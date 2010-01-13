@@ -1,0 +1,2 @@
+* TODO Not all useflag combis should be generated before selection
+* TODO Automatic finding of rdeps with stable version

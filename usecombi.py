@@ -1,15 +1,27 @@
 #!/usr/bin/python
 
+### USAGE and OPTIONS ###
+
+from optparse import OptionParser
+
+parser=OptionParser()
+parser.add_option("-d", "--depend", help="Determine stable rdeps")
+parser.add_option("-f", "--file", "-o", help="Outfile name")
+
+(options,args) = parser.parse_args()
+
+print options.file
+
 import sys
 import re
 import random
 from subprocess import *
 import os
 
-if os.path.isfile("usecombi.out"):
-    print "WARNING! usecombi.out exsits. I will overwrite it!"
+if os.path.isfile(options.file):
+    print ("WARNING! "+options.file+" exsits. I will overwrite it!")
 
-outfile = open("usecombi.out",'w')
+outfile = open(options.file,'w')
 
 if (Popen(['whoami'], stdout=PIPE).communicate()[0].rstrip() == 'root'):
     isroot=True
@@ -20,7 +32,7 @@ else:
 try:
     atom = sys.argv[1]
 except IndexError:
-    print "Please call package atom as argument"
+    print "Please call with package atom as argument"
     exit (1)
 
 # A VERY SIMPLE regular expression to test for a package atom
