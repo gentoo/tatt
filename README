@@ -1,1 +1,4 @@
 tatt is tom's arch testing tool 
+
+Dependencies:
+app-portage/gentoolkit   (for equery)
