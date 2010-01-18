@@ -149,7 +149,7 @@ except IndexError:
 
 if options.depend:
     rdeps = stableredeps (atom)
-    if len(rdeps == 0):
+    if len(rdeps) == 0:
         print "No stable rdeps" 
     for r in rdeps:
         print ("emerge -1v " + r)
