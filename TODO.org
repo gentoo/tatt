@@ -1,3 +1,3 @@
 * TODO Not all useflag combis should be generated before selection
-* TODO Automatic finding of rdeps with stable version
+* TODO Rdeps are often use-flag conditional. We should filter that!
 * TODO Incorporate pybugz
