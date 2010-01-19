@@ -59,49 +59,33 @@ def findUseFlagCombis (atom):
     uses=Popen('equery -C uses '+atom+' | cut -f 1 | cut -c 2-40 | xargs',shell=True,stdout=PIPE).communicate()[0]
     uselist=uses.split()
 
-    # Here is my naive subset iterator
-    # usecombis = [[ x for (pos,x) in zip(range(len(uselist)),uselist)
-    #              if (2**pos) & switches] for switches in range(2**len(uselist))]
-
-    # We should generate 16 distinct useflagcombis
+    if len(uselist) > 4:
+        # More than 4 use flags, generate 16 random strings and everything -, everything +
+        s = 2**(len (uselist))
+        random.seed()
+        swlist = [random.randint(0,s-1) for i in range (16)]
+        swlist.append(0)
+        swlist.append(s-1)
+        swlist.sort()
+        # Todo: Remove duplicates
+    else:
+        # 4 or less use flags. Generate all combinations
+        swlist = range(2**len(uselist))
 
     usecombis=[]
-    if len(uselist <= 4):
-        # We generate all possible combinations if <= 16
-        for sw in range(2**len(uselist)):
-            mod = []
-            for pos in range(len(uselist)):
-                if ((2**pos) & sw):
-                    mod.append("")
-                else:
-                    mod.append("-")
-                    usecombis.append(zip(mod,uselist))
-        usecombis = [["".join(uf) for uf in combi] for combi in usecombis]
-
-    # If more than 5 useflags, pick 32 combis at random.
-    if len(usecombis)>32:
-        random.seed()
-        usecombis = random.sample(usecombis, 32)
-
-    callstrings
-    for uc in usecombis:
-        ucs = " ".join(uc) # The string with USE+"..."
-        callstring = 'USE="'+ucs+'" emerge -1v '+'"'+atom+'"'
-        if isroot:
-            mes = ("Will now run : \n " + callstring)
-            outfile.write(mes)
-            print mes
-            retvalue = call(callstring,shell=True)
-            if retvalue > 0:
-                mes = "returnvalue > 0 !"
-                print mes
-                outfile.write(mes+"\n")
+    for sw in swlist:
+        mod = []
+        for pos in range(len(uselist)):
+            if ((2**pos) & sw):
+                mod.append("")
             else:
-                outfile.write("\n ==> OK \n")
-                outfile.flush()
-        else:
-            print callstring
-    return callstrings
+                mod.append("-")
+        usecombis.append(zip(mod,uselist))
+
+    usecombis = [["".join(uf) for uf in combi] for combi in usecombis]
+
+    # Merge everything to as USE="" string
+    return ["USE=\""+" ".join(uc)+ "\"" for uc in usecombis]
 
 #####################################################
 
@@ -114,6 +98,11 @@ parser=OptionParser()
 parser.add_option("-d", "--depend",
                   help="Determine stable rdeps",
                   dest="depend",
+                  action="store_true",
+                  default = False)
+parser.add_option("-u", "--use" "--usecombis",
+                  help="Determine use flag combinations",
+                  dest="usecombi",
                   action="store_true",
                   default = False)
 parser.add_option("-f", "--file", "-o",
@@ -148,10 +137,17 @@ except IndexError:
     exit (1)
 
 if options.depend:
+    # Show or build rdeps
     rdeps = stableredeps (atom)
     if len(rdeps) == 0:
         print "No stable rdeps" 
     for r in rdeps:
         print ("emerge -1v " + r)
+
+if options.usecombi:
+    # Show or build with diffent useflag combis
+    usecombis = findUseFlagCombis (atom)
+    for uc in usecombis:
+        print (uc + " emerge -1v " + atom)
 
 ## That's all folks ##
