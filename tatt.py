@@ -8,7 +8,7 @@ import os
 
 ## Testing the validity of a package atom ##
 def atomtest(atom):
-    ### A VERY SIMPLE regular expression to test for a package atom ####
+    """ Test an string for being a portage atom"""
     ### Can we use stuff from portage here?
     testa = re.compile('=?\\w+.*/.*')
     if testa.match(atom) == None :
@@ -38,7 +38,7 @@ def stableredeps (atom):
     # Does that make sense?
     for package in plist:
         # A problem for this are the -r* parts
-        name = re.split("-[0-9]",package)[0]
+        name = re.split("-[0-9]", package)[0]
         eixcall = ["eix", "--stable", "--only-names", "--exact", name]
         p2 = Popen(eixcall, stdout=PIPE)
         outlist.append(p2.communicate()[0].rstrip())
@@ -56,14 +56,15 @@ def findUseFlagCombis (atom):
     """
     Generate combinations of use flags to test
     """
-    uses=Popen('equery -C uses '+atom+' | cut -f 1 | cut -c 2-40 | xargs',shell=True,stdout=PIPE).communicate()[0]
+    uses=Popen('equery -C uses '+atom+' | cut -f 1 | cut -c 2-40 | xargs',
+               shell=True, stdout=PIPE).communicate()[0]
     uselist=uses.split()
 
     if len(uselist) > 4:
         # More than 4 use flags, generate 16 random strings and everything -, everything +
         s = 2**(len (uselist))
         random.seed()
-        swlist = [random.randint(0,s-1) for i in range (16)]
+        swlist = [random.randint(0, s-1) for i in range (16)]
         swlist.append(0)
         swlist.append(s-1)
         swlist.sort()
@@ -80,7 +81,7 @@ def findUseFlagCombis (atom):
                 mod.append("")
             else:
                 mod.append("-")
-        usecombis.append(zip(mod,uselist))
+        usecombis.append(zip(mod, uselist))
 
     usecombis = [["".join(uf) for uf in combi] for combi in usecombis]
 
@@ -107,8 +108,9 @@ parser.add_option("-u", "--use" "--usecombis",
                   default = False)
 parser.add_option("-f", "--file", "-o",
                   help="Outfile name",
+                  dest="fileprefix",
                   action="store",
-                  default="tatt.out"
+                  default="tatt-test.sh"
                   )
 parser.add_option("-p", "--pretend", 
                   help="Print things to stdout instead of doing them",
@@ -116,13 +118,7 @@ parser.add_option("-p", "--pretend",
                   default=False
                   )
 
-    
 (options,args) = parser.parse_args()
-
-if os.path.isfile(options.file):
-    print ("WARNING! "+options.file+" exsits. I will overwrite it!")
-
-outfile = open(options.file,'w')
 
 if (Popen(['whoami'], stdout=PIPE).communicate()[0].rstrip() == 'root'):
     isroot=True
@@ -137,17 +133,28 @@ except IndexError:
     exit (1)
 
 if options.depend:
-    # Show or build rdeps
+    # We are checking for stable rdeps:
     rdeps = stableredeps (atom)
     if len(rdeps) == 0:
-        print "No stable rdeps" 
-    for r in rdeps:
-        print ("emerge -1v " + r)
+        print "No stable rdeps"
+    else:
+        outfilename = (atom.split("/")[1] + "-rdeptest.sh")
+        if os.path.isfile(outfilename):
+            print ("WARNING: Will overwrite " + outfilename)
+        outfile = open(outfilename,'w')
+        outfile.write(" && ".join(["emerge -1v " + r for r in rdeps]))
+        outfile.close()
+        print ("Rdep build commands written to " + outfilename)
 
 if options.usecombi:
     # Show or build with diffent useflag combis
     usecombis = findUseFlagCombis (atom)
-    for uc in usecombis:
-        print (uc + " emerge -1v " + atom)
+    outfilename = (atom.split("/")[1] + "-useflagtest.sh")
+    if os.path.isfile(outfilename):
+        print ("WARNING: Will overwrite " + outfilename)
+    outfile = open(outfilename, 'w')        
+    outfile.write(" && ".join([uc + " emerge -1v " + atom for uc in usecombis]))
+    outfile.close()
+    print ("Build commands written to " + outfilename)
 
 ## That's all folks ##

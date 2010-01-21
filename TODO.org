@@ -1,3 +1,4 @@
 * TODO Not all useflag combis should be generated before selection
 * TODO Rdeps are often use-flag conditional. We should filter that!
 * TODO Incorporate pybugz
+* TODO should set FEATURES="test"
