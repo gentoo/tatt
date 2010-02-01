@@ -73,9 +73,14 @@ def findUseFlagCombis (atom):
     """
     Generate combinations of use flags to test
     """
+    ## A list of useflagsprefixes to be ignored
+    ignoreprefix=["elibc_","video_cards_","test"]
+    
     uses=Popen('equery -C uses '+atom+' | cut -f 1 | cut -c 2-40 | xargs',
                shell=True, stdout=PIPE).communicate()[0]
     uselist=uses.split()
+    for i in ignoreprefix:
+        uselist=[u for u in uselist if not re.match(i,u)]
 
     if len(uselist) > 4:
         # More than 4 use flags, generate 16 random strings and everything -, everything +
@@ -134,6 +139,11 @@ parser.add_option("-p", "--pretend",
                   action="store_true",
                   default=False
                   )
+parser.add_option("-t", "--test",
+                  help="run emerge commands with FEATURES=\"test\"",
+                  dest="feature_test",
+                  action="store_true",
+                  default = True)
 
 (options,args) = parser.parse_args()
 
@@ -159,6 +169,8 @@ if options.depend:
         if os.path.isfile(outfilename):
             print ("WARNING: Will overwrite " + outfilename)
         outfile = open(outfilename,'w')
+        if options.feature_test:
+            outfile.write ("FEATURES=\"test\" ")
         outfile.write(" && ".join(["emerge -1v " + r for r in rdeps]))
         outfile.close()
         print ("Rdep build commands written to " + outfilename)
@@ -169,7 +181,9 @@ if options.usecombi:
     outfilename = (atom.split("/")[1] + "-useflagtest.sh")
     if os.path.isfile(outfilename):
         print ("WARNING: Will overwrite " + outfilename)
-    outfile = open(outfilename, 'w')        
+    outfile = open(outfilename, 'w')
+    if options.feature_test:
+        outfile.write ("FEATURES=\"test\" ")
     outfile.write(" && ".join([uc + " emerge -1v " + atom for uc in usecombis]))
     outfile.close()
     print ("Build commands written to " + outfilename)
