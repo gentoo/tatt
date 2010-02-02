@@ -1,4 +1,6 @@
+* TODO We should query http://tinderbox.dev.gentoo.org/misc/dindex to solve the below issues and speed up
 * TODO Not all useflag combis should be generated before selection
 * TODO Rdeps are often use-flag conditional. We should filter that!
 * TODO Incorporate pybugz
-* TODO should set FEATURES="test"
+* DONE should set FEATURES="test"
+  CLOSED: [2010-02-02 Tue 15:54]
