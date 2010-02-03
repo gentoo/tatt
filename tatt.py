@@ -38,33 +38,22 @@ def unique(seq, idfun=None):
 def stableredeps (atom):
     """
     Find packages with stable versions which depend on atom
-    What we will call is:
-    equery depends ${ATOM} | eix --pipe --stable --only-names
+    We query the tinderbox at http://tinderbox.dev.gentoo.org/misc/dindex/
+    for this purpose.
+    The result is a list of pairs of package atoms and a list of necessary useflags
     """
-    eqarg = ["equery", "depends", "-a", atom]
-    # For debugging purposes put your package list here:
-    # eqarg = ["cat", "/home/tom/dump"]
-    ## There is some bug in eix which makes the pipe thing nonworking.
-    ## We will work around by looping manually:
-    outlist = []
-    p1 = Popen(eqarg, stdout=PIPE)
-    out = p1.communicate()[0].rstrip()
-    plist = out.split("\n")
-    # A typical element of plist is games-util/xgamer-0.2.1-r17
-    # We split at the last '-' before a number.
-    # Does that make sense?
-    for package in plist:
-        # A problem for this are the -r* parts
-        name = re.split("-[0-9]", package)[0]
-        eixcall = ["eix", "--stable", "--only-names", "--exact", name]
-        p2 = Popen(eixcall, stdout=PIPE)
-        outlist.append(p2.communicate()[0].rstrip())
-    outlist.sort()
-    while outlist[0] == '':
-        outlist.remove('')
-        if len(outlist) == 0:
-            return []
-    return unique(outlist)
+
+    #Todo, this will not work with atoms that specify verisons
+
+    import urllib
+    tinderbox = 'http://tinderbox.dev.gentoo.org/misc/dindex/'
+    download = urllib.urlopen(tinderbox + atom).read()
+    if not re.search("404 - Not Found", download) == None:
+        return []
+    packlist = download.rstrip().split("\n")
+    # If the file has no stable rdeps
+    outlist = [p.split(":") for p in packlist]
+    return [(o[0], o[1].split("+")) for o in outlist]
     
 #############################
 
@@ -169,9 +158,16 @@ if options.depend:
         if os.path.isfile(outfilename):
             print ("WARNING: Will overwrite " + outfilename)
         outfile = open(outfilename,'w')
-        if options.feature_test:
-            outfile.write ("FEATURES=\"test\" ")
-        outfile.write(" && ".join(["emerge -1v " + r for r in rdeps]))
+        estrings = []
+        for r in rdeps:
+            st = ""
+            if options.feature_test:
+                st = (st + "FEATURES=\"test\" ")
+            st = (st + "USE=\"" + " ".join([s for s in r[1] if not s[0] == "!"]) + " ")
+            st = (st + " ".join(["-" + s[1:] for s in r[1] if s[0] == "!"]))
+            st = (st + "\" emerge -1v " + r[0])
+            estrings.append(st)
+        outfile.write(" && ".join(estrings))
         outfile.close()
         print ("Rdep build commands written to " + outfilename)
 
