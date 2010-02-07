@@ -1,8 +1,8 @@
 tatt is tom's arch testing tool 
 
 Dependencies:
-app-portage/gentoolkit   (for equery)
-app-portage/eix    (for)
+app-portage/eix    (for finding useflag combis)
+www-client/pybugz  (for quering bugs )
 
 Introduction
 
@@ -10,6 +10,10 @@ Arch testing includes many boring tasks. While gatt is intended to handle things
 closing the bug and the actual keywording, tatt focusses on the testing. 
 
 Usage Examples:
+
+Work on a stable bug no 300000. This will unmask the package and create two 
+shell scripts for automated testing of useflag combis and rdeps 
+./tatt.py -b300000
 
 Print emerge commands for the stable rdeps of eix :
 

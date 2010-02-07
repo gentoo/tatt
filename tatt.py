@@ -10,8 +10,8 @@ import os
 def atomtest(atom):
     """ Test an string for being a portage atom"""
     ### Can we use stuff from portage here?
-    testa = re.compile('=?\\w+.*/.*')
-    if testa.match(atom) == None :
+    testatom = re.compile('=?\\w+.*/.*')
+    if testatom.match(atom) == None :
         print "Sorry, no valid package atom given"
         print "Use the version string starting with = and ending in the version"
         exit(1)
@@ -51,9 +51,12 @@ def stableredeps (atom):
     if not re.search("404 - Not Found", download) == None:
         return []
     packlist = download.rstrip().split("\n")
-    # If the file has no stable rdeps
-    outlist = [p.split(":") for p in packlist]
-    return [(o[0], o[1].split("+")) for o in outlist]
+    print packlist
+    # Split at : to see if useflags are necessary
+    splitlist = [p.split(":") for p in packlist]
+    withoutuse = [(s[0], []) for s in splitlist if len(s)==1]
+    withuse = [(o[0], o[1].split("+")) for o in splitlist if len(o)>1]
+    return (withoutuse + withuse)
     
 #############################
 
@@ -98,8 +101,52 @@ def findUseFlagCombis (atom):
 
     # Merge everything to as USE="" string
     return ["USE=\""+" ".join(uc)+ "\"" for uc in usecombis]
-
 #####################################################
+
+
+#### Write useflagcombiscript ########
+def writeusecombiscript(atom):
+    # Show or build with diffent useflag combis
+    usecombis = findUseFlagCombis (atom)
+    outfilename = (atom.split("/")[1] + "-useflagtest.sh")
+    if os.path.isfile(outfilename):
+        print ("WARNING: Will overwrite " + outfilename)
+    outfile = open(outfilename, 'w')
+    if options.feature_test:
+        outfile.write ("FEATURES=\"test\" ")
+    outfile.write(" && ".join([uc + " emerge -1v " + atom for uc in usecombis]))
+    outfile.close()
+    print ("Build commands written to " + outfilename)
+    return 0
+######################################
+
+
+### Write rdepcombiscript ############
+def writerdepscript(atom):
+    # We are checking for stable rdeps:
+    rdeps = stableredeps (atom)
+    if len(rdeps) == 0:
+        print "No stable rdeps"
+    else:
+    	outfilename = (atom.split("/")[1] + "-rdeptest.sh")
+    	if os.path.isfile(outfilename):
+    	    print ("WARNING: Will overwrite " + outfilename)
+    	outfile = open(outfilename,'w')
+    	estrings = []
+    	for r in rdeps:
+    	    st = ""
+    	    if options.feature_test:
+    	        st = (st + "FEATURES=\"test\" ")
+    	    st = (st + "USE=\"" + " ".join([s for s in r[1] if not s[0] == "!"]) + " ")
+    	    st = (st + " ".join(["-" + s[1:] for s in r[1] if s[0] == "!"]))
+    	    st = (st + "\" emerge -1v =" + r[0])
+    	    estrings.append(st)
+    	outfile.write(" && ".join(estrings))
+    	outfile.close()
+    	print ("Rdep build commands written to " + outfilename)
+    	return 0
+######################################
+
 
 ######### Main program starts here ###############
 
@@ -133,6 +180,10 @@ parser.add_option("-t", "--test",
                   dest="feature_test",
                   action="store_true",
                   default = True)
+parser.add_option("-b", "--bug",
+                  help="do the full program for a given stable request bug",
+                  dest="bugnum",
+                  action="store")
 
 (options,args) = parser.parse_args()
 
@@ -142,6 +193,57 @@ else:
     print "You're not root!"
     isroot=False
 
+## -b and a bugnumber was given ?
+if options.bugnum:
+    print "Working on bug number " + options.bugnum
+    bugraw = Popen(['bugz', 'get', options.bugnum, '-n', '--skip-auth'], stdout=PIPE).communicate()[0]
+    if not re.search('[Ss]tab', bugraw):
+        print "Does not look like a stable request bug !"
+        print bugraw
+        exit (1)
+    bugdata = bugraw.split("\n")
+    
+    atomre = re.compile("=?\S+-\S+/\S+-[0-9]\S+")
+    for l in bugdata:
+        m = atomre.search(l)
+        if m == None: continue
+        atom = m.group(0)
+        break
+    # Remove a leading =
+    if atom.find("=") == 0: atom = atom[1:]
+    print "Found the following package atom : " + atom
+    # Splitting the atom to get the package name:
+    atomparts = atom.split("/")
+    cat = atomparts[0]
+    rest = atomparts[1].split("-")
+    # I don't really know how to find where the version part starts
+    name = "";
+    while 1:
+        p = rest.pop(0)
+        # Try a number after a '-'
+        if re.match('[0-9]+', p):
+            # Version starts here:
+            ver = "-".join(rest)
+            break
+        else:
+            # Append back to name
+            if name=="": name = p
+            else : name = "-".join([name, p])
+    if isroot:
+        # If we are root, then we can write to package.keywords
+        keywordfile=open("/etc/portage/package.keywords/arch",'a')
+        keywordfile.write("\n=" + atom + "\n")
+        keywordfile.close()
+        print "Appended package to /etc/portage/package.keywords/arch"
+    else:
+        print "You are not root, your unmaskstring would be:"
+        print ("\n=" + atom + "\n")
+    ## Write the scripts
+    writeusecombiscript("/".join([cat,name]))
+    writerdepscript("/".join([cat,name]))
+    exit (0)
+
+## If we arrive here then a package atom should be given
 try:
     atom = args[0]
 except IndexError:
@@ -149,39 +251,9 @@ except IndexError:
     exit (1)
 
 if options.depend:
-    # We are checking for stable rdeps:
-    rdeps = stableredeps (atom)
-    if len(rdeps) == 0:
-        print "No stable rdeps"
-    else:
-        outfilename = (atom.split("/")[1] + "-rdeptest.sh")
-        if os.path.isfile(outfilename):
-            print ("WARNING: Will overwrite " + outfilename)
-        outfile = open(outfilename,'w')
-        estrings = []
-        for r in rdeps:
-            st = ""
-            if options.feature_test:
-                st = (st + "FEATURES=\"test\" ")
-            st = (st + "USE=\"" + " ".join([s for s in r[1] if not s[0] == "!"]) + " ")
-            st = (st + " ".join(["-" + s[1:] for s in r[1] if s[0] == "!"]))
-            st = (st + "\" emerge -1v " + r[0])
-            estrings.append(st)
-        outfile.write(" && ".join(estrings))
-        outfile.close()
-        print ("Rdep build commands written to " + outfilename)
+    writerdepscript(atom)
 
 if options.usecombi:
-    # Show or build with diffent useflag combis
-    usecombis = findUseFlagCombis (atom)
-    outfilename = (atom.split("/")[1] + "-useflagtest.sh")
-    if os.path.isfile(outfilename):
-        print ("WARNING: Will overwrite " + outfilename)
-    outfile = open(outfilename, 'w')
-    if options.feature_test:
-        outfile.write ("FEATURES=\"test\" ")
-    outfile.write(" && ".join([uc + " emerge -1v " + atom for uc in usecombis]))
-    outfile.close()
-    print ("Build commands written to " + outfilename)
+    writeusecombiscript(atom)
 
 ## That's all folks ##

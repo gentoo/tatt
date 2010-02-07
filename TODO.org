@@ -4,6 +4,7 @@
   CLOSED: [2010-02-03 Wed 16:14]
 * DONE Rdeps are often use-flag conditional. We should filter that!
   CLOSED: [2010-02-03 Wed 16:14]
-* TODO Incorporate pybugz
+* DONE Incorporate pybugz
+  CLOSED: [2010-02-07 Sun 18:41]
 * DONE should set FEATURES="test"
   CLOSED: [2010-02-02 Tue 15:54]
