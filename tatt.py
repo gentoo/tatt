@@ -51,7 +51,6 @@ def stableredeps (atom):
     if not re.search("404 - Not Found", download) == None:
         return []
     packlist = download.rstrip().split("\n")
-    print packlist
     # Split at : to see if useflags are necessary
     splitlist = [p.split(":") for p in packlist]
     withoutuse = [(s[0], []) for s in splitlist if len(s)==1]
