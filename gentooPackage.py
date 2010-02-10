@@ -34,6 +34,9 @@ class gentooPackage(object):
                     if self.name=="": self.name = p
                     else : self.name = "-".join([self.name, p])
 
+    def packageName(self):
+        """Returns the package category and name without version"""
+        return "/".join([self.category, self.name])
 
     def packageString(self):
         """ Returns a portage compatible string representation"""
