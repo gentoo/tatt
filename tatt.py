@@ -1,9 +1,10 @@
 #!/usr/bin/python
 
+from gentooPackage import gentooPackage as gP
+from subprocess import *
 import sys
 import re
 import random
-from subprocess import *
 import os
 
 ## Testing the validity of a package atom ##
@@ -44,7 +45,6 @@ def stableredeps (atom):
     """
 
     #Todo, this will not work with atoms that specify verisons
-
     import urllib
     tinderbox = 'http://tinderbox.dev.gentoo.org/misc/dindex/'
     download = urllib.urlopen(tinderbox + atom).read()
@@ -52,10 +52,19 @@ def stableredeps (atom):
         return []
     packlist = download.rstrip().split("\n")
     # Split at : to see if useflags are necessary
-    splitlist = [p.split(":") for p in packlist]
-    withoutuse = [(s[0], []) for s in splitlist if len(s)==1]
-    withuse = [(o[0], o[1].split("+")) for o in splitlist if len(o)>1]
-    return (withoutuse + withuse)
+    splitlist2 = [p.split(":") for p in packlist]
+    # Fill with empty useflags if nothing is given:
+    splitlist = []
+    for s in splitlist2:
+        if len(s) == 1:
+            splitlist.append([s[0],[" "]])
+        else:
+            splitlist.append([s[0],s[1].split("+")])
+    d = dict([])
+    for s in splitlist:
+        # Saves necessary useflags under package names, removing duplicates.
+        d[gP(s[0]).packageName()] = s[1]
+    return [[k, d[k]] for k in d.keys()]
     
 #############################
 
@@ -132,6 +141,7 @@ def writerdepscript(atom):
     	    print ("WARNING: Will overwrite " + outfilename)
     	outfile = open(outfilename,'w')
     	estrings = []
+        print rdeps
     	for r in rdeps:
     	    st = ""
     	    if options.feature_test:
@@ -209,37 +219,21 @@ if options.bugnum:
         atom = m.group(0)
         break
     # Remove a leading =
-    if atom.find("=") == 0: atom = atom[1:]
-    print "Found the following package atom : " + atom
+    p = gP(atom)
+    print "Found the following package atom : " + p.packageString()
     # Splitting the atom to get the package name:
-    atomparts = atom.split("/")
-    cat = atomparts[0]
-    rest = atomparts[1].split("-")
-    # I don't really know how to find where the version part starts
-    name = "";
-    while 1:
-        p = rest.pop(0)
-        # Try a number after a '-'
-        if re.match('[0-9]+', p):
-            # Version starts here:
-            ver = "-".join(rest)
-            break
-        else:
-            # Append back to name
-            if name=="": name = p
-            else : name = "-".join([name, p])
     if isroot:
         # If we are root, then we can write to package.keywords
         keywordfile=open("/etc/portage/package.keywords/arch",'a')
-        keywordfile.write("\n=" + atom + "\n")
+        keywordfile.write("\n" + p.packageString() + "\n")
         keywordfile.close()
         print "Appended package to /etc/portage/package.keywords/arch"
     else:
         print "You are not root, your unmaskstring would be:"
-        print ("\n=" + atom + "\n")
+        print ("\n" + p.packageString() + "\n")
     ## Write the scripts
-    writeusecombiscript("/".join([cat,name]))
-    writerdepscript("/".join([cat,name]))
+    writeusecombiscript(p.packageName())
+    writerdepscript(p.packageName())
     exit (0)
 
 ## If we arrive here then a package atom should be given
