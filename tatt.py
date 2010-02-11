@@ -141,7 +141,6 @@ def writerdepscript(atom):
     	    print ("WARNING: Will overwrite " + outfilename)
     	outfile = open(outfilename,'w')
     	estrings = []
-        print rdeps
     	for r in rdeps:
     	    st = ""
     	    if options.feature_test:
