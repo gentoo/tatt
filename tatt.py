@@ -64,13 +64,15 @@ def stableredeps (atom):
     for s in splitlist:
         # Saves necessary useflags under package names, removing duplicates.
         d[gP(s[0]).packageName()] = s[1]
-    outlist = [[k, d[k]] for k in d.keys()]
-    for o in outlist:
+    outlist2 = [[k, d[k]] for k in d.keys()]
+    outlist = []
+    for o in outlist2:
         # We are calling eix for each package to work around issues with --stable:
         eixcall = ["eix", "--stable", "--only-names", "--exact", o[0]]
         p2 = Popen(eixcall, stdout=PIPE)
-        if p2.communicate()[0].rstrip() == '':
-            outlist.remove(o)
+        out = p2.communicate()[0]
+        if out == '': continue
+        else : outlist.append(o)
     return outlist
     
 #############################
@@ -154,7 +156,7 @@ def writerdepscript(atom):
     	        st = (st + "FEATURES=\"test\" ")
     	    st = (st + "USE=\"" + " ".join([s for s in r[1] if not s[0] == "!"]) + " ")
     	    st = (st + " ".join(["-" + s[1:] for s in r[1] if s[0] == "!"]))
-    	    st = (st + "\" emerge -1v =" + r[0])
+    	    st = (st + "\" emerge -1v " + r[0])
     	    estrings.append(st)
     	outfile.write(" && ".join(estrings))
     	outfile.close()
