@@ -64,7 +64,14 @@ def stableredeps (atom):
     for s in splitlist:
         # Saves necessary useflags under package names, removing duplicates.
         d[gP(s[0]).packageName()] = s[1]
-    return [[k, d[k]] for k in d.keys()]
+    outlist = [[k, d[k]] for k in d.keys()]
+    for o in outlist:
+        # We are calling eix for each package to work around issues with --stable:
+        eixcall = ["eix", "--stable", "--only-names", "--exact", o[0]]
+        p2 = Popen(eixcall, stdout=PIPE)
+        if p2.communicate()[0].rstrip() == '':
+            outlist.remove(o)
+    return outlist
     
 #############################
 
