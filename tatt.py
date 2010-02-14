@@ -88,6 +88,9 @@ def findUseFlagCombis (atom):
     uses=Popen('equery -C uses '+atom+' | cut -f 1 | cut -c 2-40 | xargs',
                shell=True, stdout=PIPE).communicate()[0]
     uselist=uses.split()
+    # The uselist could have duplicates due to slot-conditional
+    # output of equery
+    uselist=unique(uselist)
     for i in ignoreprefix:
         uselist=[u for u in uselist if not re.match(i,u)]
 
@@ -99,7 +102,7 @@ def findUseFlagCombis (atom):
         swlist.append(0)
         swlist.append(s-1)
         swlist.sort()
-        # Todo: Remove duplicates
+        swlist = unique(swlist)
     else:
         # 4 or less use flags. Generate all combinations
         swlist = range(2**len(uselist))
