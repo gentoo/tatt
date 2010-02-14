@@ -147,24 +147,27 @@ def writerdepscript(atom):
     rdeps = stableredeps (atom)
     if len(rdeps) == 0:
         print "No stable rdeps"
-    else:
-    	outfilename = (atom.split("/")[1] + "-rdeptest.sh")
-    	if os.path.isfile(outfilename):
-    	    print ("WARNING: Will overwrite " + outfilename)
-    	outfile = open(outfilename,'w')
-    	estrings = []
-    	for r in rdeps:
-    	    st = ""
-    	    if options.feature_test:
-    	        st = (st + "FEATURES=\"test\" ")
-    	    st = (st + "USE=\"" + " ".join([s for s in r[1] if not s[0] == "!"]) + " ")
-    	    st = (st + " ".join(["-" + s[1:] for s in r[1] if s[0] == "!"]))
-    	    st = (st + "\" emerge -1v " + r[0])
-    	    estrings.append(st)
-    	outfile.write(" && ".join(estrings))
-    	outfile.close()
-    	print ("Rdep build commands written to " + outfilename)
-    	return 0
+        return 0
+    if len(rdeps) > 20:
+        print "More than 20 stable rdeps, sampling 20"
+        rdeps = random.sample(rdeps, 20)
+    outfilename = (atom.split("/")[1] + "-rdeptest.sh")
+    if os.path.isfile(outfilename):
+        print ("WARNING: Will overwrite " + outfilename)
+    outfile = open(outfilename,'w')
+    estrings = []
+    for r in rdeps:
+        st = ""
+        if options.feature_test:
+            st = (st + "FEATURES=\"test\" ")
+        st = (st + "USE=\"" + " ".join([s for s in r[1] if not s[0] == "!"]) + " ")
+        st = (st + " ".join(["-" + s[1:] for s in r[1] if s[0] == "!"]))
+        st = (st + "\" emerge -1v " + r[0])
+        estrings.append(st)
+    outfile.write(" && ".join(estrings))
+    outfile.close()
+    print ("Rdep build commands written to " + outfilename)
+    return 0
 ######################################
 
 
