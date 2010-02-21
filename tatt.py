@@ -133,7 +133,8 @@ def writeusecombiscript(atom):
         print ("WARNING: Will overwrite " + outfilename)
     outfile = open(outfilename, 'w')
     if options.feature_test:
-        outfile.write ("FEATURES=\"test\" ")
+        # Test once with system enabled useflags:
+        outfile.write ("FEATURES=\"test\" emerge -1v " + atom + " ")
     outfile.write(" && ".join([uc + " emerge -1v " + atom for uc in usecombis]))
     outfile.close()
     print ("Build commands written to " + outfilename)
