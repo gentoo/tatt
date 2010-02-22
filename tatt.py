@@ -239,10 +239,22 @@ if options.bugnum:
     # Splitting the atom to get the package name:
     if isroot:
         # If we are root, then we can write to package.keywords
-        keywordfile=open("/etc/portage/package.keywords/arch",'a')
-        keywordfile.write("\n" + p.packageString() + "\n")
+        try:
+            keywordfile=open("/etc/portage/package.keywords/arch", 'r+')
+        except IOError:
+            # create an empty file, this should be beautified
+            keywordfile=open("/etc/portage/package.keywords/arch", 'w')
+            keywordfile.write(" ")
+            keywordfile.close()
+            keywordfile=open("/etc/portage/package.keywords/arch", 'r+')
+
+        # Test if keywordfile already contains the atom
+        if re.search(p.packageString(), keywordfile.read()):
+            print "Package atom already package.keywords"
+        else:
+            keywordfile.write("\n" + p.packageString() + "\n")
+            print "Appended package to /etc/portage/package.keywords/arch"
         keywordfile.close()
-        print "Appended package to /etc/portage/package.keywords/arch"
     else:
         print "You are not root, your unmaskstring would be:"
         print ("\n" + p.packageString() + "\n")
