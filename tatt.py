@@ -227,7 +227,7 @@ if options.bugnum:
         exit (1)
     bugdata = bugraw.split("\n")
     
-    atomre = re.compile("=?\S+-\S+/\S+-[0-9]\S+")
+    atomre = re.compile("=?[^\s:,;]+/\S+-[0-9]?\S+[0-9]")
     for l in bugdata:
         m = atomre.search(l)
         if m == None: continue
