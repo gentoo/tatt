@@ -7,17 +7,6 @@ import re
 import random
 import os
 
-## Testing the validity of a package atom ##
-def atomtest(atom):
-    """ Test an string for being a portage atom"""
-    ### Can we use stuff from portage here?
-    testatom = re.compile('=?\\w+.*/.*')
-    if testatom.match(atom) == None :
-        print "Sorry, no valid package atom given"
-        print "Use the version string starting with = and ending in the version"
-        exit(1)
-############################################
-
 ## Getting unique elements of a list ##
 def unique(seq, idfun=None):
     # order preserving
@@ -224,10 +213,12 @@ if options.bugnum:
     if not re.search('[Ss]tab', bugraw):
         print "Does not look like a stable request bug !"
         print bugraw
-        exit (1)
+        # Let's not exit here, maybe we still want to work on the bug
+#        exit (1)
     bugdata = bugraw.split("\n")
     
-    atomre = re.compile("=?[^\s:,;]+/\S+-[0-9]?\S+[0-9]")
+    # Todo: Check if this is really an atom
+    atomre = re.compile("=?[^\s:,;<>]+/\S+-[0-9]?\S+[0-9]")
     for l in bugdata:
         m = atomre.search(l)
         if m == None: continue
