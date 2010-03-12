@@ -118,14 +118,20 @@ def writeusecombiscript(atom):
     # Show or build with diffent useflag combis
     usecombis = findUseFlagCombis (atom)
     outfilename = (atom.split("/")[1] + "-useflagtest.sh")
+    reportname = (atom.split("/")[1] + ".report")
     if os.path.isfile(outfilename):
         print ("WARNING: Will overwrite " + outfilename)
     outfile = open(outfilename, 'w')
-    outfile.write("#!/bin/sh")
+    outfile.write("#!/bin/sh" + '\n')
+    for uc in usecombis:
+        outfile.write("if " + uc + " emerge -1v " + atom + "; then " + '\n')
+        outfile.write("  echo \"" + uc.replace("\"","\'") + " succeeded \" >> " + reportname + "; " + '\n')
+        outfile.write("else echo \"" + uc.replace("\"", "\'") + " failed \" >> " + reportname + '; \nfi; \n')
+# the old union for reference:
+#    outfile.write(" && ".join([uc + " emerge -1v " + atom for uc in usecombis]))
     if options.feature_test:
-        # Test once with system enabled useflags:
-        outfile.write ("FEATURES=\"test\" emerge -1v " + atom + " && ")
-    outfile.write(" && ".join([uc + " emerge -1v " + atom for uc in usecombis]))
+        # Test once with system enabled useflags in the end:
+        outfile.write ("FEATURES=\"test\" emerge -1v " + atom)
     outfile.close()
     print ("Build commands written to " + outfilename)
     return 0
@@ -146,7 +152,7 @@ def writerdepscript(atom):
     if os.path.isfile(outfilename):
         print ("WARNING: Will overwrite " + outfilename)
     outfile = open(outfilename,'w')
-    outfile.write("#!/bin/sh")
+    outfile.write("#!/bin/sh" + '\n')
     estrings = []
     for r in rdeps:
         st = ""
