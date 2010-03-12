@@ -127,8 +127,6 @@ def writeusecombiscript(atom):
         outfile.write("if " + uc + " emerge -1v " + atom + "; then " + '\n')
         outfile.write("  echo \"" + uc.replace("\"","\'") + " succeeded \" >> " + reportname + "; " + '\n')
         outfile.write("else echo \"" + uc.replace("\"", "\'") + " failed \" >> " + reportname + '; \nfi; \n')
-# the old union for reference:
-#    outfile.write(" && ".join([uc + " emerge -1v " + atom for uc in usecombis]))
     if options.feature_test:
         # Test once with system enabled useflags in the end:
         outfile.write ("FEATURES=\"test\" emerge -1v " + atom)
@@ -149,20 +147,22 @@ def writerdepscript(atom):
         print "More than 20 stable rdeps, sampling 20"
         rdeps = random.sample(rdeps, 20)
     outfilename = (atom.split("/")[1] + "-rdeptest.sh")
+    reportname = (atom.split("/")[1] + ".report")
     if os.path.isfile(outfilename):
         print ("WARNING: Will overwrite " + outfilename)
     outfile = open(outfilename,'w')
     outfile.write("#!/bin/sh" + '\n')
-    estrings = []
     for r in rdeps:
-        st = ""
+        call = ""
         if options.feature_test:
-            st = (st + "FEATURES=\"test\" ")
-        st = (st + "USE=\"" + " ".join([s for s in r[1] if not s[0] == "!"]) + " ")
-        st = (st + " ".join(["-" + s[1:] for s in r[1] if s[0] == "!"]))
-        st = (st + "\" emerge -1v " + r[0])
-        estrings.append(st)
-    outfile.write(" && ".join(estrings))
+            call = "FEATURES=\"test\" "
+        call = (call + "USE=\"" + " ".join([s for s in r[1] if not s[0] == "!"]) + " ")
+        call = (call + " ".join(["-" + s[1:] for s in r[1] if s[0] == "!"]))
+        call = (call + "\" emerge -1v " + r[0])
+        st = ("if " + call + "; then \n")
+        st = (st + "echo \""+call.replace("\"","\'") + "\" succeeded > " + reportname + ";\n")
+        st = (st + "else echo \""+call.replace("\"","\'") + "\" failed > " + reportname + ";\nfi;\n")
+        outfile.write(st)
     outfile.close()
     print ("Rdep build commands written to " + outfilename)
     return 0
