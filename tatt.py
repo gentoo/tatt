@@ -226,7 +226,7 @@ if options.bugnum:
     bugdata = bugraw.split("\n")
     
     # Todo: Check if this is really an atom
-    atomre = re.compile("=?[^\s:,;<>]+/\S+-[0-9]?\S+[0-9]")
+    atomre = re.compile("=?[^\s:,;<>]+/\S+-[0-9]?\S+[0-9][a-z]?")
     for l in bugdata:
         m = atomre.search(l)
         if m == None: continue
