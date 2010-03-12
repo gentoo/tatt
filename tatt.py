@@ -121,6 +121,7 @@ def writeusecombiscript(atom):
     if os.path.isfile(outfilename):
         print ("WARNING: Will overwrite " + outfilename)
     outfile = open(outfilename, 'w')
+    outfile.write("#!/bin/sh")
     if options.feature_test:
         # Test once with system enabled useflags:
         outfile.write ("FEATURES=\"test\" emerge -1v " + atom + " && ")
@@ -145,6 +146,7 @@ def writerdepscript(atom):
     if os.path.isfile(outfilename):
         print ("WARNING: Will overwrite " + outfilename)
     outfile = open(outfilename,'w')
+    outfile.write("#!/bin/sh")
     estrings = []
     for r in rdeps:
         st = ""

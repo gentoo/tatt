@@ -11,3 +11,4 @@
 * TODO Write a test-protocol
 * TODO Support for multiple packages per bug
 * TODO Code cleanup
+* TODO If we give a package-name with version to -u or -d then it fails!
