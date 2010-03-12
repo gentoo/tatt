@@ -8,7 +8,8 @@
   CLOSED: [2010-02-07 Sun 18:41]
 * DONE should set FEATURES="test"
   CLOSED: [2010-02-02 Tue 15:54]
-* TODO Write a test-protocol
+* DONE Write a test-protocol
+  CLOSED: [2010-03-12 Fri 12:45]
 * TODO Support for multiple packages per bug
 * TODO Code cleanup
 * TODO If we give a package-name with version to -u or -d then it fails!
