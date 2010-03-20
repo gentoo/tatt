@@ -72,7 +72,7 @@ def findUseFlagCombis (atom):
     Generate combinations of use flags to test
     """
     ## A list of useflagsprefixes to be ignored
-    ignoreprefix=["elibc_","video_cards_","linguas_","test","debug"]
+    ignoreprefix=["elibc_","video_cards_","linguas_","kdeenablefinal","test","debug"]
     
     uses=Popen('equery -C uses '+atom+' | cut -f 1 | cut -c 2-40 | xargs',
                shell=True, stdout=PIPE).communicate()[0]
