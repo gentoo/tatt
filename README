@@ -13,13 +13,20 @@ Usage Examples:
 
 Work on a stable bug no 300000. This will unmask the package and create two 
 shell scripts for automated testing of useflag combis and rdeps 
+
 ./tatt.py -b300000
 
-Print emerge commands for the stable rdeps of eix :
+Everything was successful, we want to comment on the bug. The following command
+will log in and write the comment "Tested on x86: Everything fine" to the bug.
+./tatt.py -s300000
+
+To run individual parts use the following syntax:
+
+-) Print emerge commands for the stable rdeps of eix:
 
 ./tatt.py -d app-portage/eix
 
-Print emerge commands for <=16 use flag combinations of eix:
+-) Print emerge commands for <=16 use flag combinations of eix:
 
 ./tatt.py -u app-portage/eix
 
