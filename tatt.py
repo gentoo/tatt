@@ -7,6 +7,14 @@ import re
 import random
 import os
 
+############## GLOBAL STUFF #############:
+## A list of useflagsprefixes to be ignored
+ignoreprefix=["elibc_","video_cards_","linguas_","kdeenablefinal","test","debug"]
+
+## Success Message:
+successmessage = "Tested on x86: Everything fine"
+#########################################
+
 ## Getting unique elements of a list ##
 def unique(seq, idfun=None):
     # order preserving
@@ -71,8 +79,6 @@ def findUseFlagCombis (atom):
     """
     Generate combinations of use flags to test
     """
-    ## A list of useflagsprefixes to be ignored
-    ignoreprefix=["elibc_","video_cards_","linguas_","kdeenablefinal","test","debug"]
     
     uses=Popen('equery -C uses '+atom+' | cut -f 1 | cut -c 2-40 | xargs',
                shell=True, stdout=PIPE).communicate()[0]
@@ -168,6 +174,20 @@ def writerdepscript(atom):
     return 0
 ######################################
 
+#######Write report script############
+def writereportscript (bugnum, atom):
+    outfilename = (atom.split("/")[1] + "-success.sh")
+    reportname = (atom.split("/")[1] + ".report")
+    if os.path.isfile(outfilename):
+        print ("WARNING: Will overwrite " + outfilename)
+    outfile = open(outfilename,'w')
+    outfile.write("#!/bin/sh" + '\n')
+    outfile.write("if grep failed " + reportname + " >> /dev/null; then echo Failure found;\n")
+    outfile.write("else bugz modify " + bugnum + ' -c' + "\"" +successmessage + "\";\n")
+    outfile.write("fi;")
+    outfile.close()
+    print ("Success Report script written to " + outfilename)
+    return 0
 
 ######### Main program starts here ###############
 
@@ -220,14 +240,14 @@ else:
 
 ## -s and a bugnumber was given ?
 if options.succbugnum:
-   print "Reporting success for bug number " + options.succbugnum
-   retcode = call(['bugz', 'modify', options.succbugnum, '-c' ,"'Tested on x86: Everything fine'"])
-   if retcode == 0:
-      print "Success!";
-      exit (0)
-   else:
-      print "Failure commenting on Bugzilla"
-      exit(1)
+    print "Reporting success for bug number " + options.succbugnum
+    retcode = call(['bugz', 'modify', options.succbugnum, '-c', successmessage])
+    if retcode == 0:
+        print "Success!";
+        exit (0)
+    else:
+        print "Failure commenting on Bugzilla"
+        exit(1)
 
 ## -b and a bugnumber was given ?
 if options.bugnum:
@@ -264,7 +284,7 @@ if options.bugnum:
 
         # Test if keywordfile already contains the atom
         if re.search(p.packageString(), keywordfile.read()):
-            print "Package atom already package.keywords"
+            print "Package atom already in package.keywords"
         else:
             keywordfile.write("\n" + p.packageString() + "\n")
             print "Appended package to /etc/portage/package.keywords/arch"
@@ -275,6 +295,7 @@ if options.bugnum:
     ## Write the scripts
     writeusecombiscript(p.packageName())
     writerdepscript(p.packageName())
+    writereportscript(options.bugnum, p.packageName())
     exit (0)
 
 ## If we arrive here then a package atom should be given
