@@ -205,6 +205,10 @@ parser.add_option("-b", "--bug",
                   help="do the full program for a given stable request bug",
                   dest="bugnum",
                   action="store")
+parser.add_option("-s", "--success",
+		  help="Comment that the program was successfully tested",
+                  dest="succbugnum",
+		  action="store")
 
 (options,args) = parser.parse_args()
 
@@ -213,6 +217,17 @@ if (Popen(['whoami'], stdout=PIPE).communicate()[0].rstrip() == 'root'):
 else:
     print "You're not root!"
     isroot=False
+
+## -s and a bugnumber was given ?
+if options.succbugnum:
+   print "Reporting success for bug number " + options.succbugnum
+   retcode = call(['bugz', 'modify', options.succbugnum, '-c' ,"'Tested on x86: Everything fine'"])
+   if retcode == 0:
+      print "Success!";
+      exit (0)
+   else:
+      print "Failure commenting on Bugzilla"
+      exit(1)
 
 ## -b and a bugnumber was given ?
 if options.bugnum:
