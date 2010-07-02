@@ -253,7 +253,7 @@ if options.succbugnum:
 if options.bugnum:
     print "Working on bug number " + options.bugnum
     bugraw = Popen(['bugz', 'get', options.bugnum, '-n', '--skip-auth'], stdout=PIPE).communicate()[0]
-    if not re.search('[Ss]tab', bugraw):
+    if not re.search('[Ss][Tt][Aa][Bb]', bugraw):
         print "Does not look like a stable request bug !"
         print bugraw
         # Let's not exit here, maybe we still want to work on the bug
