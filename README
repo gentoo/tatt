@@ -1,15 +1,19 @@
-tatt is tom's arch testing tool 
+tatt stands for "tatt (is an) arch testing tool"
 
 Dependencies:
 app-portage/eix    (for finding useflag combis)
 www-client/pybugz  (for quering bugs )
+dev-python/configobj 
 
 Introduction
 
 Arch testing includes many boring tasks. While gatt is intended to handle things that you do as a developer, like
 closing the bug and the actual keywording, tatt focusses on the testing. 
 
-Usage Examples:
+Tatt is configured through the file ~/.tatt. An example is given in dot-tatt-example, the spec is in
+dot-tatt-spec
+
+ Usage Examples:
 
 Work on a stable bug no 300000. This will unmask the package and create two shell scripts for automated testing of
 useflag combis and rdeps and success-reports to bugzilla.

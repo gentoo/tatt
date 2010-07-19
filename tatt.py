@@ -1,36 +1,30 @@
 #!/usr/bin/python
 
 from gentooPackage import gentooPackage as gP
+from tool import unique
+
 from subprocess import *
 import sys
 import re
 import random
 import os
 
-############## GLOBAL STUFF #############:
-## A list of useflagsprefixes to be ignored
-ignoreprefix=["elibc_","video_cards_","linguas_","kdeenablefinal","test","debug"]
+# from configobj
+from configobj import ConfigObj
+from validate  import Validator
 
-## Success Message:
-successmessage = "Tested on x86: Everything fine"
-#########################################
 
-## Getting unique elements of a list ##
-def unique(seq, idfun=None):
-    # order preserving
-    if idfun is None:
-        def idfun(x): return x
-        seen = {}
-        result = []
-        for item in seq:
-            marker = idfun(item)
-            # in old Python versions:
-            # if seen.has_key(marker)
-            # but in new ones:
-            if marker in seen: continue
-            seen[marker] = 1
-            result.append(item)
-    return result
+########### Generate a global config obj #################
+
+config = ConfigObj("dot-tatt-example", configspec="dot-tatt-spec")
+
+# This validator will also do type conversion according to the spec file!
+validator = Validator()
+result = config.validate(validator)
+
+if result != True:
+    print 'Config file validation failed!'
+    sys.exit(1)
 
 ## Generate stable rdeps ###
 def stableredeps (atom):
@@ -86,7 +80,7 @@ def findUseFlagCombis (atom):
     # The uselist could have duplicates due to slot-conditional
     # output of equery
     uselist=unique(uselist)
-    for i in ignoreprefix:
+    for i in config["ignoreprefix"]:
         uselist=[u for u in uselist if not re.match(i,u)]
 
     if len(uselist) > 4:
@@ -183,7 +177,7 @@ def writereportscript (bugnum, atom):
     outfile = open(outfilename,'w')
     outfile.write("#!/bin/sh" + '\n')
     outfile.write("if grep failed " + reportname + " >> /dev/null; then echo Failure found;\n")
-    outfile.write("else bugz modify " + bugnum + ' -c' + "\"" +successmessage + "\";\n")
+    outfile.write("else bugz modify " + bugnum + ' -c' + "\"" +config['successmessage'] + "\";\n")
     outfile.write("fi;")
     outfile.close()
     print ("Success Report script written to " + outfilename)
@@ -241,7 +235,7 @@ else:
 ## -s and a bugnumber was given ?
 if options.succbugnum:
     print "Reporting success for bug number " + options.succbugnum
-    retcode = call(['bugz', 'modify', options.succbugnum, '-c', successmessage])
+    retcode = call(['bugz', 'modify', options.succbugnum, '-c', config['successmessage']])
     if retcode == 0:
         print "Success!";
         exit (0)
@@ -261,7 +255,8 @@ if options.bugnum:
     bugdata = bugraw.split("\n")
     
     # Todo: Check if this is really an atom
-    atomre = re.compile("=?[^\s:,;<>]+/\S+-[0-9]?\S+[0-9][^\s:,;<>]?[a-z]*")
+    # atomre = re.compile("=?[^\s:,;<>]+/\S+-[0-9]?\S+[0-9][^\s:,;<>]?[a-z]*")
+    atomre = re.compile(config['atom-regexp'])
     for l in bugdata:
         m = atomre.search(l)
         if m == None: continue
