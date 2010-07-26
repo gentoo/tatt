@@ -10,14 +10,20 @@ import os
 # from configobj
 from configobj import ConfigObj
 from validate  import Validator
+# To access the specfile:
+from pkg_resources import resource_filename
+
 
 from tatt.gentooPackage import gentooPackage as gP
 from tatt.tool import unique
 from tatt.packageFinder import *
+from tatt.config import 
 
 ########### Generate a global config obj #################
 
-config = ConfigObj("dot-tatt-example", configspec="dot-tatt-spec")
+specfile = resource_filename('tatt', 'dot-tatt-spec')
+config = ConfigObj("dot-tatt-example", configspec=specfile)
+# config = ConfigObj("dot-tatt-example", configspec="dot-tatt-spec")
 
 # This validator will also do type conversion according to the spec file!
 validator = Validator()
