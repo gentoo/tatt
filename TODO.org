@@ -17,3 +17,4 @@
 ** TODO Specify the location where all the scripts and reports will land
 ** TODO Specify the file in /etc/portage/package.keywords/ where unmasking will be added
 * TODO Parallelization (important: Fork multiple eix instances!)
+* TODO Implement tests

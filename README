@@ -2,6 +2,7 @@ tatt stands for "tatt (is an) arch testing tool"
 
 Dependencies:
 app-portage/eix    (for finding useflag combis)
+app-portage/gentoolkit (for equery)
 www-client/pybugz  (for quering bugs )
 dev-python/configobj 
 

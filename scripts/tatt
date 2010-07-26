@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-from gentooPackage import gentooPackage as gP
-from tool import unique
-
+# Global Modules
 from subprocess import *
 import sys
 import re
@@ -13,6 +11,9 @@ import os
 from configobj import ConfigObj
 from validate  import Validator
 
+from tatt.gentooPackage import gentooPackage as gP
+from tatt.tool import unique
+from tatt.packageFinder import *
 
 ########### Generate a global config obj #################
 
@@ -27,11 +28,12 @@ if result != True:
     sys.exit(1)
 
 ## Useflag Combis ##
-def findUseFlagCombis (atom):
+def findUseFlagCombis (package):
     """
     Generate combinations of use flags to test
+    The output will be a list each containing a list with a useflag combination
     """
-    
+    atom=package.packageString()
     uses=Popen('equery -C uses '+atom+' | cut -f 1 | cut -c 2-40 | xargs',
                shell=True, stdout=PIPE).communicate()[0]
     uselist=uses.split()
@@ -70,13 +72,12 @@ def findUseFlagCombis (atom):
     return ["USE=\""+" ".join(uc)+ "\"" for uc in usecombis]
 #####################################################
 
-
 #### Write useflagcombiscript ########
-def writeusecombiscript(atom):
+def writeusecombiscript(package):
     # Show or build with diffent useflag combis
-    usecombis = findUseFlagCombis (atom)
-    outfilename = (atom.split("/")[1] + "-useflagtest.sh")
-    reportname = (atom.split("/")[1] + ".report")
+    usecombis = findUseFlagCombis (package)
+    outfilename = (package.packageName() + "-useflagtest.sh")
+    reportname = (package.packageName() + ".report")
     if os.path.isfile(outfilename):
         print ("WARNING: Will overwrite " + outfilename)
     outfile = open(outfilename, 'w')
@@ -92,7 +93,6 @@ def writeusecombiscript(atom):
     print ("Build commands written to " + outfilename)
     return 0
 ######################################
-
 
 ### Write rdepcombiscript ############
 def writerdepscript(atom):
@@ -210,20 +210,12 @@ if options.bugnum:
         print bugraw
         # Let's not exit here, maybe we still want to work on the bug
 #        exit (1)
-    bugdata = bugraw.split("\n")
-    
-    # Todo: Check if this is really an atom
-    # atomre = re.compile("=?[^\s:,;<>]+/\S+-[0-9]?\S+[0-9][^\s:,;<>]?[a-z]*")
-    atomre = re.compile(config['atom-regexp'])
-    for l in bugdata:
-        m = atomre.search(l)
-        if m == None: continue
-        atom = m.group(0)
-        break
-    # Remove a leading =
-    p = gP(atom)
-    print "Found the following package atom : " + p.packageString()
-    # Splitting the atom to get the package name:
+
+    packs = fP(bugraw, re.compile(config['atom-regexp']))
+
+    for p in packs:
+        print "Found the following package atom : " + p.packageString()
+
     if isroot:
         # If we are root, then we can write to package.keywords
         try:
@@ -235,20 +227,22 @@ if options.bugnum:
             keywordfile.close()
             keywordfile=open("/etc/portage/package.keywords/arch", 'r+')
 
-        # Test if keywordfile already contains the atom
-        if re.search(p.packageString(), keywordfile.read()):
-            print "Package atom already in package.keywords"
-        else:
-            keywordfile.write("\n" + p.packageString() + "\n")
-            print "Appended package to /etc/portage/package.keywords/arch"
+        for p in packs:
+            # Test if keywordfile already contains the atom
+            if re.search(p.packageString(), keywordfile.read()):
+                print (p.packageString() + " already in package.keywords.")
+            else:
+                keywordfile.write("\n" + p.packageString() + "\n")
+                print ("Appended " + p.packageString()+ " to /etc/portage/package.keywords/arch")
         keywordfile.close()
     else:
         print "You are not root, your unmaskstring would be:"
-        print ("\n" + p.packageString() + "\n")
+        print ("\n".join([p.packageString() for p in packs]) + "\n")
     ## Write the scripts
-    writeusecombiscript(p.packageName())
-    writerdepscript(p.packageName())
-    writereportscript(options.bugnum, p.packageName())
+    for p in packs:
+        writeusecombiscript(p)
+        writerdepscript(p)
+        writereportscript(options.bugnum, p.packageName())
     exit (0)
 
 ## If we arrive here then a package atom should be given

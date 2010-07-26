@@ -52,5 +52,4 @@ class gentooPackage(object):
             return  "/".join([self.category, self.name])
         else:
             return ( "=" + "/".join([self.category, "-".join([self.name, self.ver])]))
-
         
