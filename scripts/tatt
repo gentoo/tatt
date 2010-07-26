@@ -4,7 +4,6 @@
 from subprocess import *
 import sys
 import re
-import random
 import os
 
 # from configobj
@@ -15,8 +14,10 @@ from pkg_resources import resource_filename
 
 
 from tatt.gentooPackage import gentooPackage as gP
-from tatt.tool import unique
 from tatt.packageFinder import *
+from tatt.scriptwriter import writeusecombiscript as writeUSE
+from tatt.scriptwriter import writerdepscript as writeRdep
+from tatt.scriptwriter import writesucessreportscript as writeSuccess
 
 ########### Generate a global config obj #################
 
@@ -31,120 +32,6 @@ result = config.validate(validator)
 if result != True:
     print 'Config file validation failed!'
     sys.exit(1)
-
-## Useflag Combis ##
-def findUseFlagCombis (package):
-    """
-    Generate combinations of use flags to test
-    The output will be a list each containing a list with a useflag combination
-    """
-    atom=package.packageString()
-    uses=Popen('equery -C uses '+atom+' | cut -f 1 | cut -c 2-40 | xargs',
-               shell=True, stdout=PIPE).communicate()[0]
-    uselist=uses.split()
-    # The uselist could have duplicates due to slot-conditional
-    # output of equery
-    uselist=unique(uselist)
-    for i in config["ignoreprefix"]:
-        uselist=[u for u in uselist if not re.match(i,u)]
-
-    if len(uselist) > 4:
-        # More than 4 use flags, generate 16 random strings and everything -, everything +
-        s = 2**(len (uselist))
-        random.seed()
-        swlist = [random.randint(0, s-1) for i in range (16)]
-        swlist.append(0)
-        swlist.append(s-1)
-        swlist.sort()
-        swlist = unique(swlist)
-    else:
-        # 4 or less use flags. Generate all combinations
-        swlist = range(2**len(uselist))
-
-    usecombis=[]
-    for sw in swlist:
-        mod = []
-        for pos in range(len(uselist)):
-            if ((2**pos) & sw):
-                mod.append("")
-            else:
-                mod.append("-")
-        usecombis.append(zip(mod, uselist))
-
-    usecombis = [["".join(uf) for uf in combi] for combi in usecombis]
-
-    # Merge everything to as USE="" string
-    return ["USE=\""+" ".join(uc)+ "\"" for uc in usecombis]
-#####################################################
-
-#### Write useflagcombiscript ########
-def writeusecombiscript(package):
-    # Show or build with diffent useflag combis
-    usecombis = findUseFlagCombis (package)
-    outfilename = (package.packageName() + "-useflagtest.sh")
-    reportname = (package.packageName() + ".report")
-    if os.path.isfile(outfilename):
-        print ("WARNING: Will overwrite " + outfilename)
-    outfile = open(outfilename, 'w')
-    outfile.write("#!/bin/sh" + '\n')
-    for uc in usecombis:
-        outfile.write("if " + uc + " emerge -1v " + atom + "; then " + '\n')
-        outfile.write("  echo \"" + uc.replace("\"","\'") + " succeeded \" >> " + reportname + "; " + '\n')
-        outfile.write("else echo \"" + uc.replace("\"", "\'") + " failed \" >> " + reportname + '; \nfi; \n')
-    if options.feature_test:
-        # Test once with system enabled useflags in the end:
-        outfile.write ("FEATURES=\"test\" emerge -1v " + atom)
-    outfile.close()
-    print ("Build commands written to " + outfilename)
-    return 0
-######################################
-
-### Write rdepcombiscript ############
-def writerdepscript(atom):
-    # We are checking for stable rdeps:
-    rdeps = stableredeps (atom)
-    if len(rdeps) == 0:
-        print "No stable rdeps"
-        return 0
-    if len(rdeps) > 20:
-        print "More than 20 stable rdeps, sampling 20"
-        rdeps = random.sample(rdeps, 20)
-    outfilename = (atom.split("/")[1] + "-rdeptest.sh")
-    reportname = (atom.split("/")[1] + ".report")
-    if os.path.isfile(outfilename):
-        print ("WARNING: Will overwrite " + outfilename)
-    outfile = open(outfilename,'w')
-    outfile.write("#!/bin/sh" + '\n')
-    for r in rdeps:
-        call = ""
-        if options.feature_test:
-            call = "FEATURES=\"test\" "
-        call = (call + "USE=\"" + " ".join([s for s in r[1] if not s[0] == "!"]) + " ")
-        call = (call + " ".join(["-" + s[1:] for s in r[1] if s[0] == "!"]))
-        call = (call + "\" emerge -1v " + r[0])
-        st = ("if " + call + "; then \n")
-        st = (st + "echo \""+call.replace("\"","\'") + "\" succeeded >> " + reportname + ";\n")
-        st = (st + "else echo \""+call.replace("\"","\'") + "\" failed >> " + reportname + ";\nfi;\n")
-        outfile.write(st)
-    outfile.close()
-    print ("Rdep build commands written to " + outfilename)
-    return 0
-######################################
-
-#######Write report script############
-def writereportscript (bugnum, atom):
-    outfilename = (atom.split("/")[1] + "-success.sh")
-    reportname = (atom.split("/")[1] + ".report")
-    if os.path.isfile(outfilename):
-        print ("WARNING: Will overwrite " + outfilename)
-    outfile = open(outfilename,'w')
-    outfile.write("#!/bin/sh" + '\n')
-    outfile.write("if grep failed " + reportname + " >> /dev/null; then echo Failure found;\n")
-    outfile.write("else bugz modify " + bugnum + ' -c' + "\"" +config['successmessage'] + "\";\n")
-    outfile.write("fi;")
-    outfile.close()
-    print ("Success Report script written to " + outfilename)
-    return 0
 
 ######### Main program starts here ###############
 
@@ -163,21 +50,15 @@ parser.add_option("-u", "--use" "--usecombis",
                   action="store_true",
                   default = False)
 parser.add_option("-f", "--file", "-o",
-                  help="Outfile name",
-                  dest="fileprefix",
-                  action="store",
-                  default="tatt-test.sh"
+                  help="Input File containing packages",
+                  dest="infile",
+                  action="store"
                   )
-parser.add_option("-p", "--pretend", 
-                  help="Print things to stdout instead of doing them",
-                  action="store_true",
-                  default=False
-                  )
-parser.add_option("-t", "--test",
-                  help="run emerge commands with FEATURES=\"test\"",
-                  dest="feature_test",
-                  action="store_true",
-                  default = True)
+# parser.add_option("-t", "--test",
+#                   help="run emerge commands with FEATURES=\"test\"",
+#                   dest="feature_test",
+#                   action="store_true",
+#                   default = True)
 parser.add_option("-j", "--jobname",
                   help="name for the job, prefix of output files",
                   dest="jobname",
@@ -210,21 +91,45 @@ if options.succbugnum:
         print "Failure commenting on Bugzilla"
         exit(1)
 
+# Will eventuall contain packages to handle:
+packs=None
+
 ## -b and a bugnumber was given ?
 if options.bugnum:
     print "Working on bug number " + options.bugnum
+    if options.jobname:
+        print " with jobname " + options.jobname
+        jobname = options.jobname
+    else:
+        print " with jobname " + options.bugnum
+        jobname = options.bugnum
     bugraw = Popen(['bugz', 'get', options.bugnum, '-n', '--skip-auth'], stdout=PIPE).communicate()[0]
     if not re.search('[Ss][Tt][Aa][Bb]', bugraw):
         print "Does not look like a stable request bug !"
         print bugraw
         # Let's not exit here, maybe we still want to work on the bug
-#        exit (1)
-
+        # exit (1)
     packs = findPackages(bugraw, re.compile(config['atom-regexp']))
 
+
+## or maybe -f and a filename have been given:
+elif options.infile: 
+    try:
+        bugfile=open(options.infile, 'r')
+    except IOError:
+        print "Given filename not found !"
+        exit(1)
+    bugraw = bugfile.read()
+    bugfile.close()
+    packs = findPackages(bugraw, re.compile(config['atom-regexp']))
+
+# joint code for -f and -b
+if not packs==None:
+    
     for p in packs:
         print "Found the following package atom : " + p.packageString()
 
+    # Unmasking:
     if isroot:
         # If we are root, then we can write to package.keywords
         try:
@@ -248,11 +153,12 @@ if options.bugnum:
         print "You are not root, your unmaskstring would be:"
         print ("\n".join([p.packageString() for p in packs]) + "\n")
     ## Write the scripts
-    for p in packs:
-        writeusecombiscript(p)
-        writerdepscript(p)
-        writereportscript(options.bugnum, p.packageName())
+    writeUSE(jobname, packs, config["ignoreprefix"])
+    writeRdeps(jobname, packs)
+    writeSuccess(jobname, options.bugnum, config["sucessmessage"])
     exit (0)
+
+    
 
 ## If we arrive here then a package atom should be given
 try:

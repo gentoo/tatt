@@ -10,7 +10,7 @@
   CLOSED: [2010-02-02 Tue 15:54]
 * DONE Write a test-protocol
   CLOSED: [2010-03-12 Fri 12:45]
-* TODO Support for multiple packages per bug
+* TODO Support for multiple packages per bug/buglist from file
 * TODO Code cleanup
 * TODO If we give a package-name with version to -u or -d then it fails!
 * TODO [0%] Configfile support
@@ -18,3 +18,5 @@
 ** TODO Specify the file in /etc/portage/package.keywords/ where unmasking will be added
 * TODO Parallelization (important: Fork multiple eix instances!)
 * TODO Implement tests
+* TODO transparent handling of config-object
+* TODO Work directly on attachments
