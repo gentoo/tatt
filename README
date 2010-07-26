@@ -36,3 +36,16 @@ To run individual parts of the full procedure use the following syntax:
 -) Print emerge commands for <=16 use flag combinations of eix:
 
 ./tatt.py -u app-portage/eix
+
+
+####### ~/.tatt ############
+# Here we show the possible options together with their default values
+
+# Regular expression to identify a portage atom
+# atom-regexp='=?[^\s:,;<>]+/\S+-[0-9]?\S+[0-9][^\s:,;<>]?[a-z]*'
+
+# Message for the success script
+# successmessage='Archtested on x86: Everything fine'
+
+# ignoreprefix contains a list of use flag prefixes to be ignored 
+# ignoreprefix="elibc_","video_cards_","linguas_","kdeenablefinal","test","debug"

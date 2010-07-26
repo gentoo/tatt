@@ -4,6 +4,9 @@ setup(name = "tatt",
       version = "0.1",
       packages = find_packages(),
       scripts = ['scripts/tatt'],
+      package_data = {
+          'tatt': ['dot-tatt-spec']
+          }
 
       install_requires = [''],
 
