@@ -35,7 +35,6 @@ def stablerdeps (package):
     d = dict([])
     for s in splitlist:
         # Saves necessary useflags under package names, removing duplicates.
-        print s
         d[gP(s[0]).packageCatName()] = s[1]
     outlist2 = [[k, d[k]] for k in d.keys()]
     outlist = []
