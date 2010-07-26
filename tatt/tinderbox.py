@@ -17,7 +17,7 @@ def stablerdeps (package):
     # File structure on this tinderbox equals that in the tree
     # Problem: The rdeps can be version dependent
     # nothing we can do about this here...
-    atom = package.packageName()
+    atom = package.packageCatName()
     download = urllib.urlopen(tinderbox + atom).read()
     if not re.search("404 - Not Found", download) == None:
         return []
@@ -36,7 +36,7 @@ def stablerdeps (package):
     for s in splitlist:
         # Saves necessary useflags under package names, removing duplicates.
         print s
-        d[gP(s[0]).packageName()] = s[1]
+        d[gP(s[0]).packageCatName()] = s[1]
     outlist2 = [[k, d[k]] for k in d.keys()]
     outlist = []
     for o in outlist2:

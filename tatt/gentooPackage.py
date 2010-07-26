@@ -35,6 +35,14 @@ class gentooPackage(object):
                     else : self.name = "-".join([self.name, p])
 
     def packageName(self):
+        """Returns the package name without category"""
+        return self.name
+
+    def packageCategory(self):
+        """Returns the package category without name"""
+        return self.category
+
+    def packageCatName(self):
         """Returns the package category and name without version"""
         return "/".join([self.category, self.name])
 
