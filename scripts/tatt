@@ -17,7 +17,6 @@ from pkg_resources import resource_filename
 from tatt.gentooPackage import gentooPackage as gP
 from tatt.tool import unique
 from tatt.packageFinder import *
-from tatt.config import 
 
 ########### Generate a global config obj #################
 
