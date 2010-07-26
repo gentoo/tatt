@@ -6,9 +6,9 @@ setup(name = "tatt",
       scripts = ['scripts/tatt'],
       package_data = {
           'tatt': ['dot-tatt-spec']
-          }
+          },
 
-      install_requires = [''],
+      install_requires = ['configobj>=4.6'],
 
       # metadata for upload to PyPI
       author = "Thomas Kahle",
