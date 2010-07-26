@@ -20,11 +20,11 @@ from tatt.packageFinder import *
 
 ########### Generate a global config obj #################
 
+# resource_filename will give us platform-independent access to the specfile
 specfile = resource_filename('tatt', 'dot-tatt-spec')
 config = ConfigObj("dot-tatt-example", configspec=specfile)
-# config = ConfigObj("dot-tatt-example", configspec="dot-tatt-spec")
 
-# This validator will also do type conversion according to the spec file!
+# this validator will also do type conversion according to the spec file!
 validator = Validator()
 result = config.validate(validator)
 
@@ -178,6 +178,10 @@ parser.add_option("-t", "--test",
                   dest="feature_test",
                   action="store_true",
                   default = True)
+parser.add_option("-j", "--jobname",
+                  help="name for the job, prefix of output files",
+                  dest="jobname",
+                  action="store")
 parser.add_option("-b", "--bug",
                   help="do the full program for a given stable request bug",
                   dest="bugnum",
@@ -216,7 +220,7 @@ if options.bugnum:
         # Let's not exit here, maybe we still want to work on the bug
 #        exit (1)
 
-    packs = fP(bugraw, re.compile(config['atom-regexp']))
+    packs = findPackages(bugraw, re.compile(config['atom-regexp']))
 
     for p in packs:
         print "Found the following package atom : " + p.packageString()
