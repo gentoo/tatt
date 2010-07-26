@@ -1,9 +1,9 @@
-from setuptools import setup, find_packages
+0;115;0cfrom setuptools import setup, find_packages
 
 setup(name = "tatt",
       version = "0.1",
       packages = find_packages(),
-      scripts = ['tatt'],
+      scripts = ['scripts/tatt'],
 
       install_requires = [''],
 
