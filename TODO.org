@@ -10,14 +10,20 @@
   CLOSED: [2010-02-02 Tue 15:54]
 * DONE Write a test-protocol
   CLOSED: [2010-03-12 Fri 12:45]
-* TODO Support for multiple packages per bug/buglist from file
-* TODO Code cleanup
-* TODO If we give a package-name with version to -u or -d then it fails!
+* DONE Support for multiple packages per bug/buglist from file
+  CLOSED: [2010-07-27 Tue 10:19]
+* DONE Code cleanup
+  CLOSED: [2010-07-27 Tue 10:19]
+* DONE If we give a package-name with version to -u or -d then it fails!
+  CLOSED: [2010-07-27 Tue 10:19]
 * TODO [0%] Configfile support
 ** TODO Specify the location where all the scripts and reports will land
 ** TODO Specify the file in /etc/portage/package.keywords/ where unmasking will be added
+** TODO ...
 * TODO Parallelization (important: Fork multiple eix instances!)
 * TODO Implement tests
 * TODO transparent handling of config-object
 * TODO Work directly on attachments
 * TODO ~/.tatt seems to be disfunctional
+* TODO Use portage api
+* TODO Sort the rdeplist and remove duplicates in multi-package mode
