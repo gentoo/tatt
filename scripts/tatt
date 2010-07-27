@@ -33,8 +33,6 @@ if result != True:
     print 'Config file validation failed!'
     sys.exit(1)
 
-print config["atom-regexp"]
-
 ######### Main program starts here ###############
 
 ### USAGE and OPTIONS ###

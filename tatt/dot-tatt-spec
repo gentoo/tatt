@@ -1,3 +1,3 @@
-atom-regexp=string(default="=?([^\/]+\/)?(\S+)(-(\d+(\.\d+)*[a-z]?(_(alpha|beta|pre|rc|p)\d*)*(-r\d+)?)?)")
+atom-regexp=string(default="=?([^\/]+\/)?(\S+)((-(\d+(\.\d+)*[a-z]?(_(alpha|beta|pre|rc|p)\d*)*(-r\d+)?)?))*?")
 successmessage=string(default="Archtested on x86: Everything fine")
 ignoreprefix=string_list(default=list("elibc_","video_cards_","linguas_","kdeenablefinal","test","debug"))
