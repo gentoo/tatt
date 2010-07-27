@@ -5,11 +5,11 @@
 EAPI="2"
 SUPPORT_PYTHON_ABIS="1"
 
-inherit distutils
+inherit distutils git
 
 DESCRIPTION="tatt is an arch testing tool"
-HOMEPAGE=""
-SRC_URI="http://github.com/downloads/tom111/${PN}/${PN}.tar.bz2"
+HOMEPAGE="http://github.com/tom111/tatt"
+EGIT_REPO_URI="git://github.com/tom111/tatt.git"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -17,7 +17,11 @@ KEYWORDS="~amd64 ~x86"
 IUSE=""
 
 DEPEND="dev-python/setuptools"
-RDEPEND=""
+RDEPEND="app-portage/eix
+		app-portage/gentoolkit
+		www-client/pybugz
+		dev-python/configobj"
+
 RESTRICT_PYTHON_ABIS="3.*"
 
 S="${WORKDIR}/${PN}"
