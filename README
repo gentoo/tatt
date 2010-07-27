@@ -11,34 +11,49 @@ Introduction
 Arch testing includes many boring tasks. While gatt is intended to handle things that you do as a developer, like
 closing the bug and the actual keywording, tatt focusses on the testing. 
 
-Tatt is configured through the file ~/.tatt. An example is given in dot-tatt-example, the spec is in
-dot-tatt-spec
+Tatt can be configured through the file ~/.tatt An example is given below, the specification can be found 
+in dot-tatt-spec which usually resides /usr/lib/${python}/site-packages/tatt
 
- Usage Examples:
+#### Ways to use tatt ######
 
-Work on a stable bug no 300000. This will unmask the package and create two shell scripts for automated testing of
-useflag combis and rdeps and success-reports to bugzilla.
+1) Work on a stable bug no 300000. This will unmask the package and create three shell scripts for
+automated testing of useflag combis and rdeps and success-reports to bugzilla.
 
-./tatt.py -b300000
+tatt -b300000 -j superjob
+
+-j specifies a jobname which will be a prefix for the scripts that tatt produces, if it is left
+ empty the bugnumber will be used
 
 
-To run individual parts of the full procedure use the following syntax:
+2) We want to stable a whole list of packages that we have saved in a file foo.
 
--) Everything was successful, we want to comment on the bug. The following command will log in and write the comment
-"Tested on x86: Everything fine" to the bug.
+tatt -f foo
+
+This will open the file foo, look for all atoms to be found write the scripts for useflagtesting and
+rdep testing of the two packages. If -j is omitted the filename is used.
+
+
+3) Running individual tests:
+
+-) Everything was successful, we want to comment on the bug. The following command will log in and
+ write the 'successmessage' to the bug.
 
 ./tatt.py -s300000
 
--) Print emerge commands for the stable rdeps of eix:
+-) Create the test script for reverse dependencies of foo:
 
-./tatt.py -d app-portage/eix
+./tatt.py -d app-bar/foo
 
--) Print emerge commands for <=16 use flag combinations of eix:
+-) Create the use flag testing script of foo
 
-./tatt.py -u app-portage/eix
+./tatt.py -u app-bar/foo
+
+4) Show help 
+
+tatt -h 
 
 
-####### ~/.tatt ############
+####### EXAMPLE ~/.tatt ############
 # Here we show the possible options together with their default values
 
 # Regular expression to identify a portage atom

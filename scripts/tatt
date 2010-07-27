@@ -44,12 +44,12 @@ parser.add_option("-d", "--depend",
                   dest="depend",
                   action="store_true",
                   default = False)
-parser.add_option("-u", "--use" "--usecombis",
+parser.add_option("-u", "--use", "--usecombis",
                   help="Determine use flag combinations",
                   dest="usecombi",
                   action="store_true",
                   default = False)
-parser.add_option("-f", "--file", "-o",
+parser.add_option("-f", "--file", 
                   help="Input File containing packages",
                   dest="infile",
                   action="store"
@@ -167,19 +167,17 @@ if not packs==None:
         writeSuccess(jobname, options.bugnum, config["successmessage"])
     exit (0)
 
-    
-
 ## If we arrive here then a package atom should be given
 try:
-    atom = args[0]
+    pack = gP(args[0])
 except IndexError:
     print "Please call with package atom as argument"
     exit (1)
 
 if options.depend:
-    writerdepscript(atom)
+    writerdepscript(pack)
 
 if options.usecombi:
-    writeusecombiscript(atom)
+    writeusecombiscript(pack)
 
 ## That's all folks ##
