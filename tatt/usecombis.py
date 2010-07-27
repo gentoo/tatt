@@ -1,6 +1,7 @@
 """Use Flag Mechanics """
 
 import random
+import re
 from subprocess import *
 
 from tool import unique

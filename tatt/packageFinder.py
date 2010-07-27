@@ -9,6 +9,6 @@ def findPackages (s, regexp):
         return all gentooPacakges that can be identified in the string"""
     
     # Should it be this simple?
-    return [gP(ps) for ps in  re.findall(regexp, s)]
+    return [gP(ps) for ps in  regexp.findall(s)]
     # Yes, it is...
 

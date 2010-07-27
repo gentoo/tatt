@@ -97,20 +97,15 @@ packs=None
 ## -b and a bugnumber was given ?
 if options.bugnum:
     print "Working on bug number " + options.bugnum
-    if options.jobname:
-        print " with jobname " + options.jobname
-        jobname = options.jobname
-    else:
-        print " with jobname " + options.bugnum
-        jobname = options.bugnum
-    bugraw = Popen(['bugz', 'get', options.bugnum, '-n', '--skip-auth'], stdout=PIPE).communicate()[0]
+    # For the time being we search only in the title
+    p1 = Popen(['bugz', 'get', options.bugnum, '-n', '--skip-auth'], stdout=PIPE)
+    bugraw = Popen(['grep', 'Title'], stdin=p1.stdout, stdout=PIPE).communicate()[0]
     if not re.search('[Ss][Tt][Aa][Bb]', bugraw):
         print "Does not look like a stable request bug !"
         print bugraw
         # Let's not exit here, maybe we still want to work on the bug
-        # exit (1)
+        # exit (1)    
     packs = findPackages(bugraw, re.compile(config['atom-regexp']))
-
 
 ## or maybe -f and a filename have been given:
 elif options.infile: 
@@ -124,7 +119,20 @@ elif options.infile:
     packs = findPackages(bugraw, re.compile(config['atom-regexp']))
 
 # joint code for -f and -b
+##########################
+
 if not packs==None:
+    
+    ## Assigning jobname
+    if options.jobname:
+        print " with jobname " + options.jobname
+        jobname = options.jobname
+    elif options.infile:
+        print " with jobname " + options.infile
+        jobname = options.infile
+    else:
+        print " with jobname " + options.bugnum
+        jobname = options.bugnum
     
     for p in packs:
         print "Found the following package atom : " + p.packageString()
@@ -155,7 +163,8 @@ if not packs==None:
     ## Write the scripts
     writeUSE(jobname, packs, config["ignoreprefix"])
     writeRdeps(jobname, packs)
-    writeSuccess(jobname, options.bugnum, config["sucessmessage"])
+    if options.bugnum:
+        writeSuccess(jobname, options.bugnum, config["successmessage"])
     exit (0)
 
     
