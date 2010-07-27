@@ -16,14 +16,14 @@ from pkg_resources import resource_filename
 from tatt.gentooPackage import gentooPackage as gP
 from tatt.packageFinder import *
 from tatt.scriptwriter import writeusecombiscript as writeUSE
-from tatt.scriptwriter import writerdepscript as writeRdep
+from tatt.scriptwriter import writerdepscript as writeRdeps
 from tatt.scriptwriter import writesucessreportscript as writeSuccess
 
 ########### Generate a global config obj #################
 
 # resource_filename will give us platform-independent access to the specfile
 specfile = resource_filename('tatt', 'dot-tatt-spec')
-config = ConfigObj("dot-tatt-example", configspec=specfile)
+config = ConfigObj("~/.tatt", configspec=specfile)
 
 # this validator will also do type conversion according to the spec file!
 validator = Validator()
@@ -32,6 +32,8 @@ result = config.validate(validator)
 if result != True:
     print 'Config file validation failed!'
     sys.exit(1)
+
+print config["atom-regexp"]
 
 ######### Main program starts here ###############
 
