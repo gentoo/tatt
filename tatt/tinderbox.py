@@ -3,7 +3,6 @@
 from gentooPackage import gentooPackage as gP
 import socket # For setting a global timeout
 import urllib2
-import re
 from subprocess import *
 
 ## Generate stable rdeps ###
@@ -21,10 +20,20 @@ def stablerdeps (package):
     atom = package.packageCatName()
 
     socket.setdefaulttimeout(45)
-    download = urllib2.urlopen(tinderbox + atom, None, 30 ).read()
+    try:
+        download = urllib2.urlopen(tinderbox + atom).read()
+    except urllib2.HTTPError, e:
+        # Cleanup the timeout:
+        socket.setdefaulttimeout(None)
+        if e.code == 404:
+            # 404 is OK, the package has no stable rdeps
+            return []
+        else:
+            # Some other error should not occur:
+            print "Non 404 Error on accessing the tinderbox"
+            exit (1)
+    # If we are here everything is fine, cleanup the timeout:
     socket.setdefaulttimeout(None)
-    if not re.search("404 - Not Found", download) == None:
-        return []
     # The result is a "\n" separated list of packages : useflags
     packlist = download.rstrip().split("\n")
     # Split at : to see if useflags are necessary
