@@ -15,8 +15,10 @@ def useCombiTestString(pack, ignoreprefix):
     for uc in usecombis:
         s = s + "if " + uc + " emerge -1v " + pack.packageString() + "; then " + '\n'
         # @@REPORT@@ will be replaces by the name of the reportfile later
-        s = s + "  echo \"" + uc.replace("\"","\'") + " succeeded \" >> " + "@@REPORT@@" + "; " + '\n'
-        s = s + "else echo \"" + uc.replace("\"", "\'") + " failed \" >> " + "@@REPORT@@" + '; \nfi; \n'
+        s = s + "  echo \"" + uc.replace("\"","\'") + " succeeded for "
+        s = s + pack.packageString() + "\" >> " + "@@REPORT@@" + "; " + '\n'
+        s = s + "else echo \"" + uc.replace("\"", "\'") + " failed for "
+        s = s + pack.packageString() + "\" >> " + "@@REPORT@@" + '; \nfi; \n'
         # In the end we test once with tests and users flags
         s = s + "FEATURES=\"test\" emerge -1v " + pack.packageString() + "\n"
     return s
