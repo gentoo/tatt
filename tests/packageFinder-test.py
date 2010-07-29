@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../tatt')
+
 from packageFinder import findPackages as fP
 import re
 atomre = re.compile("=?[^\s:,;<>]+/\S+-?[0-9]?\S+[0-9][^\s:,;<>]?[a-z]*")

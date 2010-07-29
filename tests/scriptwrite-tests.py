@@ -1,4 +1,7 @@
-import tatt.scriptwriter
-from tatt.gentooPackage import gentooPackage as gP
+import sys
+sys.path.append('../tatt')
 
-useCombiTestString(gP("=media-sound/amarok-2.3.1-r2"),[])
+from scriptwriter import *
+from gentooPackage import gentooPackage as gP
+
+print useCombiTestString(gP("=media-sound/amarok-2.3.1-r2"),[])
