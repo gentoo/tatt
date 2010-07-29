@@ -1,7 +1,8 @@
 """acessing the tinderbox at http://tinderbox.dev.gentoo.org/misc/dindex/ """
 
 from gentooPackage import gentooPackage as gP
-import urllib
+import socket # For setting a global timeout
+import urllib2
 import re
 from subprocess import *
 
@@ -18,7 +19,10 @@ def stablerdeps (package):
     # Problem: The rdeps can be version dependent
     # nothing we can do about this here...
     atom = package.packageCatName()
-    download = urllib.urlopen(tinderbox + atom).read()
+
+    socket.setdefaulttimeout(45)
+    download = urllib2.urlopen(tinderbox + atom, None, 30 ).read()
+    socket.setdefaulttimeout(None)
     if not re.search("404 - Not Found", download) == None:
         return []
     # The result is a "\n" separated list of packages : useflags
