@@ -149,9 +149,10 @@ if not packs==None:
             keywordfile.close()
             keywordfile=open("/etc/portage/package.keywords/arch", 'r+')
 
+        keywordfilecontent = keywordfile.read()
         for p in packs:
             # Test if keywordfile already contains the atom
-            if re.search(p.packageString(), keywordfile.read()):
+            if re.search(p.packageString(), keywordfilecontent):
                 print (p.packageString() + " already in package.keywords.")
             else:
                 keywordfile.write("\n" + p.packageString() + "\n")
