@@ -40,13 +40,12 @@ def rdepTestString(pack):
     # We are checking for stable rdeps:
     rdeps = stablerdeps (pack)
     if len(rdeps) == 0:
-        print "No stable rdeps \n"
+        print ("No stable rdeps for " + pack.packageString())
         return "# No stable rdeps \n"
     if len(rdeps) > 20:
         print "More than 20 stable rdeps, sampling 20 \n"
         rdeps = random.sample(rdeps, 20)
     st = " "
-    print rdeps
     for r in rdeps:
         call = ""
         call = "FEATURES=\"test\" "
