@@ -132,7 +132,7 @@ if not packs==None:
         jobname = options.infile
     else:
         print " with jobname " + options.bugnum
-        jobname = options.bugnum
+        jobname = packs[0].packageName()
     
     for p in packs:
         print "Found the following package atom : " + p.packageString()
