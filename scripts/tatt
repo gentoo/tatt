@@ -125,14 +125,12 @@ if not packs==None:
     
     ## Assigning jobname
     if options.jobname:
-        print " with jobname " + options.jobname
         jobname = options.jobname
     elif options.infile:
-        print " with jobname " + options.infile
         jobname = options.infile
     else:
-        print " with jobname " + options.bugnum
         jobname = packs[0].packageName()
+    print ("Jobname: " + jobname)
     
     for p in packs:
         print "Found the following package atom : " + p.packageString()
