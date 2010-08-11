@@ -27,3 +27,4 @@
 * TODO ~/.tatt seems to be disfunctional
 * TODO Use portage api
 * TODO Sort the rdeplist and remove duplicates in multi-package mode
+* TODO Template support for scripts
