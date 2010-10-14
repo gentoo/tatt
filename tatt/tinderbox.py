@@ -1,9 +1,14 @@
 """acessing the tinderbox at http://tinderbox.dev.gentoo.org/misc/dindex/ """
 
-from gentooPackage import gentooPackage as gP
 import socket # For setting a global timeout
 import urllib2
 from subprocess import *
+import random
+
+from gentooPackage import gentooPackage as gP
+
+## TODO: Make the number of rdeps to sample a config option
+## Pass the config on to this function:
 
 ## Generate stable rdeps ###
 def stablerdeps (package):
@@ -51,15 +56,26 @@ def stablerdeps (package):
         d[gP(s[0]).packageCatName()] = s[1]
     outlist2 = [[k, d[k]] for k in d.keys()]
     outlist = []
-    for o in outlist2:
-        # We are calling eix for each package to work around issues with --stable:
-        # What we should do with a future version of eix is to do this in a single run!
-        # Todo: Fork multiple eix instances 
-        eixcall = ["eix", "--stable", "--only-names", "--exact", o[0]]
+    # outlist 2 is setup at this point, to cut it down we sample randomly
+    # without replacement until the list is empty or we have 20.
+    
+    # We are calling eix for each package to work around issues with --stable:
+    # What we should do with a future version of eix is to do this in a single run!
+    # Todo: Fork multiple eix instances 
+
+    while ((len (outlist2) > 0) and (len(outlist) < 20)):
+        # Warning: sample returns a list, even if only one sample
+        [samp]=random.sample(outlist2, 1)
+        # Drop the one we selected
+        outlist2.remove(samp)
+        eixcall = ["eix", "--stable", "--only-names", "--exact", samp[0]]
         p2 = Popen(eixcall, stdout=PIPE)
         out = p2.communicate()[0]
         if out == '': continue
-        else : outlist.append(o)
+        else : outlist.append(samp)
+        
+    if len(outlist) > 19:
+        print "More than 20 stable rdeps, sampled 20. \n"
     return outlist
     
 #############################

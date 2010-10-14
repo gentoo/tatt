@@ -28,3 +28,4 @@
 * TODO Use portage api
 * TODO Sort the rdeplist and remove duplicates in multi-package mode
 * TODO Template support for scripts
+* TODO Check repoman & do a bugsearch as in dave-script.sh (Thx Dave Abbott)

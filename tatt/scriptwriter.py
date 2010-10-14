@@ -44,9 +44,6 @@ def rdepTestString(pack):
     if len(rdeps) == 0:
         print ("No stable rdeps for " + pack.packageString())
         return "# No stable rdeps \n"
-    if len(rdeps) > 20:
-        print "More than 20 stable rdeps, sampling 20 \n"
-        rdeps = random.sample(rdeps, 20)
     st = " "
     for r in rdeps:
         call = ""
