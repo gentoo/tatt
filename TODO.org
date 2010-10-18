@@ -16,6 +16,7 @@
   CLOSED: [2010-07-27 Tue 10:19]
 * DONE If we give a package-name with version to -u or -d then it fails!
   CLOSED: [2010-07-27 Tue 10:19]
+* TODO Template support for scripts
 * TODO [0%] Configfile support
 ** TODO Specify the location where all the scripts and reports will land
 ** TODO Specify the file in /etc/portage/package.keywords/ where unmasking will be added
@@ -27,5 +28,5 @@
 * TODO ~/.tatt seems to be disfunctional
 * TODO Use portage api
 * TODO Sort the rdeplist and remove duplicates in multi-package mode
-* TODO Template support for scripts
 * TODO Check repoman & do a bugsearch as in dave-script.sh (Thx Dave Abbott)
+* TODO Call eix with -e and --format
