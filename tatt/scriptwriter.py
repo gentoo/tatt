@@ -19,8 +19,8 @@ def useCombiTestString(pack, ignoreprefix):
         s = s + pack.packageString() + "\" >> " + "@@REPORT@@" + "; " + '\n'
         s = s + "else echo \"" + uc.replace("\"", "\'") + " failed for "
         s = s + pack.packageString() + "\" >> " + "@@REPORT@@" + '; \nfi; \n'
-        # In the end we test once with tests and users flags
-        s = s + "FEATURES=\"test\" emerge -1v " + pack.packageString() + "\n"
+    # In the end we test once with tests and users flags
+    s = s + "FEATURES=\"test\" emerge -1v " + pack.packageString() + "\n"
     return s
 
 def writeusecombiscript(job, packlist, ignoreprefix):
