@@ -1,4 +1,4 @@
-* DONE We should query http://tinderbox.dev.gentoo.org/misc/dindex to solve the below issues and speed up
+OB* DONE We should query http://tinderbox.dev.gentoo.org/misc/dindex to solve the below issues and speed up
   CLOSED: [2010-02-03 Wed 16:14]
 * DONE Not all useflag combis should be generated before selection
   CLOSED: [2010-02-03 Wed 16:14]
@@ -30,3 +30,4 @@
 * TODO Sort the rdeplist and remove duplicates in multi-package mode
 * TODO Check repoman & do a bugsearch as in dave-script.sh (Thx Dave Abbott)
 * TODO Call eix with -e and --format
+* TODO Don't output a script if no revdeps
