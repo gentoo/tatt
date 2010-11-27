@@ -31,3 +31,4 @@ OB* DONE We should query http://tinderbox.dev.gentoo.org/misc/dindex to solve th
 * TODO Check repoman & do a bugsearch as in dave-script.sh (Thx Dave Abbott)
 * TODO Call eix with -e and --format
 * TODO Don't output a script if no revdeps
+* TODO Sometimes you have to use -N to force new use flags on deps
