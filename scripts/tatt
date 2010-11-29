@@ -174,7 +174,7 @@ except IndexError:
     exit (1)
 
 if options.depend:
-    writerdepscript(pack)
+    writeRdeps(pack)
 
 if options.usecombi:
     writeusecombiscript(pack)
