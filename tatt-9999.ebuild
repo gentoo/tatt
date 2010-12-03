@@ -14,7 +14,7 @@ EGIT_REPO_URI="git://github.com/tom111/tatt.git"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS=""
-IUSE=""
+IUSE="+templates"
 
 DEPEND="dev-python/setuptools"
 RDEPEND="app-portage/eix
