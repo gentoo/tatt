@@ -1,0 +1,4 @@
+if FEATURES="@@FEATURES@@" USE="@@USE@@" emerge -1v @@CPV@@; then
+echo "FEATURES='@@FEATURES@@' USE='@@USE@@' emerge -1v @@CPV@@" succeeded >> @@REPORTFILE@@;
+else echo "FEATURES='@@FEATURES@@' USE='@@USE@@' emerge -1v @@CPV@@" failed >> @@REPORTFILE@@;
+fi;
