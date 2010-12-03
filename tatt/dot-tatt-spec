@@ -1,3 +1,7 @@
 atom-regexp=string(default="=?[^\s:,;<>]+/\S+-[0-9]?\S+[0-9][^\s:,;<>]?[a-z]*")
 successmessage=string(default="Archtested on x86: Everything fine")
 ignoreprefix=string_list(default=list("elibc_","video_cards_","linguas_","kdeenablefinal","test","debug"))
+template_dir=string(default="/usr/share/tatt/templates/")
+unmaskfile=string(default="/etc/portage/package.keywords/archtest")
+arch=string(default="x86")
+defaultopts=string(default="")

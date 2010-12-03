@@ -20,41 +20,10 @@ from tatt.scriptwriter import writerdepscript as writeRdeps
 from tatt.scriptwriter import writesucessreportscript as writeSuccess
 
 ########### Generate a global config obj, reading from ~/.tatt ################
-from configobj import ConfigObj
-config = ConfigObj(os.path.join(os.path.expanduser("~"), ".tatt"))
-
-### Testing for the important stuff in the config ###
-
-## Directory for the templates:
-try:
-    config['template_dir']
-except KeyError:
-    config['template_dir'] = "/usr/share/tatt/templates"
-
-try:
-    config['unmaskfile']
-    # Todo: Try if the file is readible right here.
-except KeyError:
-    config['unmaskfile'] = "/etc/portage/package.keywords/arch"
-
-try:
-    config['arch']
-except KeyError:
-    config['arch'] = "x86"
-
-try:
-    config['defaultopts']
-except KeyError:
-    config['defaultopts'] = ""
-
-try:
-    config['ignore_USE_prefix']
-except KeyError:
-    config['ignore_USE_prefix'] = "elibc_,video_cards_,linguas_,kdeenablefinal,test,debug"
-
 # resource_filename will give us platform-independent access to the specfile
 specfile = resource_filename('tatt', 'dot-tatt-spec')
-config = ConfigObj("~/.tatt", configspec=specfile)
+# Read the config from ~/.tatt
+config = ConfigObj(os.path.join(os.path.expanduser("~"), ".tatt"), configspec=specfile)
 
 # this validator will also do type conversion according to the spec file!
 validator = Validator()
@@ -63,6 +32,8 @@ result = config.validate(validator)
 if result != True:
     print 'Config file validation failed!'
     sys.exit(1)
+
+print config['arch']
 
 ######### Main program starts here ###############
 
