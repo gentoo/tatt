@@ -22,6 +22,15 @@ RDEPEND="app-portage/eix
 		www-client/pybugz
 		dev-python/configobj"
 
+#configobj does not support python-3
 RESTRICT_PYTHON_ABIS="3.*"
 
 S="${WORKDIR}/${PN}"
+
+src_install() {
+	distutils_src_install
+	if use templates; then
+		insinto "/usr/share/${PN}"
+		doins -r templates || die
+	fi
+}
