@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 
 setup(name = "tatt",
-      version = "0.1",
+      version = "0.2",
       packages = find_packages(),
       scripts = ['scripts/tatt'],
       package_data = {
-          'tatt': ['dot-tatt-spec']
+          'tatt': ['dot-tatt-spec'],
           },
 
       install_requires = ['configobj>=4.6'],
