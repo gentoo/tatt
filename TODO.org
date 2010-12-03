@@ -16,19 +16,27 @@
   CLOSED: [2010-07-27 Tue 10:19]
 * DONE If we give a package-name with version to -u or -d then it fails!
   CLOSED: [2010-07-27 Tue 10:19]
-* TODO Template support for scripts
-* TODO [0%] Configfile support
-** TODO Specify the location where all the scripts and reports will land
-** TODO Specify the file in /etc/portage/package.keywords/ where unmasking will be added
-** TODO ...
+* DONE Template support for scripts
+  CLOSED: [2010-12-03 Fri 18:08]
+* DONE [100%] Configfile support
+** DONE Specify the location where all the scripts and reports will land
+   CLOSED: [2010-12-03 Fri 18:08]
+** DONE Specify the file in /etc/portage/package.keywords/ where unmasking will be added
+   CLOSED: [2010-12-03 Fri 18:08]
+** DONE ...
+   CLOSED: [2010-12-03 Fri 18:08]
 * TODO Parallelization (important: Fork multiple eix instances!)
 * TODO Implement tests
-* TODO transparent handling of config-object
+* DONE transparent handling of config-object
+  CLOSED: [2010-12-03 Fri 18:08]
+Global config object will be pushed around
 * TODO Work directly on attachments
-* TODO ~/.tatt seems to be disfunctional
+* DONE ~/.tatt seems to be disfunctional
+  CLOSED: [2010-12-03 Fri 18:08]
 * TODO Use portage api
 * TODO Sort the rdeplist and remove duplicates in multi-package mode
 * TODO Check repoman & do a bugsearch as in dave-script.sh (Thx Dave Abbott)
 * TODO Call eix with -e and --format
-* TODO Don't output a script if no revdeps
+* DONE Don't output a script if no revdeps
+  CLOSED: [2010-12-03 Fri 18:09]
 * TODO Sometimes you have to use -N to force new use flags on deps
