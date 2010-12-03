@@ -30,10 +30,8 @@ validator = Validator()
 result = config.validate(validator)
 
 if result != True:
-    print 'Config file validation failed!'
+    print('Config file validation failed!')
     sys.exit(1)
-
-print config['arch']
 
 ######### Main program starts here ###############
 
@@ -79,18 +77,18 @@ parser.add_option("-s", "--success",
 if (Popen(['whoami'], stdout=PIPE).communicate()[0].rstrip() == 'root'):
     isroot=True
 else:
-    print "You're not root!"
+    print("You're not root!")
     isroot=False
 
 ## -s and a bugnumber was given ?
 if options.succbugnum:
-    print "Reporting success for bug number " + options.succbugnum
+    print("Reporting success for bug number " + options.succbugnum)
     retcode = call(['bugz', 'modify', options.succbugnum, '-c', config['successmessage']])
     if retcode == 0:
-        print "Success!";
+        print("Success!");
         exit (0)
     else:
-        print "Failure commenting on Bugzilla"
+        print("Failure commenting on Bugzilla")
         exit(1)
 
 # Will eventuall contain packages to handle:
@@ -98,13 +96,13 @@ packs=None
 
 ## -b and a bugnumber was given ?
 if options.bugnum:
-    print "Working on bug number " + options.bugnum
+    print("Working on bug number " + options.bugnum)
     # For the time being we search only in the title
     p1 = Popen(['bugz', 'get', options.bugnum, '-n', '--skip-auth'], stdout=PIPE)
     bugraw = Popen(['grep', 'Title'], stdin=p1.stdout, stdout=PIPE).communicate()[0]
     if not re.search('[Ss][Tt][Aa][Bb]', bugraw):
-        print "Does not look like a stable request bug !"
-        print bugraw
+        print("Does not look like a stable request bug !")
+        print(bugraw)
         # Let's not exit here, maybe we still want to work on the bug
         # exit (1)    
     packs = findPackages(bugraw, re.compile(config['atom-regexp']))
@@ -114,7 +112,7 @@ elif options.infile:
     try:
         bugfile=open(options.infile, 'r')
     except IOError:
-        print "Given filename not found !"
+        print("Given filename not found !")
         exit(1)
     bugraw = bugfile.read()
     bugfile.close()
@@ -135,7 +133,7 @@ if not packs==None:
     print ("Jobname: " + jobname)
     
     for p in packs:
-        print "Found the following package atom : " + p.packageString()
+        print("Found the following package atom : " + p.packageString())
 
     # Unmasking:
     if isroot:
@@ -159,7 +157,7 @@ if not packs==None:
                 print ("Appended " + p.packageString()+ " to /etc/portage/package.keywords/arch")
         keywordfile.close()
     else:
-        print "You are not root, your unmaskstring would be:"
+        print ("You are not root, your unmaskstring would be:")
         print ("\n".join([p.packageString() for p in packs]) + "\n")
     ## Write the scripts
     writeUSE(jobname, packs, config["ignoreprefix"])
@@ -172,7 +170,7 @@ if not packs==None:
 try:
     pack = gP(args[0])
 except IndexError:
-    print "Please call with package atom as argument"
+    print("Please call with package atom as argument")
     exit (1)
 
 if options.depend:
