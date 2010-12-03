@@ -61,7 +61,7 @@ def stablerdeps (package):
         d[gP(s[0]).packageCatName()] = s[1]
     outlist2 = [[k, d[k]] for k in list(d.keys())]
     outlist = []
-    # outlist 2 is setup at this point, to cut it down we sample randomly
+    # outlist2 is set up at this point. To cut it down we sample randomly
     # without replacement until the list is empty or we have 20.
     
     # We are calling eix for each package to work around issues with --stable:

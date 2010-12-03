@@ -161,7 +161,7 @@ if not packs==None:
         print ("\n".join([p.packageString() for p in packs]) + "\n")
     ## Write the scripts
     writeUSE(jobname, packs, config)
-    writeRdeps(jobname, packs)
+    writeRdeps(jobname, packs, config)
     if options.bugnum:
         writeSuccess(jobname, options.bugnum, config["successmessage"])
     exit (0)

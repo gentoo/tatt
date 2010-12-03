@@ -50,36 +50,49 @@ def writeusecombiscript(job, packlist, config):
 ######################################
 
 ############ RDEPS ################
-def rdepTestString(pack):
-    # We are checking for stable rdeps:
-    rdeps = stablerdeps (pack)
-    if len(rdeps) == 0:
-        print(("No stable rdeps for " + pack.packageString()))
-        return "# No stable rdeps \n"
-    st = " "
-    for r in rdeps:
-        call = ""
-        call = "FEATURES=\"test\" "
-        call = (call + "USE=\"" + " ".join([s for s in r[1] if not s[0] == "!"]) + " ")
-        call = (call + " ".join(["-" + s[1:] for s in r[1] if s[0] == "!"]))
-        call = (call + "\" emerge -1v " + r[0])
-        st = st + ("if " + call + "; then \n")
-        # @@REPORT@@ will be replaced with the name of the reportfile further down
-        st = (st + "echo \""+call.replace("\"","\'") + "\" succeeded >> " + "@@REPORT@@" + ";\n")
-        st = (st + "else echo \""+call.replace("\"","\'") + "\" failed >> " + "@@REPORT@@" + ";\nfi;\n")
-    return st
+def rdepTestString(rdep, config):
+    try:
+        rdepsnippetfile=open(config['template-dir'] + "revdep-snippet", 'r')
+    except IOError:
+        print("revdep-snippet not found in " + config['template-dir'])
+        exit(1)
+    rdepsnippet=rdepsnippetfile.read()
+    snip = rdepsnippet.replace("@@FEATURES@@", "FEATURES='test'")
+    ustring = "USE=\'" + " ".join([st for st in rdep[1] if not st[0] == "!"]) + " "
+    ustring = ustring + " ".join(["-" + st[1:] for st in rdep[1] if st[0] == "!"]) + "\'"
+    snip = snip.replace("@@USE@@", ustring)
+    snip = snip.replace("@@CPV@@", rdep[0] )
+    return snip
 
-def writerdepscript(job, packlist):
+def writerdepscript(job, packlist, config):
+    # Populate the list of rdeps
+    rdeps = []
+    for p in packlist:
+        rdeps = rdeps + stablerdeps (p)
+    if len(rdeps) == 0:
+        print("No stable rdeps for " + job)
+        return
+
+    # If there are rdeps, write the script
+    try:
+        rdepheaderfile=open(config['template-dir'] + "revdep-header", 'r')
+    except IOError:
+        print("revdep-header not found in " + config['template-dir'])
+        exit(1)
+    rdepheader=rdepheaderfile.read().replace("@@JOB@@", job)
     outfilename = (job + "-rdeps.sh")
     reportname = (job + ".report")
     if os.path.isfile(outfilename):
         print(("WARNING: Will overwrite " + outfilename))
     outfile = open(outfilename,'w')
-    outfile.write("#!/bin/sh" + '\n')
-    for p in packlist:
-        outfile.write("# Code for " + p.packageCatName() + "\n")
-        outfile.write(rdepTestString(p).replace("@@REPORT@@", reportname))
+    outfile.write(rdepheader)
+
+    for r in rdeps:
+        # Todo: remove duplicates
+        localsnippet = rdepTestString (r, config)
+        outfile.write(localsnippet.replace("@@REPORTFILE@@", reportname))
     outfile.close()
+
 
 #######Write report script############
 def writesucessreportscript (job, bugnum, success):
