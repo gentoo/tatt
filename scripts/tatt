@@ -175,9 +175,9 @@ except IndexError:
     exit (1)
 
 if options.depend:
-    writerdepscript(pack)
+    writeRdeps(pack.packageName(), [pack])
 
 if options.usecombi:
-    writeusecombiscript(pack)
+    writeUSE(pack.packageName(), [pack], config["ignoreprefix"])
 
 ## That's all folks ##
