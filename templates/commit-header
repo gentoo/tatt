@@ -1,0 +1,6 @@
+#!/bin/sh
+# CVS Stabeling for @@JOB@@
+
+# This is the place to move to the right location:
+cd ~/gentoo-x86
+
