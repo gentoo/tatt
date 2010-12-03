@@ -4,7 +4,7 @@ import random
 import re
 from subprocess import *
 
-from tool import unique
+from .tool import unique
 
 ## Useflag Combis ##
 def findUseFlagCombis (package, ignoreprefix):
@@ -32,7 +32,7 @@ def findUseFlagCombis (package, ignoreprefix):
         swlist = unique(swlist)
     else:
         # 4 or less use flags. Generate all combinations
-        swlist = range(2**len(uselist))
+        swlist = list(range(2**len(uselist)))
 
     usecombis=[]
     for sw in swlist:
@@ -42,7 +42,7 @@ def findUseFlagCombis (package, ignoreprefix):
                 mod.append("")
             else:
                 mod.append("-")
-        usecombis.append(zip(mod, uselist))
+        usecombis.append(list(zip(mod, uselist)))
 
     usecombis = [["".join(uf) for uf in combi] for combi in usecombis]
 

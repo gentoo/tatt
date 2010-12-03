@@ -1,11 +1,11 @@
 """acessing the tinderbox at http://tinderbox.dev.gentoo.org/misc/dindex/ """
 
 import socket # For setting a global timeout
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from subprocess import *
 import random
 
-from gentooPackage import gentooPackage as gP
+from .gentooPackage import gentooPackage as gP
 
 ## TODO: Make the number of rdeps to sample a config option
 ## Pass the config on to this function:
@@ -26,8 +26,8 @@ def stablerdeps (package):
 
     socket.setdefaulttimeout(45)
     try:
-        download = urllib2.urlopen(tinderbox + atom).read()
-    except urllib2.HTTPError, e:
+        download = urllib.request.urlopen(tinderbox + atom).read()
+    except urllib.error.HTTPError as e:
         # Cleanup the timeout:
         socket.setdefaulttimeout(None)
         if e.code == 404:
@@ -35,7 +35,7 @@ def stablerdeps (package):
             return []
         else:
             # Some other error should not occur:
-            print "Non 404 Error on accessing the tinderbox"
+            print("Non 404 Error on accessing the tinderbox")
             exit (1)
     # If we are here everything is fine, cleanup the timeout:
     socket.setdefaulttimeout(None)
@@ -54,7 +54,7 @@ def stablerdeps (package):
     for s in splitlist:
         # Saves necessary useflags under package names, removing duplicates.
         d[gP(s[0]).packageCatName()] = s[1]
-    outlist2 = [[k, d[k]] for k in d.keys()]
+    outlist2 = [[k, d[k]] for k in list(d.keys())]
     outlist = []
     # outlist 2 is setup at this point, to cut it down we sample randomly
     # without replacement until the list is empty or we have 20.
@@ -75,7 +75,7 @@ def stablerdeps (package):
         else : outlist.append(samp)
         
     if len(outlist) > 19:
-        print "More than 20 stable rdeps, sampled 20. \n"
+        print("More than 20 stable rdeps, sampled 20. \n")
     return outlist
     
 #############################

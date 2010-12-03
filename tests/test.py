@@ -8,19 +8,19 @@ import random
 import os
 
 ############### GET THE CONFIGURATION ####################
-import ConfigParser
+import configparser
 
 def readConfig(file="~/.tatt"):
-    config = ConfigParser.SafeConfigParser()
+    config = configparser.SafeConfigParser()
     config.read(file)
-    print config.sections()
+    print(config.sections())
     atomre = config.get("general", "aromregexp")
     ## A list of useflagsprefixes to be ignored
     ignoreprefix= config.get("general", "ignoreprefix")
     ## Success Message:
     successmessage = config.get("general", "successmessage")
-    print aromre
+    print(aromre)
 ##########################################################
 
 readConfig()
-print successmessage
+print(successmessage)

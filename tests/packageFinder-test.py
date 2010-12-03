@@ -42,9 +42,9 @@ x11-themes/xcursor-themes-1.0.2 hppa
 """
 
 for p in fP(s1, atomre):
-    print p.packageString()
+    print(p.packageString())
 
-print "\n ----------- \n ------------ \n"    
+print("\n ----------- \n ------------ \n")    
 for p in fP(s2, atomre):
-    print p.packageString()
+    print(p.packageString())
 

@@ -3,8 +3,8 @@
 import random
 import os
 
-from usecombis import findUseFlagCombis
-from tinderbox import stablerdeps
+from .usecombis import findUseFlagCombis
+from .tinderbox import stablerdeps
 
 #### USE-COMBIS ########
 
@@ -27,7 +27,7 @@ def writeusecombiscript(job, packlist, ignoreprefix):
     outfilename = (job + "-useflags.sh")
     reportname = (job + ".report")
     if os.path.isfile(outfilename):
-        print ("WARNING: Will overwrite " + outfilename)
+        print(("WARNING: Will overwrite " + outfilename))
     outfile = open(outfilename, 'w')
     outfile.write("#!/bin/sh" + '\n')
     for p in packlist:
@@ -42,7 +42,7 @@ def rdepTestString(pack):
     # We are checking for stable rdeps:
     rdeps = stablerdeps (pack)
     if len(rdeps) == 0:
-        print ("No stable rdeps for " + pack.packageString())
+        print(("No stable rdeps for " + pack.packageString()))
         return "# No stable rdeps \n"
     st = " "
     for r in rdeps:
@@ -61,7 +61,7 @@ def writerdepscript(job, packlist):
     outfilename = (job + "-rdeps.sh")
     reportname = (job + ".report")
     if os.path.isfile(outfilename):
-        print ("WARNING: Will overwrite " + outfilename)
+        print(("WARNING: Will overwrite " + outfilename))
     outfile = open(outfilename,'w')
     outfile.write("#!/bin/sh" + '\n')
     for p in packlist:
@@ -74,12 +74,12 @@ def writesucessreportscript (job, bugnum, success):
     outfilename = (job + "-success.sh")
     reportname = (job + ".report")
     if os.path.isfile(outfilename):
-        print ("WARNING: Will overwrite " + outfilename)
+        print(("WARNING: Will overwrite " + outfilename))
     outfile = open(outfilename,'w')
     outfile.write("#!/bin/sh" + '\n')
     outfile.write("if grep failed " + reportname + " >> /dev/null; then echo Failure found;\n")
     outfile.write("else bugz modify " + bugnum + ' -c' + "\"" + success + "\";\n")
     outfile.write("fi;")
     outfile.close()
-    print ("Success Report script written to " + outfilename)
+    print(("Success Report script written to " + outfilename))
     return 0

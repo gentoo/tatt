@@ -1,4 +1,4 @@
-OB* DONE We should query http://tinderbox.dev.gentoo.org/misc/dindex to solve the below issues and speed up
+* DONE We should query http://tinderbox.dev.gentoo.org/misc/dindex to solve the below issues and speed up
   CLOSED: [2010-02-03 Wed 16:14]
 * DONE Not all useflag combis should be generated before selection
   CLOSED: [2010-02-03 Wed 16:14]
