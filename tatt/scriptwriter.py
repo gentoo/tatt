@@ -1,4 +1,4 @@
-""" Various methods to write test scripts """
+""" Filling script templates """
 
 import random
 import os
@@ -8,31 +8,43 @@ from .tinderbox import stablerdeps
 
 #### USE-COMBIS ########
 
-def useCombiTestString(pack, ignoreprefix):
-    # Show or build with diffent useflag combis
-    s = ""
-    usecombis = findUseFlagCombis (pack, ignoreprefix)
+def useCombiTestString(pack, config):
+    """ Build with diffent useflag combis """
+    try:
+        usesnippetfile=open(config['template-dir'] + "use-snippet", 'r')
+    except IOError:
+        print("use-snippet not found in " + config['template-dir'])
+        exit(1)
+    s = "" # This will contain the resulting string
+    usesnippet = usesnippetfile.read()
+    usesnippet = usesnippet.replace("@@CPV@@", pack.packageString() )
+    usecombis = findUseFlagCombis (pack, config)
     for uc in usecombis:
-        s = s + "if " + uc + " emerge -1v " + pack.packageString() + "; then " + '\n'
-        # @@REPORT@@ will be replaces by the name of the reportfile later
-        s = s + "  echo \"" + uc.replace("\"","\'") + " succeeded for "
-        s = s + pack.packageString() + "\" >> " + "@@REPORT@@" + "; " + '\n'
-        s = s + "else echo \"" + uc.replace("\"", "\'") + " failed for "
-        s = s + pack.packageString() + "\" >> " + "@@REPORT@@" + '; \nfi; \n'
+        localsnippet = usesnippet.replace("@@USE@@", uc)
+        localsnippet = localsnippet.replace("@@FEATURES@@", "")
+        s = s + localsnippet
     # In the end we test once with tests and users flags
-    s = s + "FEATURES=\"test\" emerge -1v " + pack.packageString() + "\n"
+    localsnippet = usesnippet.replace("@@USE@@", " ")
+    localsnippet = localsnippet.replace("@@FEATURES@@", "FEATURES='test'")
+    s = s + localsnippet
     return s
 
-def writeusecombiscript(job, packlist, ignoreprefix):
+def writeusecombiscript(job, packlist, config):
+    try:
+        useheaderfile=open(config['template-dir'] + "use-header", 'r')
+    except IOError:
+        print("use-header not found in " + config['template-dir'])
+        exit(1)
+    useheader=useheaderfile.read().replace("@@JOB@@", job)
     outfilename = (job + "-useflags.sh")
     reportname = (job + ".report")
     if os.path.isfile(outfilename):
         print(("WARNING: Will overwrite " + outfilename))
     outfile = open(outfilename, 'w')
-    outfile.write("#!/bin/sh" + '\n')
+    outfile.write(useheader)
     for p in packlist:
         outfile.write("# Code for " + p.packageCatName() + "\n")
-        outfile.write(useCombiTestString(p, ignoreprefix).replace("@@REPORT@@",reportname))
+        outfile.write(useCombiTestString(p, config).replace("@@REPORTFILE@@",reportname))
     outfile.close()
 
 ######################################

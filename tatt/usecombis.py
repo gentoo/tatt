@@ -7,7 +7,7 @@ from subprocess import *
 from .tool import unique
 
 ## Useflag Combis ##
-def findUseFlagCombis (package, ignoreprefix):
+def findUseFlagCombis (package, config):
     """
     Generate combinations of use flags to test
     The output will be a list each containing a ready to use USE=... string
@@ -18,7 +18,7 @@ def findUseFlagCombis (package, ignoreprefix):
     # The uselist could have duplicates due to slot-conditional
     # output of equery
     uselist=unique(uselist)
-    for i in ignoreprefix:
+    for i in config['ignoreprefix']:
         uselist=[u for u in uselist if not re.match(i,u)]
 
     if len(uselist) > 4:
@@ -47,4 +47,4 @@ def findUseFlagCombis (package, ignoreprefix):
     usecombis = [["".join(uf) for uf in combi] for combi in usecombis]
 
     # Merge everything to a USE="" string
-    return ["USE=\""+" ".join(uc)+ "\"" for uc in usecombis]
+    return ["USE=\'"+" ".join(uc)+ "\'" for uc in usecombis]

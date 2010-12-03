@@ -1,4 +1,4 @@
-if USE="@@USE@@" FEATURES="@@FEATURES@@" emerge -1v @@CPV@@ ; then
-  echo "USE='@@USE@@' FEATURES='@@FEATURES@@' succeeded for @@CPV@@ >> @@REPORTFILE@@ ;
-else echo "USE='@@USE@@' FEATURES='@@FEATURES@@' failed for @@CPV@@" >> @@REPORTFILE@@;
+if @@USE@@ @@FEATURES@@ emerge -1v @@CPV@@ ; then
+  echo "@@USE@@ @@FEATURES@@ succeeded for @@CPV@@" >> @@REPORTFILE@@;
+else echo "@@USE@@ @@FEATURES@@ failed for @@CPV@@" >> @@REPORTFILE@@;
 fi;

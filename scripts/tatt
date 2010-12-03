@@ -160,7 +160,7 @@ if not packs==None:
         print ("You are not root, your unmaskstring would be:")
         print ("\n".join([p.packageString() for p in packs]) + "\n")
     ## Write the scripts
-    writeUSE(jobname, packs, config["ignoreprefix"])
+    writeUSE(jobname, packs, config)
     writeRdeps(jobname, packs)
     if options.bugnum:
         writeSuccess(jobname, options.bugnum, config["successmessage"])
