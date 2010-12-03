@@ -1,7 +1,9 @@
 """acessing the tinderbox at http://tinderbox.dev.gentoo.org/misc/dindex/ """
 
 import socket # For setting a global timeout
-import urllib.request, urllib.error, urllib.parse
+# This will not work with python-2.6
+# import urllib.request, urllib.error, urllib.parse
+import urllib2
 from subprocess import *
 import random
 
@@ -26,8 +28,11 @@ def stablerdeps (package):
 
     socket.setdefaulttimeout(45)
     try:
-        download = urllib.request.urlopen(tinderbox + atom).read()
-    except urllib.error.HTTPError as e:
+        download = urllib2.urlopen(tinderbox + atom).read()
+        # This would be thy python-3 version:
+        # download = urllib.request.urlopen(tinderbox + atom).read()
+    # except urllib.error.HTTPError as e:
+    except urllib2.HTTPError as e:
         # Cleanup the timeout:
         socket.setdefaulttimeout(None)
         if e.code == 404:
