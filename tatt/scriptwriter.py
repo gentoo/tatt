@@ -107,4 +107,28 @@ def writesucessreportscript (job, bugnum, success):
     outfile.write("fi;")
     outfile.close()
     print(("Success Report script written to " + outfilename))
-    return 0
+
+
+####### Write the commit script #########
+def writecommitscript (job, bugnum, packlist, config):
+    try:
+        commitheaderfile=open(config['template-dir'] + "commit-header", 'r')
+        commitsnippetfile=open(config['template-dir'] + "commit-snippet", 'r')
+    except IOError:
+        print("commit-header or commit-snippet not found in " + config['template-dir'])
+        exit(1)
+    csnippet = commitsnippetfile.read().replace("@@JOB@@", job)    
+    outfilename = (job + "-commit.sh")
+    if os.path.isfile(outfilename):
+        print(("WARNING: Will overwrite " + outfilename))
+    outfile = open(outfilename,'w')
+    outfile.write (commitheaderfile.read().replace("@@JOB@@", job))
+    for pack in packlist:
+        s = csnippet.replace("@@BUG@@", bugnum)
+        s = s.replace("@@ARCH@@", config['arch'])
+        s = s.replace("@@EBUILD@@", pack.packageCatName()+"-"+pack.packageVersion()+".ebuild")
+        s = s.replace("@@CP@@", pack.packageCatName())
+        outfile.write(s)
+    outfile.close()
+    print(("Commit script written to " + outfilename))
+

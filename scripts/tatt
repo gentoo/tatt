@@ -18,6 +18,7 @@ from tatt.packageFinder import *
 from tatt.scriptwriter import writeusecombiscript as writeUSE
 from tatt.scriptwriter import writerdepscript as writeRdeps
 from tatt.scriptwriter import writesucessreportscript as writeSuccess
+from tatt.scriptwriter import writecommitscript as writeCommit
 
 ########### Generate a global config obj, reading from ~/.tatt ################
 # resource_filename will give us platform-independent access to the specfile
@@ -94,35 +95,33 @@ if options.succbugnum:
 # Will eventuall contain packages to handle:
 packs=None
 
-## -b and a bugnumber was given ?
-if options.bugnum:
-    print("Working on bug number " + options.bugnum)
-    # For the time being we search only in the title
-    p1 = Popen(['bugz', 'get', options.bugnum, '-n', '--skip-auth'], stdout=PIPE)
-    bugraw = Popen(['grep', 'Title'], stdin=p1.stdout, stdout=PIPE).communicate()[0]
-    if not re.search('[Ss][Tt][Aa][Bb]', bugraw):
-        print("Does not look like a stable request bug !")
-        print(bugraw)
-        # Let's not exit here, maybe we still want to work on the bug
-        # exit (1)    
-    packs = findPackages(bugraw, re.compile(config['atom-regexp']))
-
-## or maybe -f and a filename have been given:
-elif options.infile: 
+## If -f and a filename have been given:
+if options.infile: 
     try:
-        bugfile=open(options.infile, 'r')
+        packfile=open(options.infile, 'r')
     except IOError:
         print("Given filename not found !")
         exit(1)
-    bugraw = bugfile.read()
-    bugfile.close()
-    packs = findPackages(bugraw, re.compile(config['atom-regexp']))
+    packraw = packfile.read()
+    packfile.close()
+    packs = findPackages(packraw, re.compile(config['atom-regexp']))
+
+## -b and a bugnumber was given ?
+if options.bugnum:
+    print("Bugnumber:  " + options.bugnum)
+    # If packs is still empty we search in the bug-title
+    if packs==None:
+        p1 = Popen(['bugz', 'get', options.bugnum, '-n', '--skip-auth'], stdout=PIPE)
+        bugraw = Popen(['grep', 'Title'], stdin=p1.stdout, stdout=PIPE).communicate()[0]
+        if not re.search('[Ss][Tt][Aa][Bb]', bugraw):
+            print("Does not look like a stable request bug !")
+            print(bugraw)
+        packs = findPackages(bugraw, re.compile(config['atom-regexp']))
 
 # joint code for -f and -b
 ##########################
 
 if not packs==None:
-    
     ## Assigning jobname
     if options.jobname:
         jobname = options.jobname
@@ -162,8 +161,10 @@ if not packs==None:
     ## Write the scripts
     writeUSE(jobname, packs, config)
     writeRdeps(jobname, packs, config)
+    ## Config and Successscript can only be written if we have a bugnumber
     if options.bugnum:
         writeSuccess(jobname, options.bugnum, config["successmessage"])
+        writeCommit(jobname, options.bugnum, packs, config)
     exit (0)
 
 ## If we arrive here then a package atom should be given

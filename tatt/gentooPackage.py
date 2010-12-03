@@ -38,6 +38,10 @@ class gentooPackage(object):
         """Returns the package name without category"""
         return self.name
 
+    def packageVersion(self):
+        """Returns the package version"""
+        return self.ver
+
     def packageCategory(self):
         """Returns the package category without name"""
         return self.category
