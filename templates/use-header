@@ -1,1 +1,2 @@
-#!/bin/sh                                                                                                                                                          # USE-Flag build tests for job @@JOB@@
+#!/bin/sh
+#USE-Flag build tests for job @@JOB@@
