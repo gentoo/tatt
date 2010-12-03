@@ -5,7 +5,7 @@ setup(name = "tatt",
       packages = find_packages(),
       scripts = ['scripts/tatt'],
       package_data = {
-          'tatt': ['dot-tatt-spec'],
+          'tatt': ['dot-tatt-spec']
           },
 
       install_requires = ['configobj>=4.6'],
