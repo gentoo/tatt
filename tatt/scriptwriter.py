@@ -126,7 +126,7 @@ def writecommitscript (job, bugnum, packlist, config):
     for pack in packlist:
         s = csnippet.replace("@@BUG@@", bugnum)
         s = s.replace("@@ARCH@@", config['arch'])
-        s = s.replace("@@EBUILD@@", pack.packageCatName()+"-"+pack.packageVersion()+".ebuild")
+        s = s.replace("@@EBUILD@@", pack.packageName()+"-"+pack.packageVersion()+".ebuild")
         s = s.replace("@@CP@@", pack.packageCatName())
         outfile.write(s)
     outfile.close()
