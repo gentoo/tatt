@@ -1,4 +1,4 @@
-# Code for stabeling @@EBUILD@@
+# Code for keywording @@EBUILD@@
 cd @@CP@@
 
 ekeyword @@ARCH@@ @@EBUILD@@
@@ -7,8 +7,6 @@ echangelog "@@ARCH@@ stable per bug @@BUG@@" || {
 	exit 1
 }
 repoman manifest 
-repoman -d full || exit 1
-repoman -m "@@ARCH@@ stable per bug @@BUG@@" commit || exit 1
 
 cd ../..
 ## @@CP@@ done

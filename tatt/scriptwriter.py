@@ -114,21 +114,34 @@ def writecommitscript (job, bugnum, packlist, config):
     try:
         commitheaderfile=open(config['template-dir'] + "commit-header", 'r')
         commitsnippetfile=open(config['template-dir'] + "commit-snippet", 'r')
+        commitsnippetfile2=open(config['template-dir'] + "commit-snippet-2", 'r')
+        commitfooterfile=open(config['template-dir'] + "commit-footer", 'r')
     except IOError:
-        print("commit-header or commit-snippet not found in " + config['template-dir'])
+        print("Some commit template not found in " + config['template-dir'])
         exit(1)
-    csnippet = commitsnippetfile.read().replace("@@JOB@@", job)    
+    csnippet = commitsnippetfile.read().replace("@@JOB@@", job)
+    csnippet2 = commitsnippetfile2.read().replace("@@JOB@@", job)
     outfilename = (job + "-commit.sh")
     if os.path.isfile(outfilename):
         print(("WARNING: Will overwrite " + outfilename))
     outfile = open(outfilename,'w')
     outfile.write (commitheaderfile.read().replace("@@JOB@@", job))
+    # First round (ekeyword)
     for pack in packlist:
         s = csnippet.replace("@@BUG@@", bugnum)
         s = s.replace("@@ARCH@@", config['arch'])
         s = s.replace("@@EBUILD@@", pack.packageName()+"-"+pack.packageVersion()+".ebuild")
         s = s.replace("@@CP@@", pack.packageCatName())
         outfile.write(s)
+    # Second round (repoman -d full checks)
+    for pack in packlist:
+        s = csnippet2.replace("@@BUG@@", bugnum)
+        s = s.replace("@@ARCH@@", config['arch'])
+        s = s.replace("@@EBUILD@@", pack.packageName()+"-"+pack.packageVersion()+".ebuild")
+        s = s.replace("@@CP@@", pack.packageCatName())
+        outfile.write(s)
+    # Footer (committing)
+    outfile.write (commitfooterfile.read().replace("@@ARCH@@", config['arch']).replace("@@BUG@@", bugnum))
     outfile.close()
     print(("Commit script written to " + outfilename))
 

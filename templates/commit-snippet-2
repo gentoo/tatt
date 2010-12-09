@@ -1,0 +1,7 @@
+# Code for checking consistency of @@EBUILD@@
+cd @@CP@@
+
+repoman -d full || exit 1
+
+cd ../..
+## @@CP@@ done
