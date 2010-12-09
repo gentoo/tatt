@@ -2,6 +2,7 @@
 cd @@CP@@
 
 repoman -d full || exit 1
+repoman -m "@@ARCH@@ stable per bug @@BUG@@" commit || exit 1
 
 cd ../..
 ## @@CP@@ done

@@ -1,4 +1,1 @@
-cd ~/gentoo-x86
-
-# And commit: (This will take ages?)
-repoman -m "@@ARCH@@ stable per bug @@BUG@@" commit || exit 1
+# Anything to be done here?
