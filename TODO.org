@@ -42,3 +42,4 @@ Global config object will be pushed around
 * TODO Sometimes you have to use -N to force new use flags on deps
 * TODO Dependency resolution for the commit script
 * TODO tinderbox lookup should be arch-specific
+* TODO Potential duplicates in revdep sampling. try libpcre for an instance
