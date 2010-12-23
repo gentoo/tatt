@@ -25,7 +25,7 @@ def useCombiTestString(pack, config):
         s = s + localsnippet
     # In the end we test once with tests and users flags
     localsnippet = usesnippet.replace("@@USE@@", " ")
-    localsnippet = localsnippet.replace("@@FEATURES@@", "FEATURES='test'")
+    localsnippet = localsnippet.replace("@@FEATURES@@", "FEATURES=\"${FEATURES} test\"")
     s = s + localsnippet
     return s
 
@@ -57,7 +57,7 @@ def rdepTestString(rdep, config):
         print("revdep-snippet not found in " + config['template-dir'])
         exit(1)
     rdepsnippet=rdepsnippetfile.read()
-    snip = rdepsnippet.replace("@@FEATURES@@", "FEATURES='test'")
+    snip = rdepsnippet.replace("@@FEATURES@@", "FEATURES=\"${FEATURES} test\"")
     ustring = "USE=\'" + " ".join([st for st in rdep[1] if not st[0] == "!"]) + " "
     ustring = ustring + " ".join(["-" + st[1:] for st in rdep[1] if st[0] == "!"]) + "\'"
     snip = snip.replace("@@USE@@", ustring)
