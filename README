@@ -64,3 +64,12 @@ tatt -h
 
 # ignoreprefix contains a list of use flag prefixes to be ignored 
 # ignoreprefix="elibc_","video_cards_","linguas_","kdeenablefinal","test","debug"
+
+# You can customize the maximal number of rdeps to be tested as follows:
+# rdeps=3
+
+# You can customize the maximal number USE combis to be tested as follows:
+# usecombis=3
+# Note that All USE-flags on and all USE-flags off will always be tested.
+
+

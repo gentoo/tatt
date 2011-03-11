@@ -43,3 +43,7 @@ Global config object will be pushed around
 * TODO Dependency resolution for the commit script
 * TODO tinderbox lookup should be arch-specific
 * TODO Potential duplicates in revdep sampling. try libpcre for an instance
+* DONE Implement a shorter run for large scale stabilizations (make number of USE combis customizable)
+  CLOSED: [2011-03-11 Fri 13:22]
+  number of rdeps and use flags are now customizable
+* TODO Implement an option to only write a commit script

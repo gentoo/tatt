@@ -68,7 +68,7 @@ def writerdepscript(job, packlist, config):
     # Populate the list of rdeps
     rdeps = []
     for p in packlist:
-        rdeps = rdeps + stablerdeps (p)
+        rdeps = rdeps + stablerdeps (p, config)
     if len(rdeps) == 0:
         print("No stable rdeps for " + job)
         return

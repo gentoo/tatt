@@ -13,7 +13,7 @@ from .gentooPackage import gentooPackage as gP
 ## Pass the config on to this function:
 
 ## Generate stable rdeps ###
-def stablerdeps (package):
+def stablerdeps (package, config):
     """
     Find packages with stable versions which depend on atom
     We query the tinderbox at http://tinderbox.dev.gentoo.org/misc/dindex/
@@ -61,14 +61,14 @@ def stablerdeps (package):
         d[gP(s[0]).packageCatName()] = s[1]
     outlist2 = [[k, d[k]] for k in list(d.keys())]
     outlist = []
-    # outlist2 is set up at this point. To cut it down we sample randomly
-    # without replacement until the list is empty or we have 20.
-    
-    # We are calling eix for each package to work around issues with --stable:
-    # What we should do with a future version of eix is to do this in a single run!
-    # Todo: Fork multiple eix instances 
+    # outlist2 is set up at this point.  It contains all candidates.  To cut it down we sample
+    # randomly without replacement until the list is empty or we have config['rdeps'] many.
 
-    while ((len (outlist2) > 0) and (len(outlist) < 20)):
+    # We are calling eix for each package to work around issues with --stable:
+    # What we should do with a future version of eix is to do this in a single run
+    # or fork multiple eix instances
+
+    while ((len (outlist2) > 0) and (len(outlist) < config['rdeps'])):
         # Warning: sample returns a list, even if only one sample
         [samp]=random.sample(outlist2, 1)
         # Drop the one we selected
@@ -79,8 +79,8 @@ def stablerdeps (package):
         if out == '': continue
         else : outlist.append(samp)
         
-    if len(outlist) > 19:
-        print("More than 20 stable rdeps, sampled 20. \n")
+    if len(outlist) > config['rdeps']:
+        print("More than " + config['rdeps'] + " stable rdeps, took a sample. \n")
     return outlist
     
 #############################

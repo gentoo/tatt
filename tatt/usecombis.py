@@ -2,6 +2,7 @@
 
 import random
 import re
+import math
 from subprocess import *
 
 from .tool import unique
@@ -21,17 +22,21 @@ def findUseFlagCombis (package, config):
     for i in config['ignoreprefix']:
         uselist=[u for u in uselist if not re.match(i,u)]
 
-    if len(uselist) > 4:
-        # More than 4 use flags, generate 16 random strings and everything -, everything +
+    if config['usecombis'] == 0:
+        # Do only all and nothing:
+        swlist = [0,2**(len(uselist))-1]
+    # Test if we can exhaust all USE-combis by computing the binary logarithm.
+    elif len(uselist) > math.log(config['usecombis'],2):
+        # Generate a sample of USE combis
         s = 2**(len (uselist))
         random.seed()
-        swlist = [random.randint(0, s-1) for i in range (16)]
+        swlist = [random.randint(0, s-1) for i in range (config['usecombis'])]
         swlist.append(0)
         swlist.append(s-1)
         swlist.sort()
         swlist = unique(swlist)
     else:
-        # 4 or less use flags. Generate all combinations
+        # Yes we can: generate all combinations
         swlist = list(range(2**len(uselist)))
 
     usecombis=[]
