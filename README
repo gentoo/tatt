@@ -14,6 +14,9 @@ closing the bug and the actual keywording, tatt focusses on the testing.
 Tatt can be configured through the file ~/.tatt An example is given below, the specification can be found 
 in dot-tatt-spec which usually resides /usr/lib/${python}/site-packages/tatt
 
+Note that tatt uses pybugz by calling 'bugz'.  You need to configure an alias for 'bugz' to contain
+your login-credentials or you will have to type them everytime you use tatt.
+
 #### Ways to use tatt ######
 
 1) Work on a stable bug no 300000. This will unmask the package and create three shell scripts for

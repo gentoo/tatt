@@ -111,7 +111,7 @@ if options.bugnum:
     print("Bugnumber:  " + options.bugnum)
     # If packs is still empty we search in the bug-title
     if packs==None:
-        p1 = Popen(['bugz', 'get', options.bugnum, '-n', '--skip-auth'], stdout=PIPE)
+        p1 = Popen(['bugz', 'get', options.bugnum, '-n'], stdout=PIPE)
         bugraw = Popen(['grep', 'Title'], stdin=p1.stdout, stdout=PIPE).communicate()[0]
         if not re.search('[Ss][Tt][Aa][Bb]', bugraw):
             print("Does not look like a stable request bug !")
