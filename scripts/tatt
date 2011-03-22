@@ -188,9 +188,9 @@ if options.resolvenum:
         print("Please call with a message per -m")
         exit (1)
     print("Resolving bug number " + options.resolvenum)
-    calllist = ['bugz', 'modify', options.resolvenum, '-c', config['resolvemessage'], '--remove-cc', config['arch']+"@gentoo.org"]
+    calllist = ['bugz', 'modify', options.resolvenum, '-c', options.resolvemessage, '--remove-cc', config['arch']+"@gentoo.org"]
     if options.close:
-        calllist = callist + ['--fixed']
+        calllist = calllist + ['--fixed']
     retcode = call(calllist)
     if retcode == 0:
         print("Success!");
