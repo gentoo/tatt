@@ -72,6 +72,20 @@ parser.add_option("-s", "--success",
 		  help="Comment that the program was successfully tested",
                   dest="succbugnum",
 		  action="store")
+parser.add_option("-r", "--resolve",
+		  help="Resolve the given bugnumber, needs a message",
+                  dest="resolvenum",
+		  action="store")
+parser.add_option("-c", "--close",
+		  help="Resolve the given bugnumber with closing it, needs to be combined with -r",
+                  dest="close",
+		  action="store_true")
+parser.add_option("-m", "--message",
+		  help="Message for bug resolution.",
+                  dest="resolvemessage",
+		  action="store")
+
+
 
 (options,args) = parser.parse_args()
 
@@ -166,6 +180,25 @@ if not packs==None:
         writeSuccess(jobname, options.bugnum, config["successmessage"])
         writeCommit(jobname, options.bugnum, packs, config)
     exit (0)
+
+# Code for resolving bugs (-r and -m)
+#####################################
+if options.resolvenum:
+    if not options.resolvemessage:
+        print("Please call with a message per -m")
+        exit (1)
+    print("Resolving bug number " + options.resolvenum)
+    calllist = ['bugz', 'modify', options.resolvenum, '-c', config['resolvemessage'], '--remove-cc', config['arch']+"@gentoo.org"]
+    if options.close:
+        calllist = callist + ['--fixed']
+    retcode = call(calllist)
+    if retcode == 0:
+        print("Success!");
+        exit (0)
+    else:
+        print("Failure accessing bugzilla.")
+        exit(1)
+
 
 ## If we arrive here then a package atom should be given
 try:
