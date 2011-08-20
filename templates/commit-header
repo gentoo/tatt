@@ -2,5 +2,5 @@
 # CVS Stabeling for @@JOB@@
 
 # This is the place to move to the right location:
-cd ~/gentoo-x86
+cd ./gentoo-x86
 
