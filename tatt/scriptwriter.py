@@ -30,6 +30,9 @@ def useCombiTestString(pack, config):
     return s
 
 def writeusecombiscript(job, packlist, config):
+    # job is a jobname
+    # packlist is a list of packages
+    # config is a tatt configuration
     try:
         useheaderfile=open(config['template-dir'] + "use-header", 'r')
     except IOError:
@@ -144,4 +147,3 @@ def writecommitscript (job, bugnum, packlist, config):
     outfile.write (commitfooterfile.read().replace("@@ARCH@@", config['arch']).replace("@@BUG@@", bugnum))
     outfile.close()
     print(("Commit script written to " + outfilename))
-

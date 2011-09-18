@@ -14,11 +14,12 @@ from pkg_resources import resource_filename
 
 
 from tatt.gentooPackage import gentooPackage as gP
-from tatt.packageFinder import *
+import tatt.packageFinder
 from tatt.scriptwriter import writeusecombiscript as writeUSE
 from tatt.scriptwriter import writerdepscript as writeRdeps
 from tatt.scriptwriter import writesucessreportscript as writeSuccess
 from tatt.scriptwriter import writecommitscript as writeCommit
+from tatt.bugbrowser import launch_browser as launch_browser
 
 ########### Generate a global config obj, reading from ~/.tatt ################
 # resource_filename will give us platform-independent access to the specfile
@@ -31,7 +32,11 @@ validator = Validator()
 result = config.validate(validator)
 
 if result != True:
-    print('Config file validation failed!')
+    print "Config file validation failed!"
+    print "The following items could not be parsed"
+    for k in result.keys():
+        if result[k] == False:
+            print k
     sys.exit(1)
 
 ######### Main program starts here ###############
@@ -55,11 +60,6 @@ parser.add_option("-f", "--file",
                   dest="infile",
                   action="store"
                   )
-# parser.add_option("-t", "--test",
-#                   help="run emerge commands with FEATURES=\"test\"",
-#                   dest="feature_test",
-#                   action="store_true",
-#                   default = True)
 parser.add_option("-j", "--jobname",
                   help="name for the job, prefix of output files",
                   dest="jobname",
@@ -84,11 +84,24 @@ parser.add_option("-m", "--message",
 		  help="Message for bug resolution.",
                   dest="resolvemessage",
 		  action="store")
-
-
+parser.add_option("-v", "--verbose",
+		  help="Print informative output.",
+                  dest="verbose",
+		  action="store_true",
+                  default = False)
+parser.add_option("-o", "--overview" "--browse",
+		  help="Launch the bug browser",
+                  dest="bugbrowser",
+		  action="store_true",
+                  default = False)
 
 (options,args) = parser.parse_args()
 
+# We copy some options to the config
+config['verbose']=options.verbose
+
+## Checking for root, tatt should be run as a user, I guess.
+## Remove on occasion.
 if (Popen(['whoami'], stdout=PIPE).communicate()[0].rstrip() == 'root'):
     isroot=True
 else:
@@ -106,6 +119,11 @@ if options.succbugnum:
         print("Failure commenting on Bugzilla")
         exit(1)
 
+if options.bugbrowser:
+    # Launch the bugbrowser
+    launch_browser (config)
+    exit (0)
+    
 # Will eventuall contain packages to handle:
 packs=None
 

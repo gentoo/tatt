@@ -4,7 +4,8 @@ Dependencies:
 app-portage/eix    (for finding useflag combis)
 app-portage/gentoolkit (for equery)
 www-client/pybugz  (for quering bugs )
-dev-python/configobj 
+dev-python/configobj
+sys-libs/ncurses (for the bug browser)
 
 Introduction
 
@@ -18,6 +19,8 @@ Note that tatt uses pybugz by calling 'bugz'.  You need to configure an alias fo
 your login-credentials or you will have to type them everytime you use tatt.
 
 #### Ways to use tatt ######
+
+0) Using the bug browser.  Fire up tatt with -o option and be happy
 
 1) Work on a stable bug no 300000. This will unmask the package and create three shell scripts for
 automated testing of useflag combis and rdeps and success-reports to bugzilla.
