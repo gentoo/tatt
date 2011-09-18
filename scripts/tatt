@@ -14,7 +14,7 @@ from pkg_resources import resource_filename
 
 
 from tatt.gentooPackage import gentooPackage as gP
-import tatt.packageFinder
+import tatt.packageFinder as packageFinder
 from tatt.scriptwriter import writeusecombiscript as writeUSE
 from tatt.scriptwriter import writerdepscript as writeRdeps
 from tatt.scriptwriter import writesucessreportscript as writeSuccess
@@ -136,7 +136,7 @@ if options.infile:
         exit(1)
     packraw = packfile.read()
     packfile.close()
-    packs = findPackages(packraw, re.compile(config['atom-regexp']))
+    packs = packageFinder.findPackages(packraw, re.compile(config['atom-regexp']))
 
 ## -b and a bugnumber was given ?
 if options.bugnum:
@@ -148,7 +148,7 @@ if options.bugnum:
         if not re.search('[Ss][Tt][Aa][Bb]', bugraw):
             print("Does not look like a stable request bug !")
             print(bugraw)
-        packs = findPackages(bugraw, re.compile(config['atom-regexp']))
+        packs = packageFinder.findPackages(bugraw, re.compile(config['atom-regexp']))
 
 # joint code for -f and -b
 ##########################
