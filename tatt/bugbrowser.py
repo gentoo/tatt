@@ -342,3 +342,4 @@ def launch_browser (config):
 		scripts.writeusecombiscript(jobname, packages, config)
 		scripts.writerdepscript (jobname, packages, config)
 		scripts.writecommitscript (jobname, str(b.id_number()), packages, config)
+		scripts.writeCleanUpScript (jobname, config)

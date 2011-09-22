@@ -147,3 +147,23 @@ def writecommitscript (job, bugnum, packlist, config):
     outfile.write (commitfooterfile.read().replace("@@ARCH@@", config['arch']).replace("@@BUG@@", bugnum))
     outfile.close()
     print(("Commit script written to " + outfilename))
+
+
+######## Write clean-up script ##############
+def writeCleanUpScript (job, config):
+    try:
+        cleanUpTemplate=open(config['template-dir'] + "cleanup", 'r')
+    except IOError:
+        print("Clean-Up template not found in" + config['template-dir'])
+        exit(1)
+    script = cleanUpTemplate.read().replace("@@JOB@@", job)
+    script = script.replace("@@CPV@@", job)
+    script = script.replace("@@KEYWORDFILE@@", config['unmaskfile'])
+    outfilename = (job + "-cleanup.sh")
+    if os.path.isfile(outfilename):
+        print(("WARNING: Will overwrite " + outfilename))
+    outfile = open(outfilename,'w')
+    outfile.write(script)
+
+
+    

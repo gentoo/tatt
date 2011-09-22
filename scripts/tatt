@@ -149,23 +149,23 @@ if not packs==None:
     if isroot:
         # If we are root, then we can write to package.keywords
         try:
-            keywordfile=open("/etc/portage/package.keywords/arch", 'r+')
+            unmaskfile=open(config['unmaskfile'], 'r+')
         except IOError:
             # create an empty file, this should be beautified
-            keywordfile=open("/etc/portage/package.keywords/arch", 'w')
-            keywordfile.write(" ")
-            keywordfile.close()
-            keywordfile=open("/etc/portage/package.keywords/arch", 'r+')
+            unmaskfile=open(config['unmaskfile'], 'w')
+            unmaskfile.write(" ")
+            unmaskfile.close()
+            unmaskfile=open(config['unmaskfile'], 'r+')
 
-        keywordfilecontent = keywordfile.read()
+        unmaskfileContent = unmaskfile.read()
         for p in packs:
-            # Test if keywordfile already contains the atom
-            if re.search(p.packageString(), keywordfilecontent):
+            # Test if unmaskfile already contains the atom
+            if re.search(p.packageString(), unmaskfileContent):
                 print (p.packageString() + " already in package.keywords.")
             else:
-                keywordfile.write("\n" + p.packageString() + "\n")
+                unmaskfile.write("\n" + p.packageString() + "\n")
                 print ("Appended " + p.packageString()+ " to /etc/portage/package.keywords/arch")
-        keywordfile.close()
+        unmaskfile.close()
     else:
         print ("You are not root, your unmaskstring would be:")
         print ("\n".join([p.packageString() for p in packs]) + "\n")
