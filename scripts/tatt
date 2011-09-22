@@ -6,13 +6,6 @@ import sys
 import re
 import os
 
-# from configobj
-from configobj import ConfigObj
-from validate  import Validator
-# To access the specfile:
-from pkg_resources import resource_filename
-
-
 from tatt.gentooPackage import gentooPackage as gP
 import tatt.packageFinder as packageFinder
 from tatt.scriptwriter import writeusecombiscript as writeUSE
@@ -20,24 +13,10 @@ from tatt.scriptwriter import writerdepscript as writeRdeps
 from tatt.scriptwriter import writesucessreportscript as writeSuccess
 from tatt.scriptwriter import writecommitscript as writeCommit
 from tatt.bugbrowser import launch_browser as launch_browser
+from tatt.tattConfig import tattConfig as tattConfig
 
-########### Generate a global config obj, reading from ~/.tatt ################
-# resource_filename will give us platform-independent access to the specfile
-specfile = resource_filename('tatt', 'dot-tatt-spec')
-# Read the config from ~/.tatt
-config = ConfigObj(os.path.join(os.path.expanduser("~"), ".tatt"), configspec=specfile)
-
-# this validator will also do type conversion according to the spec file!
-validator = Validator()
-result = config.validate(validator)
-
-if result != True:
-    print "Config file validation failed!"
-    print "The following items could not be parsed"
-    for k in result.keys():
-        if result[k] == False:
-            print k
-    sys.exit(1)
+##### Generate a global config obj, reading from ~/.tatt #####
+config = tattConfig()
 
 ######### Main program starts here ###############
 
