@@ -98,7 +98,7 @@ def writerdepscript(job, packlist, config):
 
 
 #######Write report script############
-def writesucessreportscript (job, bugnum, success):
+def writesucessreportscript (job, bugnum, config):
     outfilename = (job + "-success.sh")
     reportname = (job + ".report")
     if os.path.isfile(outfilename):
@@ -106,7 +106,8 @@ def writesucessreportscript (job, bugnum, success):
     outfile = open(outfilename,'w')
     outfile.write("#!/bin/sh" + '\n')
     outfile.write("if grep failed " + reportname + " >> /dev/null; then echo Failure found;\n")
-    outfile.write("else bugz modify " + bugnum + ' -c' + "\"" + success + "\";\n")
+    succmess = config['successmessage'].replace("@@ARCH@@", config['arch'])
+    outfile.write("else bugz modify " + bugnum + ' -c' + "\"" + succmess + "\";\n")
     outfile.write("fi;")
     outfile.close()
     print(("Success Report script written to " + outfilename))
