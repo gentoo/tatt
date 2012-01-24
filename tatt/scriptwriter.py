@@ -166,5 +166,3 @@ def writeCleanUpScript (job, config):
     outfile = open(outfilename,'w')
     outfile.write(script)
 
-
-    

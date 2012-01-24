@@ -12,6 +12,7 @@ from tatt.scriptwriter import writeusecombiscript as writeUSE
 from tatt.scriptwriter import writerdepscript as writeRdeps
 from tatt.scriptwriter import writesucessreportscript as writeSuccess
 from tatt.scriptwriter import writecommitscript as writeCommit
+from tatt.scriptwriter import writeCleanUpScript as writeCleanup
 from tatt.bugbrowser import launch_browser as launch_browser
 from tatt.tattConfig import tattConfig as tattConfig
 
@@ -172,6 +173,7 @@ if not packs==None:
     ## Write the scripts
     writeUSE(jobname, packs, config)
     writeRdeps(jobname, packs, config)
+    writeCleanup (jobname, config)
     ## Config and Successscript can only be written if we have a bugnumber
     if options.bugnum:
         writeSuccess(jobname, options.bugnum, config)
