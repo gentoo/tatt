@@ -79,3 +79,6 @@ The specification of the configuration file can be found in dot-tatt-spec which 
 # You can customize the maximal number USE combis to be tested as follows:
 # usecombis=3
 # Note that All USE-flags on and all USE-flags off will always be tested.
+
+# Url where the pre-generated rindex is to be found
+# tinderbox-url="http://qa-reports.gentoo.org/output/genrdeps/rindex/"
