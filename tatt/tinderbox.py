@@ -20,7 +20,7 @@ def stablerdeps (package, config):
     for this purpose.
     The result is a list of pairs of package atoms and a list of necessary useflags
     """
-    tinderbox = 'http://tinderbox.dev.gentoo.org/misc/dindex/'
+    tinderbox = config['tinderbox-url']
     # File structure on this tinderbox equals that in the tree
     # Problem: The rdeps can be version dependent
     # nothing we can do about this here...
