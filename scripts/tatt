@@ -6,33 +6,18 @@ import sys
 import re
 import os
 
-# from configobj
-from configobj import ConfigObj
-from validate  import Validator
-# To access the specfile:
-from pkg_resources import resource_filename
-
-
 from tatt.gentooPackage import gentooPackage as gP
-from tatt.packageFinder import *
+import tatt.packageFinder as packageFinder
 from tatt.scriptwriter import writeusecombiscript as writeUSE
 from tatt.scriptwriter import writerdepscript as writeRdeps
 from tatt.scriptwriter import writesucessreportscript as writeSuccess
 from tatt.scriptwriter import writecommitscript as writeCommit
+from tatt.scriptwriter import writeCleanUpScript as writeCleanup
+from tatt.bugbrowser import launch_browser as launch_browser
+from tatt.tattConfig import tattConfig as tattConfig
 
-########### Generate a global config obj, reading from ~/.tatt ################
-# resource_filename will give us platform-independent access to the specfile
-specfile = resource_filename('tatt', 'dot-tatt-spec')
-# Read the config from ~/.tatt
-config = ConfigObj(os.path.join(os.path.expanduser("~"), ".tatt"), configspec=specfile)
-
-# this validator will also do type conversion according to the spec file!
-validator = Validator()
-result = config.validate(validator)
-
-if result != True:
-    print('Config file validation failed!')
-    sys.exit(1)
+##### Generate a global config obj, reading from ~/.tatt #####
+config = tattConfig()
 
 ######### Main program starts here ###############
 
@@ -55,11 +40,6 @@ parser.add_option("-f", "--file",
                   dest="infile",
                   action="store"
                   )
-# parser.add_option("-t", "--test",
-#                   help="run emerge commands with FEATURES=\"test\"",
-#                   dest="feature_test",
-#                   action="store_true",
-#                   default = True)
 parser.add_option("-j", "--jobname",
                   help="name for the job, prefix of output files",
                   dest="jobname",
@@ -84,11 +64,24 @@ parser.add_option("-m", "--message",
 		  help="Message for bug resolution.",
                   dest="resolvemessage",
 		  action="store")
-
-
+parser.add_option("-v", "--verbose",
+		  help="Print informative output.",
+                  dest="verbose",
+		  action="store_true",
+                  default = False)
+parser.add_option("-o", "--overview" "--browse",
+		  help="Launch the bug browser",
+                  dest="bugbrowser",
+		  action="store_true",
+                  default = False)
 
 (options,args) = parser.parse_args()
 
+# We copy some options to the config
+config['verbose']=options.verbose
+
+## Checking for root, tatt should be run as a user, I guess.
+## Remove on occasion.
 if (Popen(['whoami'], stdout=PIPE).communicate()[0].rstrip() == 'root'):
     isroot=True
 else:
@@ -106,6 +99,11 @@ if options.succbugnum:
         print("Failure commenting on Bugzilla")
         exit(1)
 
+if options.bugbrowser:
+    # Launch the bugbrowser
+    launch_browser (config)
+    exit (0)
+    
 # Will eventuall contain packages to handle:
 packs=None
 
@@ -118,7 +116,7 @@ if options.infile:
         exit(1)
     packraw = packfile.read()
     packfile.close()
-    packs = findPackages(packraw, re.compile(config['atom-regexp']))
+    packs = packageFinder.findPackages(packraw, re.compile(config['atom-regexp']))
 
 ## -b and a bugnumber was given ?
 if options.bugnum:
@@ -130,7 +128,7 @@ if options.bugnum:
         if not re.search('[Ss][Tt][Aa][Bb]', bugraw):
             print("Does not look like a stable request bug !")
             print(bugraw)
-        packs = findPackages(bugraw, re.compile(config['atom-regexp']))
+        packs = packageFinder.findPackages(bugraw, re.compile(config['atom-regexp']))
 
 # joint code for -f and -b
 ##########################
@@ -152,32 +150,33 @@ if not packs==None:
     if isroot:
         # If we are root, then we can write to package.keywords
         try:
-            keywordfile=open("/etc/portage/package.keywords/arch", 'r+')
+            unmaskfile=open(config['unmaskfile'], 'r+')
         except IOError:
             # create an empty file, this should be beautified
-            keywordfile=open("/etc/portage/package.keywords/arch", 'w')
-            keywordfile.write(" ")
-            keywordfile.close()
-            keywordfile=open("/etc/portage/package.keywords/arch", 'r+')
+            unmaskfile=open(config['unmaskfile'], 'w')
+            unmaskfile.write(" ")
+            unmaskfile.close()
+            unmaskfile=open(config['unmaskfile'], 'r+')
 
-        keywordfilecontent = keywordfile.read()
+        unmaskfileContent = unmaskfile.read()
         for p in packs:
-            # Test if keywordfile already contains the atom
-            if re.search(p.packageString(), keywordfilecontent):
+            # Test if unmaskfile already contains the atom
+            if re.search(p.packageString(), unmaskfileContent):
                 print (p.packageString() + " already in package.keywords.")
             else:
-                keywordfile.write("\n" + p.packageString() + "\n")
+                unmaskfile.write("\n" + p.packageString() + "\n")
                 print ("Appended " + p.packageString()+ " to /etc/portage/package.keywords/arch")
-        keywordfile.close()
+        unmaskfile.close()
     else:
         print ("You are not root, your unmaskstring would be:")
         print ("\n".join([p.packageString() for p in packs]) + "\n")
     ## Write the scripts
     writeUSE(jobname, packs, config)
     writeRdeps(jobname, packs, config)
+    writeCleanup (jobname, config)
     ## Config and Successscript can only be written if we have a bugnumber
     if options.bugnum:
-        writeSuccess(jobname, options.bugnum, config["successmessage"])
+        writeSuccess(jobname, options.bugnum, config)
         writeCommit(jobname, options.bugnum, packs, config)
     exit (0)
 

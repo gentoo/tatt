@@ -30,6 +30,9 @@ def useCombiTestString(pack, config):
     return s
 
 def writeusecombiscript(job, packlist, config):
+    # job is a jobname
+    # packlist is a list of packages
+    # config is a tatt configuration
     try:
         useheaderfile=open(config['template-dir'] + "use-header", 'r')
     except IOError:
@@ -95,7 +98,7 @@ def writerdepscript(job, packlist, config):
 
 
 #######Write report script############
-def writesucessreportscript (job, bugnum, success):
+def writesucessreportscript (job, bugnum, config):
     outfilename = (job + "-success.sh")
     reportname = (job + ".report")
     if os.path.isfile(outfilename):
@@ -103,7 +106,8 @@ def writesucessreportscript (job, bugnum, success):
     outfile = open(outfilename,'w')
     outfile.write("#!/bin/sh" + '\n')
     outfile.write("if grep failed " + reportname + " >> /dev/null; then echo Failure found;\n")
-    outfile.write("else bugz modify " + bugnum + ' -c' + "\"" + success + "\";\n")
+    succmess = config['successmessage'].replace("@@ARCH@@", config['arch'])
+    outfile.write("else bugz modify " + bugnum + ' -c' + "\"" + succmess + "\";\n")
     outfile.write("fi;")
     outfile.close()
     print(("Success Report script written to " + outfilename))
@@ -144,4 +148,21 @@ def writecommitscript (job, bugnum, packlist, config):
     outfile.write (commitfooterfile.read().replace("@@ARCH@@", config['arch']).replace("@@BUG@@", bugnum))
     outfile.close()
     print(("Commit script written to " + outfilename))
+
+
+######## Write clean-up script ##############
+def writeCleanUpScript (job, config):
+    try:
+        cleanUpTemplate=open(config['template-dir'] + "cleanup", 'r')
+    except IOError:
+        print("Clean-Up template not found in" + config['template-dir'])
+        exit(1)
+    script = cleanUpTemplate.read().replace("@@JOB@@", job)
+    script = script.replace("@@CPV@@", job)
+    script = script.replace("@@KEYWORDFILE@@", config['unmaskfile'])
+    outfilename = (job + "-cleanup.sh")
+    if os.path.isfile(outfilename):
+        print(("WARNING: Will overwrite " + outfilename))
+    outfile = open(outfilename,'w')
+    outfile.write(script)
 

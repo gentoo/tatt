@@ -4,82 +4,12 @@ Dependencies:
 app-portage/eix    (for finding useflag combis)
 app-portage/gentoolkit (for equery)
 www-client/pybugz  (for quering bugs )
-dev-python/configobj 
+dev-python/configobj
+sys-libs/ncurses (for the bug browser)
 
 Introduction
 
 Arch testing includes many boring tasks. While gatt is intended to handle things that you do as a developer, like
 closing the bug and the actual keywording, tatt focusses on the testing. 
 
-Tatt can be configured through the file ~/.tatt An example is given below, the specification can be found 
-in dot-tatt-spec which usually resides /usr/lib/${python}/site-packages/tatt
-
-Note that tatt uses pybugz by calling 'bugz'.  You need to configure an alias for 'bugz' to contain
-your login-credentials or you will have to type them everytime you use tatt.
-
-#### Ways to use tatt ######
-
-1) Work on a stable bug no 300000. This will unmask the package and create three shell scripts for
-automated testing of useflag combis and rdeps and success-reports to bugzilla.
-
-tatt -b300000 -j superjob
-
--j specifies a jobname which will be a prefix for the scripts that tatt produces, if it is left
- empty the bugnumber will be used
-
-
-2) We want to stable a whole list of packages that we have saved in a file foo.
-
-tatt -f foo -b bugnumber
-
-This will open the file foo, look for all atoms to be found write the scripts for useflagtesting and
-rdep testing of the two packages. If -j is omitted the filename is used.  The bugnumber is necessary
-for the commit script.
-
-3) Resolving the bug
-
-Assume everything was committed and we want to resolve the bug.
-
-tatt -r bugnum -m "x86 stable, Thanks xyz" removes your arch from the cc and adds the message
-tatt -cr bugnum -m "x86 stable, Thanks, closing" also closes the bug.
-
-4) Running individual tests:
-
--) Everything was successful, we want to comment on the bug. The following command will log in and
- write the 'successmessage' to the bug.
-
-tatt -s300000
-
--) Create the test script for reverse dependencies of foo:
-
-tatt -d app-bar/foo
-
--) Create the use flag testing script of foo
-
-tatt -u app-bar/foo
-
-4) Show help 
-
-tatt -h 
-
-####### EXAMPLE ~/.tatt ############
-# Here we show the possible options together with their default values
-
-# Regular expression to identify a portage atom
-# atom-regexp='=?[^\s:,;<>]+/\S+-[0-9]?\S+[0-9][^\s:,;<>]?[a-z]*'
-
-# Message for the success script
-# successmessage='Archtested on x86: Everything fine'
-
-# ignoreprefix contains a list of use flag prefixes to be ignored 
-# ignoreprefix="elibc_","video_cards_","linguas_","kdeenablefinal","test","debug"
-
-# The arch you are working on (be careful, only tested with x86)
-# arch=x86
-
-# You can customize the maximal number of rdeps to be tested as follows:
-# rdeps=3
-
-# You can customize the maximal number USE combis to be tested as follows:
-# usecombis=3
-# Note that All USE-flags on and all USE-flags off will always be tested.
+Please consult the manual for ways how to use tatt.
