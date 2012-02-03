@@ -162,10 +162,10 @@ if not packs==None:
         for p in packs:
             # Test if unmaskfile already contains the atom
             if re.search(p.packageString(), unmaskfileContent):
-                print (p.packageString() + " already in package.keywords.")
+                print (p.packageString() + " already in "+config['unmaskfile'])
             else:
                 unmaskfile.write("\n" + p.packageString() + "\n")
-                print ("Appended " + p.packageString()+ " to /etc/portage/package.keywords/arch")
+                print ("Appended " + p.packageString()+ " to "+config['unmaskfile'])
         unmaskfile.close()
     else:
         print ("You are not root, your unmaskstring would be:")
