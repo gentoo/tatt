@@ -129,7 +129,9 @@ def writecommitscript (job, bugnum, packlist, config):
     if os.path.isfile(outfilename):
         print(("WARNING: Will overwrite " + outfilename))
     outfile = open(outfilename,'w')
-    outfile.write (commitheaderfile.read().replace("@@JOB@@", job))
+    cheader = commitheaderfile.read().replace("@@JOB@@", job)
+    cheader = cheader.replace(@@REPODIR@@, config['repodir'])
+    outfile.write (cheader)
     # First round (ekeyword)
     for pack in packlist:
         s = csnippet.replace("@@BUG@@", bugnum)
