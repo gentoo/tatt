@@ -1,8 +1,8 @@
 # Code for keywording @@EBUILD@@
 cd @@CP@@
 
-ekeyword @@ARCH@@ @@EBUILD@@
-echangelog "@@ARCH@@ stable per bug @@BUG@@" || {
+ekeyword @@NEWKEYWORD@@ @@EBUILD@@
+echangelog "marked @@NEWKEYWORD@@ per bug @@BUG@@" || {
 	echo " *** echangelog failed"
 	exit 1
 }

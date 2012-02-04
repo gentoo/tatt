@@ -337,9 +337,11 @@ def launch_browser (config):
 			print "Writing stabilization list to %s" % config['unmaskfile']
 
 	for b in bug_queue.get_bugs():
-		packages = [gP.gentooPackage(s) for s in b.cpvs()]
-		jobname = packages[0].packageName()
-		scripts.writeusecombiscript(jobname, packages, config)
-		scripts.writerdepscript (jobname, packages, config)
-		scripts.writecommitscript (jobname, str(b.id_number()), packages, config)
-		scripts.writeCleanUpScript (jobname, config)
+		myJob=job();
+		myJob.packageList = [gP.gentooPackage(s) for s in b.cpvs()]
+		myJob.name = packages[0].packageName()
+		myJob.bugnumber=str(b.id_number())
+		scripts.writeusecombiscript(job, config)
+		scripts.writerdepscript (job, config)
+		scripts.writecommitscript (job, config)
+		scripts.writeCleanUpScript (job, config)

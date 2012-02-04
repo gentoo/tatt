@@ -29,23 +29,22 @@ def useCombiTestString(pack, config):
     s = s + localsnippet
     return s
 
-def writeusecombiscript(job, packlist, config):
-    # job is a jobname
-    # packlist is a list of packages
+def writeusecombiscript(job, config):
+    # job is a tatt job object
     # config is a tatt configuration
     try:
         useheaderfile=open(config['template-dir'] + "use-header", 'r')
     except IOError:
         print("use-header not found in " + config['template-dir'])
         exit(1)
-    useheader=useheaderfile.read().replace("@@JOB@@", job)
-    outfilename = (job + "-useflags.sh")
-    reportname = (job + ".report")
+    useheader=useheaderfile.read().replace("@@JOB@@", job.name)
+    outfilename = (job.name + "-useflags.sh")
+    reportname = (job.name + ".report")
     if os.path.isfile(outfilename):
         print(("WARNING: Will overwrite " + outfilename))
     outfile = open(outfilename, 'w')
     outfile.write(useheader)
-    for p in packlist:
+    for p in job.packageList:
         outfile.write("# Code for " + p.packageCatName() + "\n")
         outfile.write(useCombiTestString(p, config).replace("@@REPORTFILE@@",reportname))
     outfile.close()
@@ -67,13 +66,13 @@ def rdepTestString(rdep, config):
     snip = snip.replace("@@CPV@@", rdep[0] )
     return snip
 
-def writerdepscript(job, packlist, config):
+def writerdepscript(job, config):
     # Populate the list of rdeps
     rdeps = []
-    for p in packlist:
+    for p in job.packageList:
         rdeps = rdeps + stablerdeps (p, config)
     if len(rdeps) == 0:
-        print("No stable rdeps for " + job)
+        print("No stable rdeps for " + job.name)
         return
 
     # If there are rdeps, write the script
@@ -82,9 +81,9 @@ def writerdepscript(job, packlist, config):
     except IOError:
         print("revdep-header not found in " + config['template-dir'])
         exit(1)
-    rdepheader=rdepheaderfile.read().replace("@@JOB@@", job)
-    outfilename = (job + "-rdeps.sh")
-    reportname = (job + ".report")
+    rdepheader=rdepheaderfile.read().replace("@@JOB@@", job.name)
+    outfilename = (job.name + "-rdeps.sh")
+    reportname = (job.name + ".report")
     if os.path.isfile(outfilename):
         print(("WARNING: Will overwrite " + outfilename))
     outfile = open(outfilename,'w')
@@ -98,23 +97,23 @@ def writerdepscript(job, packlist, config):
 
 
 #######Write report script############
-def writesucessreportscript (job, bugnum, config):
-    outfilename = (job + "-success.sh")
-    reportname = (job + ".report")
+def writesucessreportscript (job, config):
+    outfilename = (job.name + "-success.sh")
+    reportname = (job.name + ".report")
     if os.path.isfile(outfilename):
         print(("WARNING: Will overwrite " + outfilename))
     outfile = open(outfilename,'w')
     outfile.write("#!/bin/sh" + '\n')
     outfile.write("if grep failed " + reportname + " >> /dev/null; then echo Failure found;\n")
     succmess = config['successmessage'].replace("@@ARCH@@", config['arch'])
-    outfile.write("else bugz modify " + bugnum + ' -c' + "\"" + succmess + "\";\n")
+    outfile.write("else bugz modify " + job.bugnumber + ' -c' + "\"" + succmess + "\";\n")
     outfile.write("fi;")
     outfile.close()
     print(("Success Report script written to " + outfilename))
 
 
 ####### Write the commit script #########
-def writecommitscript (job, bugnum, packlist, config):
+def writecommitscript (job, config):
     try:
         commitheaderfile=open(config['template-dir'] + "commit-header", 'r')
         commitsnippetfile=open(config['template-dir'] + "commit-snippet", 'r')
@@ -123,31 +122,40 @@ def writecommitscript (job, bugnum, packlist, config):
     except IOError:
         print("Some commit template not found in " + config['template-dir'])
         exit(1)
-    csnippet = commitsnippetfile.read().replace("@@JOB@@", job)
-    csnippet2 = commitsnippetfile2.read().replace("@@JOB@@", job)
-    outfilename = (job + "-commit.sh")
+    csnippet = commitsnippetfile.read().replace("@@JOB@@", job.name)
+    csnippet2 = commitsnippetfile2.read().replace("@@JOB@@", job.name)
+    outfilename = (job.name + "-commit.sh")
     if os.path.isfile(outfilename):
         print(("WARNING: Will overwrite " + outfilename))
     outfile = open(outfilename,'w')
-    cheader = commitheaderfile.read().replace("@@JOB@@", job)
-    cheader = cheader.replace(@@REPODIR@@, config['repodir'])
+    cheader = commitheaderfile.read().replace("@@JOB@@", job.name)
+    cheader = cheader.replace("@@REPODIR@@", config['repodir'])
     outfile.write (cheader)
     # First round (ekeyword)
-    for pack in packlist:
-        s = csnippet.replace("@@BUG@@", bugnum)
+    for pack in job.packageList:
+        s = csnippet.replace("@@BUG@@", job.bugnumber)
         s = s.replace("@@ARCH@@", config['arch'])
+        if job.type=="stable":
+            newkeyword=config['arch']
+        elif job.type=="keyword":
+            newkeyword="~"+config['arch']
+        else:
+            print "No job type? Can't continue. This is a bug"
+            exit(1)
+        s = s.replace("@@NEWKEYWORD@@", newkeyword)
         s = s.replace("@@EBUILD@@", pack.packageName()+"-"+pack.packageVersion()+".ebuild")
         s = s.replace("@@CP@@", pack.packageCatName())
         outfile.write(s)
     # Second round (repoman -d full checks)
-    for pack in packlist:
-        s = csnippet2.replace("@@BUG@@", bugnum)
+    for pack in job.packageList:
+        s = csnippet2.replace("@@BUG@@", job.bugnumber)
         s = s.replace("@@ARCH@@", config['arch'])
+        s = s.replace("@@NEWKEYWORD@@", newkeyword)
         s = s.replace("@@EBUILD@@", pack.packageName()+"-"+pack.packageVersion()+".ebuild")
         s = s.replace("@@CP@@", pack.packageCatName())
         outfile.write(s)
     # Footer (committing)
-    outfile.write (commitfooterfile.read().replace("@@ARCH@@", config['arch']).replace("@@BUG@@", bugnum))
+    outfile.write (commitfooterfile.read().replace("@@ARCH@@", config['arch']).replace("@@BUG@@", job.bugnumber))
     outfile.close()
     print(("Commit script written to " + outfilename))
 
@@ -158,13 +166,13 @@ def writeCleanUpScript (job, config):
         cleanUpTemplate=open(config['template-dir'] + "cleanup", 'r')
     except IOError:
         print("Clean-Up template not found in" + config['template-dir'])
-        exit(1)
-    script = cleanUpTemplate.read().replace("@@JOB@@", job)
-    script = script.replace("@@CPV@@", job)
+        print "No clean-up script written"
+        return
+    script = cleanUpTemplate.read().replace("@@JOB@@", job.name)
+    script = script.replace("@@CPV@@", job.name)
     script = script.replace("@@KEYWORDFILE@@", config['unmaskfile'])
-    outfilename = (job + "-cleanup.sh")
+    outfilename = (job.name + "-cleanup.sh")
     if os.path.isfile(outfilename):
         print(("WARNING: Will overwrite " + outfilename))
     outfile = open(outfilename,'w')
     outfile.write(script)
-
