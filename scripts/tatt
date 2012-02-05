@@ -127,24 +127,22 @@ if options.infile:
 if options.bugnum:
     print("Bugnumber:  " + options.bugnum)
     myJob.bugnumber=options.bugnum
+    p1 = Popen(['bugz', 'get', myJob.bugnumber, '-n'], stdout=PIPE)
+    # Instead we now capture everything:
+    bugraw = p1.communicate()[0]
+    if re.search('KEYWORDREQ', bugraw):
+        # This is a keywording bug:
+        print ("Keywording bug detected.")
+        myJob.type="keyword"
+    elif re.search('STABLEREQ', bugraw):
+        # Stablebug
+        print ("Stabilization bug detected.")
+        myJob.type="stable"
+    else:
+        print ("Could not detect bug's type, is the 'Keywords' field set?")
+        exit(1)
     # If myJob.packageList is still empty we search in the bug-title
     if myJob.packageList==None:
-        p1 = Popen(['bugz', 'get', myJob.bugnumber, '-n'], stdout=PIPE)
-        #This old call would just fetch the title
-        #bugraw = Popen(['grep', 'Title'], stdin=p1.stdout, stdout=PIPE).communicate()[0]
-        # Instead we now capture everything:
-        bugraw = p1.communicate()[0]
-        if re.search('KEYWORDREQ', bugraw):
-            # This is a keywording bug:
-            print ("Keywording bug detected.")
-            myJob.type="keyword"
-        elif re.search('STABLEREQ', bugraw):
-            # Stablebug
-            print ("Stabilization bug detected.")
-            myJob.type="stable"
-        else:
-            print ("Could not detect bug's type, is the 'Keywords' field set?")
-            exit(1)
         myJob.packageList = packageFinder.findPackages(bugraw, re.compile(config['atom-regexp']))
 
 # joint code for -f and -b
