@@ -143,8 +143,6 @@ def writecommitscript (job, config):
             packageHash[pack.packageCatName()] = packageHash[pack.packageCatName()] + [pack]
         else:
             packageHash[pack.packageCatName()] = [pack]
-    # Prepare a list of ebuild names strings
-    ebuilds = [p.packageName()+"-"+p.packageVersion()+".ebuild" for p in packageHash[pack]]
     # First round (ekeyword)
     for pack in packageHash.keys():
         s = csnippet.replace("@@BUG@@", job.bugnumber)
@@ -157,17 +155,21 @@ def writecommitscript (job, config):
             print "No job type? Can't continue. This is a bug"
             exit(1)
         s = s.replace("@@NEWKEYWORD@@", newkeyword)
+        # Prepare a list of ebuild names strings
+        ebuilds = [p.packageName()+"-"+p.packageVersion()+".ebuild" for p in packageHash[pack]]
         s = s.replace("@@EBUILD@@", " ".join(ebuilds))
         s = s.replace("@@CP@@", pack)
         outfile.write(s)
     # Second round: repoman -d full checks and commit, should be done once per
     # key of packageHash
-    for packCN in packageHash.keys():
+    for pack in packageHash.keys():
         s = csnippet2.replace("@@BUG@@", job.bugnumber)
         s = s.replace("@@ARCH@@", config['arch'])
         s = s.replace("@@NEWKEYWORD@@", newkeyword)
+        # Prepare a list of ebuild names strings
+        ebuilds = [p.packageName()+"-"+p.packageVersion()+".ebuild" for p in packageHash[pack]]
         s = s.replace("@@EBUILD@@", " ".join(ebuilds))
-        s = s.replace("@@CP@@", packCN)
+        s = s.replace("@@CP@@", pack)
         outfile.write(s)
     # Footer (committing)
     outfile.write (commitfooterfile.read().replace("@@ARCH@@", config['arch']).replace("@@BUG@@", job.bugnumber))
