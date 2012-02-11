@@ -142,7 +142,7 @@ def writecommitscript (job, config):
         if pack.packageCatName() in packageHash:
             packageHash[pack.packageCatName()] = packageHash[pack.packageCatName()] + [pack]
         else:
-            packageHash[pack.packageCatName] = [pack]
+            packageHash[pack.packageCatName()] = [pack]
     # First round (ekeyword)
     for pack in packageHash.keys():
         s = csnippet.replace("@@BUG@@", job.bugnumber)
