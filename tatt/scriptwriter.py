@@ -5,6 +5,7 @@ import os
 
 from .usecombis import findUseFlagCombis
 from .tinderbox import stablerdeps
+from .tool import unique
 
 #### USE-COMBIS ########
 
@@ -131,8 +132,19 @@ def writecommitscript (job, config):
     cheader = commitheaderfile.read().replace("@@JOB@@", job.name)
     cheader = cheader.replace("@@REPODIR@@", config['repodir'])
     outfile.write (cheader)
-    # First round (ekeyword)
+    # Here's a catch: If there are multiple versions of the same package to be
+    # stabilized, then we want only one keywording block and one commit block
+    # for them.  Therefore we split up the loop by sorting job.packlist
+    # accordingly, saving them in a hash-table with the package names as keys
+    # and the packages as values.
+    packageHash = dict();
     for pack in job.packageList:
+        if pack.packageCatName() in packageHash:
+            packageHash[pack.packageCatName()] = packageHash[pack.packageCatName()] + [pack]
+        else:
+            packageHash[pack.packageCatName] = [pack]
+    # First round (ekeyword)
+    for pack in packageHash.keys():
         s = csnippet.replace("@@BUG@@", job.bugnumber)
         s = s.replace("@@ARCH@@", config['arch'])
         if job.type=="stable":
@@ -143,8 +155,9 @@ def writecommitscript (job, config):
             print "No job type? Can't continue. This is a bug"
             exit(1)
         s = s.replace("@@NEWKEYWORD@@", newkeyword)
-        s = s.replace("@@EBUILD@@", pack.packageName()+"-"+pack.packageVersion()+".ebuild")
-        s = s.replace("@@CP@@", pack.packageCatName())
+        ebuilds = [p.packageName()+"-"+p.packageVersion()+".ebuild" for p in packageHash[pack]]
+        s = s.replace("@@EBUILD@@", " ".join(ebuilds))
+        s = s.replace("@@CP@@", pack)
         outfile.write(s)
     # Second round (repoman -d full checks)
     for pack in job.packageList:
