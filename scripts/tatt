@@ -48,6 +48,10 @@ parser.add_option("-j", "--jobname",
 parser.add_option("-b", "--bug",
                   help="do the full program for a given stable request bug",
                   dest="bugnum",
+                  # type="int",
+                  # We could test this here, but in most cases the bugnumber
+                  # is actually used as a string, so we validate further down
+                  # and leave it as a string
                   action="store")
 parser.add_option("-s", "--success",
 		  help="Comment that the program was successfully tested",
@@ -83,6 +87,12 @@ parser.add_option("-o", "--overview" "--browse",
 config['verbose']=options.verbose
 # Normalize the template dir:
 config['template-dir']=os.path.abspath(config['template-dir'])+os.sep
+# Test if the bugnumber represents an int
+try:
+    int(options.bugnum)
+except ValueError:
+    print ("The bugnumber you gave with -b should be an integer.")
+    exit(1);
 
 
 ## Checking for root, tatt should be run as a user, I guess.
