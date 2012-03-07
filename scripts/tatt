@@ -87,13 +87,15 @@ parser.add_option("-o", "--overview" "--browse",
 config['verbose']=options.verbose
 # Normalize the template dir:
 config['template-dir']=os.path.abspath(config['template-dir'])+os.sep
-# Test if the bugnumber represents an int
+# If given, test if the bugnumber represents an int
 try:
     int(options.bugnum)
 except ValueError:
     print ("The bugnumber you gave with -b should be an integer.")
     exit(1);
-
+except TypeError:
+    # This occurs if bugnum is None, that is, -b was not given
+    pass
 
 ## Checking for root, tatt should be run as a user, I guess.
 ## Remove on occasion.
