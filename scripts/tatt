@@ -92,10 +92,19 @@ try:
     int(options.bugnum)
 except ValueError:
     print ("The bugnumber you gave with -b should be an integer.")
-    exit(1);
+    exit(1)
 except TypeError:
     # This occurs if bugnum is None, that is, -b was not given
     pass
+
+## If safedir is set, check for the current directory
+if config['safedir'] != "":
+    if os.getcwd().find(config['safedir']) == -1:
+        # Safedir not found
+        print ("Your safedir variable is set to '" + config['safedir'] + "',")
+        print ("but you are in " + os.getcwd())
+        print ("Exiting.")
+        exit (1)
 
 ## Checking for root, tatt should be run as a user, I guess.
 ## Remove on occasion.
