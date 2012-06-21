@@ -234,7 +234,7 @@ if options.resolvenum:
 
 ## If we arrive here then a package atom should be given
 try:
-    myJob.packageList=gP(args[0])
+    myJob.packageList=[gP(args[0])]
     myJob.name=myJob.packageList[0].packageName()
 except IndexError:
     print("Please call with package atom as argument")
