@@ -13,7 +13,6 @@ from tatt.scriptwriter import writerdepscript as writeRdeps
 from tatt.scriptwriter import writesucessreportscript as writeSuccess
 from tatt.scriptwriter import writecommitscript as writeCommit
 from tatt.scriptwriter import writeCleanUpScript as writeCleanup
-from tatt.bugbrowser import launch_browser as launch_browser
 from tatt.tattConfig import tattConfig as tattConfig
 from tatt.job import job as job
 
@@ -74,11 +73,6 @@ parser.add_option("-v", "--verbose",
                   dest="verbose",
 		  action="store_true",
                   default = False)
-parser.add_option("-o", "--overview" "--browse",
-		  help="Launch the bug browser",
-                  dest="bugbrowser",
-		  action="store_true",
-                  default = False)
 
 (options,args) = parser.parse_args()
 
@@ -125,11 +119,6 @@ if options.succbugnum:
         print("Failure commenting on Bugzilla")
         exit(1)
 
-if options.bugbrowser:
-    # Launch the bugbrowser
-    launch_browser (config)
-    exit (0)
-    
 # get a job object to save things to
 myJob = job()
 

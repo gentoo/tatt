@@ -5,7 +5,6 @@ app-portage/eix    (for finding useflag combis)
 app-portage/gentoolkit (for equery)
 www-client/pybugz  (for quering bugs )
 dev-python/configobj
-sys-libs/ncurses (for the bug browser)
 
 Introduction
 

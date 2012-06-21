@@ -9,8 +9,6 @@ through the file ~/.tatt, an example is given below.
 Note that tatt uses pybugz by calling 'bugz'.  You may want to configure an alias for 'bugz' to
 contain your login-credentials or you will have to type them everytime you use tatt.
 
-0) Using the bug browser.  Fire up tatt with -o option and be happy
-
 1) Work on a stable bug no 300000. This will unmask the package and create three shell scripts for
 automated testing of useflag combis and rdeps and success-reports to bugzilla.
 
