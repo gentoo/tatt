@@ -140,6 +140,7 @@ if options.bugnum:
     p1 = Popen(['bugz', 'get', myJob.bugnumber, '-n'], stdout=PIPE)
     # Instead we now capture everything:
     bugraw = p1.communicate()[0]
+    bugtitle = [l for l in bugraw.splitlines() if 'Title' in l][0]
     if re.search('KEYWORDREQ', bugraw):
         # This is a keywording bug:
         print ("Keywording bug detected.")
@@ -153,7 +154,7 @@ if options.bugnum:
         exit(1)
     # If myJob.packageList is still empty we search in the bug-title
     if myJob.packageList==None:
-        myJob.packageList = packageFinder.findPackages(bugraw, re.compile(config['atom-regexp']))
+        myJob.packageList = packageFinder.findPackages(bugtitle, re.compile(config['atom-regexp']))
 
 # joint code for -f and -b
 ##########################
