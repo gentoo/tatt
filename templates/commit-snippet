@@ -1,6 +1,7 @@
 # Code for keywording @@EBUILD@@
 cd @@CP@@
 
+cvs up
 ekeyword @@NEWKEYWORD@@ @@EBUILD@@
 echangelog "marked @@NEWKEYWORD@@ per bug @@BUG@@" || {
 	echo " *** echangelog failed"
