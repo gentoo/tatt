@@ -71,6 +71,13 @@ The specification of the configuration file can be found in dot-tatt-spec which 
 # The arch you are working on (be careful, only tested with x86)
 # arch=x86
 
+# Directory where your script templates are (normally you don't need
+# to change this)
+# template-dir="/usr/share/tatt/templates/"
+
+# Where do you want tatt to put unmasked packages.
+# unmaskfile="/etc/portage/package.keywords/archtest"
+
 # You can customize the maximal number of rdeps to be tested as follows:
 # rdeps=3
 
