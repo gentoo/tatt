@@ -174,43 +174,41 @@ if not myJob.packageList==None:
         print("Found the following package atom : " + p.packageString())
 
     # Unmasking:
-    if isroot:
-        # If we are root, then we can write to package.keywords
+    try:
+        unmaskfile=open(config['unmaskfile'], 'r+')
+    except IOError:
+        print "Your unmaskfile was not found, I will create it as"
+        print config['unmaskfile']
         try:
-            unmaskfile=open(config['unmaskfile'], 'r+')
+            unmaskfile=open(config['unmaskfile'], 'w')
+            unmaskfile.write(" ")
+            unmaskfile.close()
         except IOError:
-            print "Your unmaskfile was not found, I will create it as"
-            print config['unmaskfile']
-            try:
-                unmaskfile=open(config['unmaskfile'], 'w')
-                unmaskfile.write(" ")
-                unmaskfile.close()
-            except IOError:
-                print " ".join(["Can not create unmaskfile",config['unmaskfile']])
-                print "Probably you want to configure a different file in your ~/.tatt"
-                print "Exiting"
-                exit(1)
-            unmaskfile=open(config['unmaskfile'], 'r+')
+            # If we can't write to the file, then it should be configured differently
+            print " ".join(["Can not write to ",config['unmaskfile']])
+            print "Maybe you don't have permission or the location is invalid."
+            print " ".join(["Is",os.path.split(config['unmaskfile'])[0],"a writeable directory?"])
+            print "Probably you want to configure a different unmaskfile"
+            print "in your ~/.tatt.  Exiting"
+            exit(1)
+        unmaskfile=open(config['unmaskfile'], 'r+')
 
-        unmaskfileContent = unmaskfile.read()
-        for p in myJob.packageList:
-            # Test if unmaskfile already contains the atom
-            if re.search(p.packageString(), unmaskfileContent):
-                print (p.packageString() + " already in "+config['unmaskfile'])
+    unmaskfileContent = unmaskfile.read()
+    for p in myJob.packageList:
+        # Test if unmaskfile already contains the atom
+        if re.search(p.packageString(), unmaskfileContent):
+            print (p.packageString() + " already in "+config['unmaskfile'])
+        else:
+            unmaskfile.write(p.packageString())
+            if myJob.type=="stable":
+                unmaskfile.write("\n")
+            elif myJob.type=="keyword":
+                unmaskfile.write(" ** \n")
             else:
-                unmaskfile.write(p.packageString())
-                if myJob.type=="stable":
-                    unmaskfile.write("\n")
-                elif myJob.type=="keyword":
-                    unmaskfile.write(" ** \n")
-                else:
-                    print ("Uh Oh, no job.type? Tell tomka@gentoo.org to fix this!")
-                    unmaskfile.write("\n")
-                print ("Unmasked " + p.packageString()+ " in "+config['unmaskfile'])
-        unmaskfile.close()
-    else:
-        print ("You are not root, your unmaskstring would be:")
-        print ("\n".join([p.packageString() for p in myJob.packageList]) + "\n")
+                print ("Uh Oh, no job.type? Tell tomka@gentoo.org to fix this!")
+                unmaskfile.write("\n")
+            print ("Unmasked " + p.packageString()+ " in "+config['unmaskfile'])
+    unmaskfile.close()
     ## Write the scripts
     writeUSE(myJob, config)
     writeRdeps(myJob, config)
