@@ -19,13 +19,14 @@ def useCombiTestString(pack, config):
     s = "" # This will contain the resulting string
     usesnippet = usesnippetfile.read()
     usesnippet = usesnippet.replace("@@CPV@@", pack.packageString() )
+    usesnippet = usesnippet.replace("@@EMERGEOPTS@@", config['emergeopts'])
     usecombis = findUseFlagCombis (pack, config)
     for uc in usecombis:
         localsnippet = usesnippet.replace("@@USE@@", uc)
         localsnippet = localsnippet.replace("@@FEATURES@@", "")
         s = s + localsnippet
     # In the end we test once with tests and users flags
-    localsnippet = usesnippet.replace("@@USE@@", " ")
+    localsnippet = usesnippet.replace("@@USE@@", "")
     localsnippet = localsnippet.replace("@@FEATURES@@", "FEATURES=\"${FEATURES} test\"")
     s = s + localsnippet
     return s
@@ -65,6 +66,7 @@ def rdepTestString(rdep, config):
     ustring = ustring + " ".join(["-" + st[1:] for st in rdep[1] if st[0] == "!"]) + "\'"
     snip = snip.replace("@@USE@@", ustring)
     snip = snip.replace("@@CPV@@", rdep[0] )
+    snip = snip.replace("@@EMERGEOPTS@@", config['emergeopts'])
     return snip
 
 def writerdepscript(job, config):

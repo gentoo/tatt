@@ -95,3 +95,7 @@ The specification of the configuration file can be found in dot-tatt-spec which 
 # match this string.  Use it as a safety measure against creating tatt-scripts
 # in random places of you filesystem
 # safedir=string(default="")
+
+# All emerge runs in the generated scripts are automatically passed
+# the -1 option.  Here you can specify additional options.
+# emergeopts="-v"
