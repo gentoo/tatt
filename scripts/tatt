@@ -100,14 +100,6 @@ if config['safedir'] != "":
         print ("Exiting.")
         exit (1)
 
-## Checking for root, tatt should be run as a user, I guess.
-## Remove on occasion.
-if (Popen(['whoami'], stdout=PIPE).communicate()[0].rstrip() == 'root'):
-    isroot=True
-else:
-    print("You're not root!")
-    isroot=False
-
 ## -s and a bugnumber was given ?
 if options.succbugnum:
     print("Reporting success for bug number " + options.succbugnum)
