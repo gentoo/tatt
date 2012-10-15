@@ -179,10 +179,17 @@ if not myJob.packageList==None:
         try:
             unmaskfile=open(config['unmaskfile'], 'r+')
         except IOError:
-            # create an empty file, this should be beautified
-            unmaskfile=open(config['unmaskfile'], 'w')
-            unmaskfile.write(" ")
-            unmaskfile.close()
+            print "Your unmaskfile was not found, I will create it as"
+            print config['unmaskfile']
+            try:
+                unmaskfile=open(config['unmaskfile'], 'w')
+                unmaskfile.write(" ")
+                unmaskfile.close()
+            except IOError:
+                print " ".join(["Can not create unmaskfile",config['unmaskfile']])
+                print "Probably you want to configure a different file in your ~/.tatt"
+                print "Exiting"
+                exit(1)
             unmaskfile=open(config['unmaskfile'], 'r+')
 
         unmaskfileContent = unmaskfile.read()
