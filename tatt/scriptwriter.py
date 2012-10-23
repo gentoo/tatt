@@ -2,6 +2,7 @@
 
 import random
 import os
+import sys
 
 from .usecombis import findUseFlagCombis
 from .tinderbox import stablerdeps
@@ -15,7 +16,7 @@ def useCombiTestString(pack, config):
         usesnippetfile=open(config['template-dir'] + "use-snippet", 'r')
     except IOError:
         print("use-snippet not found in " + config['template-dir'])
-        exit(1)
+        sys.exit(1)
     s = "" # This will contain the resulting string
     usesnippet = usesnippetfile.read()
     usesnippet = usesnippet.replace("@@CPV@@", pack.packageString() )
@@ -38,7 +39,7 @@ def writeusecombiscript(job, config):
         useheaderfile=open(config['template-dir'] + "use-header", 'r')
     except IOError:
         print("use-header not found in " + config['template-dir'])
-        exit(1)
+        sys.exit(1)
     useheader=useheaderfile.read().replace("@@JOB@@", job.name)
     outfilename = (job.name + "-useflags.sh")
     reportname = (job.name + ".report")
@@ -63,7 +64,7 @@ def rdepTestString(rdep, config):
         rdepsnippetfile=open(config['template-dir'] + "revdep-snippet", 'r')
     except IOError:
         print("revdep-snippet not found in " + config['template-dir'])
-        exit(1)
+        sys.exit(1)
     rdepsnippet=rdepsnippetfile.read()
     snip = rdepsnippet.replace("@@FEATURES@@", "FEATURES=\"${FEATURES} test\"")
     ustring = "USE=\'" + " ".join([st for st in rdep[1] if not st[0] == "!"]) + " "
@@ -87,7 +88,7 @@ def writerdepscript(job, config):
         rdepheaderfile=open(config['template-dir'] + "revdep-header", 'r')
     except IOError:
         print("revdep-header not found in " + config['template-dir'])
-        exit(1)
+        sys.exit(1)
     rdepheader=rdepheaderfile.read().replace("@@JOB@@", job.name)
     outfilename = (job.name + "-rdeps.sh")
     reportname = (job.name + ".report")
@@ -130,7 +131,7 @@ def writecommitscript (job, config):
         commitfooterfile=open(config['template-dir'] + "commit-footer", 'r')
     except IOError:
         print("Some commit template not found in " + config['template-dir'])
-        exit(1)
+        sys.exit(1)
     csnippet = commitsnippetfile.read().replace("@@JOB@@", job.name)
     csnippet2 = commitsnippetfile2.read().replace("@@JOB@@", job.name)
     outfilename = (job.name + "-commit.sh")
@@ -161,7 +162,7 @@ def writecommitscript (job, config):
             newkeyword="~"+config['arch']
         else:
             print "No job type? Can't continue. This is a bug"
-            exit(1)
+            sys.exit(1)
         s = s.replace("@@NEWKEYWORD@@", newkeyword)
         # Prepare a list of ebuild names strings
         ebuilds = [p.packageName()+"-"+p.packageVersion()+".ebuild" for p in packageHash[pack]]

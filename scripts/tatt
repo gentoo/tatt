@@ -86,7 +86,7 @@ try:
     int(options.bugnum)
 except ValueError:
     print ("The bugnumber you gave with -b should be an integer.")
-    exit(1)
+    sys.exit(1)
 except TypeError:
     # This occurs if bugnum is None, that is, -b was not given
     pass
@@ -98,7 +98,7 @@ if config['safedir'] != "":
         print ("Your safedir variable is set to '" + config['safedir'] + "',")
         print ("but you are in " + os.getcwd())
         print ("Exiting.")
-        exit (1)
+        sys.exit (1)
 
 ## -s and a bugnumber was given ?
 if options.succbugnum:
@@ -106,10 +106,10 @@ if options.succbugnum:
     retcode = call(['bugz', 'modify', options.succbugnum, '-c', config['successmessage']])
     if retcode == 0:
         print("Success!");
-        exit (0)
+        sys.exit (0)
     else:
         print("Failure commenting on Bugzilla")
-        exit(1)
+        sys.exit(1)
 
 # get a job object to save things to
 myJob = job()
@@ -120,7 +120,7 @@ if options.infile:
         packfile=open(options.infile, 'r')
     except IOError:
         print("Given filename not found !")
-        exit(1)
+        sys.exit(1)
     packraw = packfile.read()
     packfile.close()
     myJob.packageList = packageFinder.findPackages(packraw, re.compile(config['atom-regexp']))
@@ -143,7 +143,7 @@ if options.bugnum:
         myJob.type="stable"
     else:
         print ("Could not detect bug's type, is the 'Keywords' field set?")
-        exit(1)
+        sys.exit(1)
     # If myJob.packageList is still empty we search in the bug-title
     if myJob.packageList==None:
         myJob.packageList = packageFinder.findPackages(bugtitle, re.compile(config['atom-regexp']))
@@ -182,7 +182,7 @@ if not myJob.packageList==None:
             print " ".join(["Is",os.path.split(config['unmaskfile'])[0],"a writeable directory?"])
             print "Probably you want to configure a different unmaskfile"
             print "in your ~/.tatt.  Exiting"
-            exit(1)
+            sys.exit(1)
         unmaskfile=open(config['unmaskfile'], 'r+')
 
     unmaskfileContent = unmaskfile.read()
@@ -209,14 +209,14 @@ if not myJob.packageList==None:
     if myJob.bugnumber:
         writeSuccess(myJob, config)
         writeCommit(myJob, config)
-    exit (0)
+    sys.exit (0)
 
 # Code for resolving bugs (-r and -m)
 #####################################
 if options.resolvenum:
     if not options.resolvemessage:
         print("Please call with a message per -m")
-        exit (1)
+        sys.exit (1)
     print("Resolving bug number " + options.resolvenum)
     calllist = ['bugz', 'modify', options.resolvenum, '-c', options.resolvemessage, '--remove-cc', config['arch']+"@gentoo.org"]
     if options.close:
@@ -224,10 +224,10 @@ if options.resolvenum:
     retcode = call(calllist)
     if retcode == 0:
         print("Success!");
-        exit (0)
+        sys.exit (0)
     else:
         print("Failure accessing bugzilla.")
-        exit(1)
+        sys.exit(1)
 
 
 ## If we arrive here then a package atom should be given
@@ -236,7 +236,7 @@ try:
     myJob.name=myJob.packageList[0].packageName()
 except IndexError:
     print("Please call with package atom as argument")
-    exit (1)
+    sys.exit (1)
 
 if options.depend:
     writeRdeps(myJob, config)

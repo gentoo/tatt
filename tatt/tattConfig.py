@@ -1,6 +1,7 @@
 """Abstraction of a tatt configuration"""
 
 import os
+import sys
 
 # from configobj
 from configobj import ConfigObj

@@ -4,6 +4,7 @@ import socket # For setting a global timeout
 # This will not work with python-2.6
 # import urllib.request, urllib.error, urllib.parse
 import urllib2
+import sys
 from subprocess import *
 import random
 
@@ -41,7 +42,7 @@ def stablerdeps (package, config):
         else:
             # Some other error should not occur:
             print("Non 404 Error on accessing the tinderbox")
-            exit (1)
+            sys.exit (1)
     # If we are here everything is fine, cleanup the timeout:
     socket.setdefaulttimeout(None)
     # The result is a "\n" separated list of packages : useflags
