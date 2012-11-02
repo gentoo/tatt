@@ -1,4 +1,8 @@
-if @@USE@@ @@FEATURES@@ emerge -1 @@EMERGEOPTS@@ @@CPV@@ ; then
+eout=$( @@USE@@ @@FEATURES@@ emerge -1 @@EMERGEOPTS@@ @@CPV@@ 2>&1 1>/dev/tty )
+if [[ $? == 0 ]] ; then
   echo "@@USE@@ @@FEATURES@@ succeeded for @@CPV@@" >> @@REPORTFILE@@;
-else echo "@@USE@@ @@FEATURES@@ failed for @@CPV@@" >> @@REPORTFILE@@;
+elif [[ "${eout}" =~ REQUIRED_USE ]] ; then
+  echo "@@USE@@ : REQUIRED_USE not satisfied (probably)" >> @@REPORTFILE@@;
+else
+  echo "@@USE@@ @@FEATURES@@ failed for @@CPV@@" >> @@REPORTFILE@@;
 fi;
