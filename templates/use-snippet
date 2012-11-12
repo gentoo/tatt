@@ -2,7 +2,11 @@ eout=$( @@USE@@ @@FEATURES@@ emerge -1 @@EMERGEOPTS@@ @@CPV@@ 2>&1 1>/dev/tty )
 if [[ $? == 0 ]] ; then
   echo "@@USE@@ @@FEATURES@@ succeeded for @@CPV@@" >> @@REPORTFILE@@;
 elif [[ "${eout}" =~ REQUIRED_USE ]] ; then
+  echo "${eout}";
   echo "@@USE@@ : REQUIRED_USE not satisfied (probably)" >> @@REPORTFILE@@;
+elif [[ "${eout}" =~ USE_CHANGES ]] ; then
+  echo "${eout}";
+  echo "@@USE@@ : USE dependencies not satisfied (probably)" >> @@REPORTFILE@@;
 else
   echo "${eout}";
   echo "@@USE@@ @@FEATURES@@ failed for @@CPV@@" >> @@REPORTFILE@@;
