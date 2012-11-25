@@ -235,7 +235,7 @@ try:
     myJob.packageList=[gP(args[0])]
     myJob.name=myJob.packageList[0].packageName()
 except IndexError:
-    print("Please call with package atom as argument")
+    print("Please call with complete package atom (including version) as argument.")
     sys.exit (1)
 
 if options.depend:
