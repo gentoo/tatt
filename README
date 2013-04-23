@@ -1,50 +1,71 @@
-_tatt (is an) arch testing tool_
-* Introduction
+tatt (is an) arch testing tool
 
-Arch testing includes many boring tasks and tatt tries to automate them.  It can be configured
-through the file ~/.tatt, an example is given below.  
+Introduction
+============
 
-* Ways to use tatt
+Arch testing includes many boring tasks and tatt tries to automate
+them.  It can be configured through the file ~/.tatt, an example is
+given below.
 
-Note that tatt uses pybugz by calling 'bugz'.  You may want to configure an alias for 'bugz' to
-contain your login-credentials or you will have to type them everytime you use tatt.
+tatt uses a template system.  Basically it fills in small bash scripts
+using data scraped off bugzilla.  You can look at the default
+templates which live in /usr/share/tatt/templates/
 
-1) Work on a stable bug no 300000. This will unmask the package and create three shell scripts for
-automated testing of useflag combis and rdeps and success-reports to bugzilla.
+tatt uses 'bugz' from www-client/pybugz.  You may want to configure an
+alias for 'bugz' to contain your login-credentials or you will have to
+type them everytime you use tatt.
 
-tatt -b300000 -j superjob
+tatt lives on github.  Forks and pull requests are welcome:
+https://github.com/tom111/tatt
 
--j specifies a jobname which will be a prefix for the scripts that tatt produces, if it is left
- empty the bugnumber will be used
+Ways to use tatt
+================
+
+1) Work on a stable bug no 300000. This will unmask the package and
+create five shell scripts.  One is for automated testing of USE-flag
+combinations, one is for testing of reverse dependencies, one is for
+committing the new keywords to CVS, one is for leaving a message on
+the bug, and finally one is for cleaning up.
+
+tatt -b300000 -j myjob
+
+-j specifies a jobname which will be a prefix for the scripts that
+tatt produces, if it is left empty the bugnumber will be used
 
 
-2) We want to stable a whole list of packages that we have saved in a file foo.
+2) If a whole list of packages should be tested, they can be specified
+in a file
 
-tatt -f foo -b bugnumber
+tatt -f myPackageFile -b bugnumber
 
-This will open the file foo, look for all atoms to be found write the scripts for useflagtesting and
-rdep testing of the two packages. If -j is omitted the filename is used.  The bugnumber is necessary
-for the commit script.
+This will open the file myPackageFile, look for all atoms in it, and
+write scripts that test/commit all packages.  If -j is omitted the
+filename is used.  The bugnumber is necessary for the commit script.
 
-3) Resolving the bug
+3) Resolving a bug
 
 Assume everything was committed and we want to resolve the bug.
 
-tatt -r bugnum -m "x86 stable, Thanks xyz" removes your arch from the cc and adds the message
-tatt -cr bugnum -m "x86 stable, Thanks, closing" also closes the bug.
+tatt -r bugnum -m "x86 stable, Thanks xyz" 
 
-4) Running individual tests:
+removes your arch from the CC field of the bug and adds the message.
 
--) Everything was successful, we want to comment on the bug. The following command will log in and
- write the 'successmessage' to the bug.
+tatt -cr bugnum -m "x86 stable, Thanks, closing" 
+
+Does the things -r does and additionally closes the bug.
+
+4) Running individual parts of tatt.
+
+-) Open a bug and leave a message (for instance after successfull
+ testing)
 
 tatt -s300000
 
--) Create the test script for reverse dependencies of foo:
+-) Create only the test script for reverse dependencies of foo:
 
 tatt -d app-bar/foo
 
--) Create the use flag testing script of foo
+-) Create only the USE-flag testing script of foo
 
 tatt -u app-bar/foo
 
