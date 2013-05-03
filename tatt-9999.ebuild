@@ -40,5 +40,5 @@ python_install_all() {
 }
 
 src_install() {
-	doman *.1
+	doman *.[1-5]
 }
