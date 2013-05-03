@@ -1,0 +1,87 @@
+.TH TATT 1
+.SH NAME
+tatt (is an) arch testing tool.
+.SH SYNOPSIS
+.B tatt
+\fI<options> [suboptions]\fB
+
+.SH DESCRIPTION
+Tatt is an arch-testing tool written for automation of frequently repeated tasks.
+
+.SH OPTIONS
+.TP 
+\fB-h, --help\fI
+Show this help message and exit.
+.TP
+\fB-d, --depend\fI
+Determine stable rdeps.
+.TP
+\fB-u, --use, --usecombis\fI
+Determine use flag combinations.
+.TP
+\fB-f INFILE, --file=INFILE\fI
+Input File containing packages.
+.TP
+\fB-j JOBNAME, --jobname=JOBNAME\fI
+Name for the job, prefix of output files.
+.TP
+\fB-b BUGNUM, --bug=BUGNUM\fI
+Do the full program for a given stable request bug
+.TP
+\fB-s SUCCBUGNUM, --success=SUCCBUGNUM\fI
+Comment that the program was successfully tested
+.TP
+\fB-r RESOLVENUM, --resolve=RESOLVENUM\fI
+Resolve the given bugnumber, needs a message
+.TP
+\fB-c, --close\fI
+Resolve the given bugnumber with closing it, needs to be combined with -r
+.TP
+\fB-m RESOLVEMESSAGE, --message=RESOLVEMESSAGE\fI
+Message for bug resolution.
+.TP
+\fB-v, --verbose\fI
+Print informative output.
+
+.SH USAGE
+.TP
+tatt -b300000 -j myjob
+Work on a stable bug no 300000. This will unmask the package and
+create five shell scripts.  One is for automated testing of USE-flag
+combinations, one is for testing of reverse dependencies, one is for
+committing the new keywords to CVS, one is for leaving a message on
+the bug, and finally one is for cleaning up.
+
+-j specifies a jobname which will be a prefix for the scripts that
+tatt produces, if it is left empty the bugnumber will be used
+
+.TP
+tatt -f myPackageFile -b bugnumber
+This will open the file myPackageFile, look for all atoms in it, and
+write scripts that test/commit all packages.  If -j is omitted the
+filename is used.  The bugnumber is necessary for the commit script.
+
+.TP
+tatt -r bugnum -m "x86 stable, Thanks xyz" 
+Removes your arch from the CC field of the bug and adds the message (assuming everything was committed and we want to resolve the bug).
+.br
+-c switch additionally closes the bug.
+.SH FILES
+~/.tatt
+.br
+/usr/share/tatt/templates/
+
+.SH SEE ALSO
+gatt(8)
+.br
+https://github.com/tom111/tatt
+
+.SH COPYRIGHT 
+This software is licensed under the GNU General Public License, version 2 (GPLv2). A copy of this license is available at http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
+
+.SH BUGS 
+Forks and pull requests are welcome on github. https://github.com/tom111/tatt
+
+.SH AUTHOR
+tatt is written and maintained by Thomas Kahle <tom111@gmx.de>
+
