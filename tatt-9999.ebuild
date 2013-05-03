@@ -33,6 +33,6 @@ src_install() {
 		insinto "/usr/share/${PN}"
 		doins -r templates || die
 	fi
-	dodoc tatt.1
+	doman tatt.1
 }
 
