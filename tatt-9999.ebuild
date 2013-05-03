@@ -11,7 +11,7 @@ inherit distutils-r1 git-2
 
 DESCRIPTION="tatt is an arch testing tool"
 HOMEPAGE="http://github.com/tom111/tatt"
-EGIT_REPO_URI="git://github.com/tpruzina/tatt.git \
+EGIT_REPO_URI="https://github.com/tom111/tatt.git \
 	git://github.com/tom111/tatt.git"
 
 LICENSE="GPL-2"
