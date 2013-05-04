@@ -1,0 +1,101 @@
+.TH TATT 5
+.SH NAME
+.TP
+tatt configuration file ~/.tatt
+.SH SYNOPSIS
+.B tatt
+~/.tatt
+.SH DESCRIPTION
+The specification of the configuration file can be found in dot-tatt-spec
+which usually resides \fI /usr/lib/${python}/site-packages/tatt \fI
+
+.SH EXAMPLE ~/.tatt
+.B
+# Regular expression to identify a portage atom 
+.br
+#atom-regexp='=?[^\s:,;<>]+/\S+-[0-9]?\S+[0-9][^\s:,;<>]?[a-z]*'
+
+.br
+# Message for the success script @@ARCH@@ will be replaced by arch
+.br
+#successmessage='Archtested on @@ARCH@@: Everything fine'
+
+.br
+#ignoreprefix contains a list of use flag prefixes to be ignored 
+.br
+#ignoreprefix="elibc_","video_cards_","linguas_","kdeenablefinal","test","debug"
+
+.br
+# The arch you are working on (be careful, only tested with x86)
+.br
+#arch=x86
+
+.br
+# Directory where your script templates are (normally you don't need to change this)
+.br
+#template-dir="/usr/share/tatt/templates/"
+
+.br
+# Where do you want tatt to put unmasked packages.
+.br
+#unmaskfile="/etc/portage/package.keywords/archtest"
+
+.br
+# You can customize the maximal number of rdeps to be tested as follows:
+.br
+#rdeps=3
+
+.br
+# You can customize the maximal number USE combis to be tested as follows:
+.br
+# Note that All USE-flags on and all USE-flags off will always be tested.
+.br
+#usecombis=3
+
+.br
+# Location of a checked out CVS Gentoo tree for repoman checks and 
+.br
+commit scripts.
+.br
+#repodir="./gentoo-x86"
+
+.br
+# Url where the pre-generated rindex is to be found
+.br
+#tinderbox-url="\fIhttp://qa-reports.gentoo.org/output/genrdeps/rindex/\fU"
+
+.br
+# If this is set, then tatt will refuse to run in a directory that
+.br
+# does not match this string.
+.br
+# Use it as a safety measure against creating tatt-scripts in random
+.br
+# places of you filesystem.
+.br
+#safedir=string(default="")
+
+.br
+# All emerge runs in the generated scripts are automatically passed
+.br
+# the -1 option.  Here you can specify additional options.
+.br
+#emergeopts="-v"
+
+.SH FILES
+~/.tatt
+.br
+/usr/lib/${python}/site-packages/tatt
+.br
+/usr/share/tatt/templates/
+
+.SH SEE ALSO
+tatt(1)
+.br
+https://github.com/tom111/tatt
+
+.SH COPYRIGHT 
+This software is licensed under the GNU General Public License, version 2 (GPLv2). A copy of this license is available at http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
+
+.SH AUTHOR
+tatt is written and maintained by Thomas Kahle <tomka@gentoo.org>
