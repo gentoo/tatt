@@ -35,10 +35,8 @@ python_install_all() {
 	distutils-r1_python_install_all
 	if use templates; then
 		insinto "/usr/share/${PN}"
-		doins -r templates || die
+		doins -r templates
 	fi
-}
-
-src_install() {
-	doman *.[1-5]
+	doman tatt.1
+	doman tatt.5
 }
