@@ -87,7 +87,7 @@ The specification of the configuration file can be found in dot-tatt-spec which 
 # successmessage='Archtested on @@ARCH@@: Everything fine'
 
 # ignoreprefix contains a list of use flag prefixes to be ignored 
-# ignoreprefix="elibc_","video_cards_","linguas_","kdeenablefinal","test","debug"
+# ignoreprefix="elibc_","video_cards_","linguas_","python_targets_","python_single_target_","kdeenablefinal","test","debug"
 
 # The arch you are working on (be careful, only tested with x86)
 # arch=x86
