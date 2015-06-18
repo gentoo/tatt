@@ -169,19 +169,19 @@ if not myJob.packageList==None:
     try:
         unmaskfile=open(config['unmaskfile'], 'r+')
     except IOError:
-        print "Your unmaskfile was not found, I will create it as"
-        print config['unmaskfile']
+        print ("Your unmaskfile was not found, I will create it as")
+        print (config['unmaskfile'])
         try:
             unmaskfile=open(config['unmaskfile'], 'w')
             unmaskfile.write(" ")
             unmaskfile.close()
         except IOError:
             # If we can't write to the file, then it should be configured differently
-            print " ".join(["Can not write to ",config['unmaskfile']])
-            print "Maybe you don't have permission or the location is invalid."
-            print " ".join(["Is",os.path.split(config['unmaskfile'])[0],"a writeable directory?"])
-            print "Probably you want to configure a different unmaskfile"
-            print "in your ~/.tatt.  Exiting"
+            print (" ".join(["Can not write to ",config['unmaskfile']]))
+            print ("Maybe you don't have permission or the location is invalid.")
+            print (" ".join(["Is",os.path.split(config['unmaskfile'])[0],"a writeable directory?"]))
+            print ("Probably you want to configure a different unmaskfile")
+            print ("in your ~/.tatt.  Exiting")
             sys.exit(1)
         unmaskfile=open(config['unmaskfile'], 'r+')
 

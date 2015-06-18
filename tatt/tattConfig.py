@@ -24,9 +24,9 @@ class tattConfig (ConfigObj):
         result = self.validate(validator)
 
         if result != True:
-            print "Config file validation failed!"
-            print "The following items could not be parsed"
+            print ("Config file validation failed!")
+            print ("The following items could not be parsed")
             for k in result.keys():
                 if result[k] == False:
-                    print k
+                    print (k)
             sys.exit(1)

@@ -44,7 +44,7 @@ def writeusecombiscript(job, config):
     outfilename = (job.name + "-useflags.sh")
     reportname = (job.name + ".report")
     if os.path.isfile(outfilename):
-        print(("WARNING: Will overwrite " + outfilename))
+        print("WARNING: Will overwrite " + outfilename)
     outfile = open(outfilename, 'w')
     outfile.write(useheader)
     for p in job.packageList:
@@ -92,7 +92,7 @@ def writerdepscript(job, config):
     outfilename = (job.name + "-rdeps.sh")
     reportname = (job.name + ".report")
     if os.path.isfile(outfilename):
-        print(("WARNING: Will overwrite " + outfilename))
+        print("WARNING: Will overwrite " + outfilename)
     outfile = open(outfilename,'w')
     outfile.write(rdepheader)
 
@@ -109,7 +109,7 @@ def writesucessreportscript (job, config):
     outfilename = (job.name + "-success.sh")
     reportname = (job.name + ".report")
     if os.path.isfile(outfilename):
-        print(("WARNING: Will overwrite " + outfilename))
+        print("WARNING: Will overwrite " + outfilename)
     outfile = open(outfilename,'w')
     outfile.write("#!/bin/sh" + '\n')
     outfile.write("if grep failed " + reportname + " >> /dev/null; then echo Failure found;\n")
@@ -118,7 +118,7 @@ def writesucessreportscript (job, config):
     outfile.write("fi;")
     os.fchmod(outfile.fileno(),0744)
     outfile.close()
-    print(("Success Report script written to " + outfilename))
+    print("Success Report script written to " + outfilename)
 
 
 ####### Write the commit script #########
@@ -135,7 +135,7 @@ def writecommitscript (job, config):
     csnippet2 = commitsnippetfile2.read().replace("@@JOB@@", job.name)
     outfilename = (job.name + "-commit.sh")
     if os.path.isfile(outfilename):
-        print(("WARNING: Will overwrite " + outfilename))
+        print("WARNING: Will overwrite " + outfilename)
     outfile = open(outfilename,'w')
     cheader = commitheaderfile.read().replace("@@JOB@@", job.name)
     cheader = cheader.replace("@@REPODIR@@", config['repodir'])
@@ -160,7 +160,7 @@ def writecommitscript (job, config):
         elif job.type=="keyword":
             newkeyword="~"+config['arch']
         else:
-            print "No job type? Can't continue. This is a bug"
+            print ("No job type? Can't continue. This is a bug")
             sys.exit(1)
         s = s.replace("@@NEWKEYWORD@@", newkeyword)
         # Prepare a list of ebuild names strings
@@ -183,7 +183,7 @@ def writecommitscript (job, config):
     outfile.write (commitfooterfile.read().replace("@@ARCH@@", config['arch']).replace("@@BUG@@", job.bugnumber))
     os.fchmod(outfile.fileno(),0744)
     outfile.close()
-    print(("Commit script written to " + outfilename))
+    print("Commit script written to " + outfilename)
 
 
 ######## Write clean-up script ##############
@@ -192,14 +192,14 @@ def writeCleanUpScript (job, config):
         cleanUpTemplate=open(config['template-dir'] + "cleanup", 'r')
     except IOError:
         print("Clean-Up template not found in" + config['template-dir'])
-        print "No clean-up script written"
+        print("No clean-up script written")
         return
     script = cleanUpTemplate.read().replace("@@JOB@@", job.name)
     script = script.replace("@@CPV@@", job.name)
     script = script.replace("@@KEYWORDFILE@@", config['unmaskfile'])
     outfilename = (job.name + "-cleanup.sh")
     if os.path.isfile(outfilename):
-        print(("WARNING: Will overwrite " + outfilename))
+        print("WARNING: Will overwrite " + outfilename)
     outfile = open(outfilename,'w')
     outfile.write(script)
     os.fchmod(outfile.fileno(),0744)
