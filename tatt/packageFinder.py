@@ -7,8 +7,7 @@ def findPackages (s, regexp):
     """ Given a string s,
         and a compiled regexp regexp
         return all gentooPacakges that can be identified in the string"""
-    
+
     # Should it be this simple?
     return [gP(ps) for ps in  regexp.findall(s)]
     # Yes, it is...
-

@@ -8,7 +8,7 @@ class gentooPackage(object):
        name
        version
     of a Gentoo package"""
-    
+
     def __init__(self, st):
         """An atom is initialized from an atom string"""
         if st[0] == '=': st = st[1:]
@@ -56,4 +56,3 @@ class gentooPackage(object):
             return  "/".join([self.category, self.name])
         else:
             return ( "=" + "/".join([self.category, "-".join([self.name, self.ver])]))
-        

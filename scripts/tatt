@@ -53,25 +53,25 @@ parser.add_option("-b", "--bug",
                   # and leave it as a string
                   action="store")
 parser.add_option("-s", "--success",
-		  help="Comment that the program was successfully tested",
+                  help="Comment that the program was successfully tested",
                   dest="succbugnum",
-		  action="store")
+                  action="store")
 parser.add_option("-r", "--resolve",
-		  help="Resolve the given bugnumber, needs a message",
+                  help="Resolve the given bugnumber, needs a message",
                   dest="resolvenum",
-		  action="store")
+                  action="store")
 parser.add_option("-c", "--close",
-		  help="Resolve the given bugnumber with closing it, needs to be combined with -r",
+                  help="Resolve the given bugnumber with closing it, needs to be combined with -r",
                   dest="close",
-		  action="store_true")
+                  action="store_true")
 parser.add_option("-m", "--message",
-		  help="Message for bug resolution.",
+                  help="Message for bug resolution.",
                   dest="resolvemessage",
-		  action="store")
+                  action="store")
 parser.add_option("-v", "--verbose",
-		  help="Print informative output.",
+                  help="Print informative output.",
                   dest="verbose",
-		  action="store_true",
+                  action="store_true",
                   default = False)
 
 (options,args) = parser.parse_args()
@@ -115,7 +115,7 @@ if options.succbugnum:
 myJob = job()
 
 ## If -f and a filename have been given:
-if options.infile: 
+if options.infile:
     try:
         packfile=open(options.infile, 'r')
     except IOError:
@@ -161,7 +161,7 @@ if not myJob.packageList==None:
         myJob.name = myJob.packageList[0].packageName()
     print ("Jobname: " + myJob.name)
     ## Determine jobtype
-    
+
     for p in myJob.packageList:
         print("Found the following package atom : " + p.packageString())
 

@@ -22,7 +22,7 @@ class tattConfig (ConfigObj):
         # Validate against the specfile
         validator = Validator()
         result = self.validate(validator)
-        
+
         if result != True:
             print "Config file validation failed!"
             print "The following items could not be parsed"
@@ -30,5 +30,3 @@ class tattConfig (ConfigObj):
                 if result[k] == False:
                     print k
             sys.exit(1)
-
-

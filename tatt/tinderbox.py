@@ -79,9 +79,8 @@ def stablerdeps (package, config):
         out = p2.communicate()[0]
         if out == '': continue
         else : outlist.append(samp)
-        
+
     if len(outlist) > config['rdeps']:
         print("More than " + config['rdeps'] + " stable rdeps, took a sample. \n")
     return outlist
-    
 #############################

@@ -17,4 +17,3 @@ def unique(seq, idfun=None):
             seen[marker] = 1
             result.append(item)
     return result
-

@@ -7,7 +7,7 @@ class job(object):
     - type (either 'stable', 'keyword')
     - list of packages
     """
-    
+
     def __init__(self,
                  name="",
                  bugnumber=0,
@@ -17,4 +17,3 @@ class job(object):
         self.bugnumber=bugnumber
         self.type=type
         self.packageList=packageList
-

@@ -54,7 +54,6 @@ def writeusecombiscript(job, config):
     # integer retrieved by fileno().
     os.fchmod(outfile.fileno(),0744)
     outfile.close()
-    
 
 ######################################
 
@@ -205,4 +204,3 @@ def writeCleanUpScript (job, config):
     outfile.write(script)
     os.fchmod(outfile.fileno(),0744)
     outfile.close()
-
