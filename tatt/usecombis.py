@@ -14,7 +14,7 @@ def findUseFlagCombis (package, config):
     The output will be a list each containing a ready to use USE=... string
     """
     uses=Popen('equery -C uses '+package.packageString()+' | cut -f 1 | cut -c 2-40 | xargs',
-               shell=True, stdout=PIPE).communicate()[0]
+               shell=True, stdout=PIPE).communicate()[0].decode('utf-8')
     uselist=uses.split()
     # The uselist could have duplicates due to slot-conditional
     # output of equery

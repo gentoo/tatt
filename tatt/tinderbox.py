@@ -76,7 +76,7 @@ def stablerdeps (package, config):
         outlist2.remove(samp)
         eixcall = ["eix", "--stable", "--only-names", "--exact", samp[0]]
         p2 = Popen(eixcall, stdout=PIPE)
-        out = p2.communicate()[0]
+        out = p2.communicate()[0].decode('utf-8')
         if out == '': continue
         else : outlist.append(samp)
 
