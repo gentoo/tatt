@@ -32,7 +32,7 @@ def stablerdeps (package, config):
 
     socket.setdefaulttimeout(45)
     try:
-        download = urlopen(tinderbox + atom).read()
+        download = urlopen(tinderbox + atom).read().decode('utf-8')
     except HTTPError as e:
         # Cleanup the timeout:
         socket.setdefaulttimeout(None)
