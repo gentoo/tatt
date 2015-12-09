@@ -194,12 +194,12 @@ if not myJob.packageList==None:
         else:
             unmaskfile.write(p.packageString())
             if myJob.type=="stable":
-                unmaskfile.write("\n")
+                pass
             elif myJob.type=="keyword":
-                unmaskfile.write(" ** \n")
+                unmaskfile.write(" ** ")
             else:
                 print ("Uh Oh, no job.type? Tell tomka@gentoo.org to fix this!")
-                unmaskfile.write("\n")
+            unmaskfile.write("  # Job " + myJob.name + "\n")
             print ("Unmasked " + p.packageString()+ " in "+config['unmaskfile'])
     unmaskfile.close()
     ## Write the scripts
