@@ -110,12 +110,15 @@ def writesucessreportscript (job, config):
     reportname = (job.name + ".report")
     if os.path.isfile(outfilename):
         print("WARNING: Will overwrite " + outfilename)
+    try:
+        updatebugtemplate=open(config['template-dir'] + "updatebug", 'r')
+    except IOError:
+        print("updatebug not found in " + config['template-dir'])
+        sys.exit(1)
+    updatebug=updatebugtemplate.read().replace("@@ARCH@@", config['arch'])
+    updatebug=updatebug.replace("@@BUG@@", job.bugnumber)
     outfile = open(outfilename,'w')
-    outfile.write("#!/bin/sh" + '\n')
-    outfile.write("if grep failed " + reportname + " >> /dev/null; then echo Failure found;\n")
-    succmess = config['successmessage'].replace("@@ARCH@@", config['arch'])
-    outfile.write("else bugz modify " + job.bugnumber + ' -c' + "\"" + succmess + "\";\n")
-    outfile.write("fi;")
+    outfile.write(updatebug)
     os.fchmod(outfile.fileno(),484)
     outfile.close()
     print("Success Report script written to " + outfilename)

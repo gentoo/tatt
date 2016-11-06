@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+# Copyright 2016 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+import portage.versions
+import requests
+from tatt.tattConfig import tattConfig as tattConfig
+
+
+def main():
+	tattconfig = tattConfig()
+	session = requests.Session()
+	session.params.update({'Bugzilla_api_key': tattconfig['bugzilla-key']})
+
+	bug_url = tattconfig['bugzilla-url']
+	bug_id = str(@@BUG@@)
+
+	params = {'id': bug_id}
+	response = session.get(tattconfig['bugzilla-url'] + '/rest/bug', params=params).json()['bugs'][0]
+
+	has_my_arch = False
+	has_other_arches = False
+	for cc in response['cc']:
+		body, domain = cc.split('@', 1)
+		if domain == 'gentoo.org':
+			if body == '@@ARCH@@':
+				has_my_arch = True
+			elif body in portage.archlist:
+				has_other_arches = True
+
+	# We don't close bugs which still have other arches for obvious reasons,
+	# and security bugs because stabilization is not the last step for them.
+	params['cc'] = {}
+	params['cc']['remove'] = ['@@ARCH@@@gentoo.org']
+	params['comment'] = {}
+	if has_other_arches or 'Security' in response['product']:
+		params['comment']['body'] = '@@ARCH@@ stable'
+	else:
+		params['comment']['body'] = '@@ARCH@@ stable, closing'
+		params['status'] = 'RESOLVED'
+		params['resolution'] = 'FIXED'
+
+	session.put(tattconfig['bugzilla-url'] + '/rest/bug/' + bug_id, json=params)
+
+if __name__ == '__main__':
+	main()
