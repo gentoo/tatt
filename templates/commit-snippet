@@ -1,13 +1,5 @@
-# Code for keywording @@EBUILD@@
-cd @@CP@@
+pushd @@CP@@ > /dev/null
 
-cvs up
 ekeyword @@NEWKEYWORD@@ @@EBUILD@@
-echangelog "marked @@NEWKEYWORD@@ per bug @@BUG@@" || {
-	echo " *** echangelog failed"
-	exit 1
-}
-repoman manifest 
 
-cd ../..
-## @@CP@@ done
+popd > /dev/null

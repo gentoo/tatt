@@ -1,8 +1,9 @@
 # Code for checking consistency of @@EBUILD@@
-cd @@CP@@
+pushd @@CP@@ > /dev/null
 
 repoman -d full || exit 1
-repoman -m "marked @@NEWKEYWORD@@ per bug @@BUG@@" commit || exit 1
+repoman -m "@@CP@@: @@NEWKEYWORD@@ stable
 
-cd ../..
-## @@CP@@ done
+Gentoo-bug: @@BUG@@" commit || exit 1
+
+popd > /dev/null
