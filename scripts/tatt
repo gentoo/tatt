@@ -163,7 +163,7 @@ if options.bugnum:
 # joint code for -f and -b
 ##########################
 
-if not myJob.packageList==None:
+if myJob.packageList is not None and len(myJob.packageList) > 0:
     ## Assigning jobname
     if options.jobname:
         myJob.name = options.jobname
