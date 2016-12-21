@@ -5,6 +5,8 @@ from subprocess import *
 import sys
 import re
 import os
+import base64
+import requests
 
 from tatt.gentooPackage import gentooPackage as gP
 import tatt.packageFinder as packageFinder
@@ -18,6 +20,8 @@ from tatt.job import job as job
 
 ##### Generate a global config obj, reading from ~/.tatt #####
 config = tattConfig()
+session = requests.Session()
+session.params.update({'Bugzilla_api_key': config['bugzilla-key']})
 
 ######### Main program starts here ###############
 
@@ -123,22 +127,19 @@ if options.infile:
         sys.exit(1)
     packraw = packfile.read()
     packfile.close()
-    myJob.packageList = packageFinder.findPackages(packraw, re.compile(config['atom-regexp']))
+    myJob.packageList = packageFinder.findPackages(packraw, config['arch'])
 
 ## -b and a bugnumber was given ?
 if options.bugnum:
     print("Bugnumber:  " + options.bugnum)
     myJob.bugnumber=options.bugnum
-    p1 = Popen(['bugz', 'get', myJob.bugnumber, '-n'], stdout=PIPE)
-    # This returns a bytes encoded string, but we need standard utf-8
-    # to use a string object via its buffer API. -> decode.
-    bugraw = p1.communicate()[0].decode('utf-8')
-    bugtitle = [l for l in bugraw.splitlines() if 'Title' in l][0]
-    if re.search('KEYWORDREQ', bugraw):
+    params = {"id": options.bugnum}
+    response = session.get(config["bugzilla-url"] + "/rest/bug", params=params).json()["bugs"][0]
+    if "KEYWORDREQ" in response["keywords"] or response["component"] == "Keywording":
         # This is a keywording bug:
         print ("Keywording bug detected.")
         myJob.type="keyword"
-    elif re.search('STABLEREQ', bugraw):
+    elif "STABLEREQ" in response["keywords"] or response["component"] == "Stabilization":
         # Stablebug
         print ("Stabilization bug detected.")
         myJob.type="stable"
@@ -147,7 +148,17 @@ if options.bugnum:
         sys.exit(1)
     # If myJob.packageList is still empty we search in the bug-title
     if myJob.packageList==None:
-        myJob.packageList = packageFinder.findPackages(bugtitle, re.compile(config['atom-regexp']))
+        if response["cf_stabilisation_atoms"]:
+            myJob.packageList = packageFinder.findPackages(response["cf_stabilisation_atoms"], config['arch'])
+        else:
+            response = session.get(config["bugzilla-url"] + "/rest/bug/{}/attachment".format(options.bugnum), params=params).json()["bugs"][str(options.bugnum)]
+            for attachment in response:
+                if attachment["is_obsolete"] == 1:
+                    continue
+                for flag in attachment['flags']:
+                    if flag["name"] == "stabilization-list" and flag["status"] == '+':
+                        myJob.packageList = packageFinder.findPackages(base64.b64decode(attachment["data"]).decode("utf8"), config['arch'])
+
 
 # joint code for -f and -b
 ##########################

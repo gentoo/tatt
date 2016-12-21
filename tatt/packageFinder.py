@@ -1,13 +1,17 @@
-"""module for identifying package names in files and strings"""
+"""module for extracting packages from a package/architecture list """
 
-import re
 from .gentooPackage import gentooPackage as gP
 
-def findPackages (s, regexp):
+def findPackages (s, arch):
     """ Given a string s,
-        and a compiled regexp regexp
-        return all gentooPacakges that can be identified in the string"""
+        and a string arch
+        return all gentooPackages from that string that need actioning on that arch """
 
-    # Should it be this simple?
-    return [gP(ps) for ps in  regexp.findall(s)]
-    # Yes, it is...
+    packages = []
+
+    for line in s.splitlines():
+        atom, _, arches = line.partition(' ')
+        if not arches or arch in arches.split(' '):
+            packages.append(gP(atom))
+
+    return(packages)
