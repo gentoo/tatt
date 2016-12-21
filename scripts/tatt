@@ -200,7 +200,7 @@ if myJob.packageList is not None and len(myJob.packageList) > 0:
     unmaskfileContent = unmaskfile.read()
     for p in myJob.packageList:
         # Test if unmaskfile already contains the atom
-        if re.search(p.packageString(), unmaskfileContent):
+        if re.search(re.escape(p.packageString()), unmaskfileContent):
             print (p.packageString() + " already in "+config['unmaskfile'])
         else:
             unmaskfile.write(p.packageString())
