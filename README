@@ -80,9 +80,6 @@ The specification of the configuration file can be found in dot-tatt-spec which 
 ####### EXAMPLE ~/.tatt ############
 # Here we show the possible options together with their default values
 
-# Regular expression to identify a portage atom
-# atom-regexp='=?[^\s:,;<>]+/\S+-[0-9]?\S+[0-9][^\s:,;<>]?[a-z]*'
-
 # Message for the success script @@ARCH@@ will be replaced by arch
 # successmessage='Archtested on @@ARCH@@: Everything fine'
 

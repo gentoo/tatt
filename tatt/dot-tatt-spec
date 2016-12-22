@@ -1,4 +1,3 @@
-atom-regexp=string(default="=?[^\s:,;<>]+/\S+-[0-9]?\S+[0-9][^\s:,;<>]?[a-z]*")
 successmessage=string(default="Archtested on @@ARCH@@: Everything fine")
 ignoreprefix=string_list(default=list("elibc_","video_cards_","linguas_","python_targets_","python_single_target_","kdeenablefinal","test","debug"))
 template-dir=string(default="/usr/share/tatt/templates/")
