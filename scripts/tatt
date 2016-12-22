@@ -134,7 +134,11 @@ if options.bugnum:
     print("Bugnumber:  " + options.bugnum)
     myJob.bugnumber=options.bugnum
     params = {"id": options.bugnum}
-    response = session.get(config["bugzilla-url"] + "/rest/bug", params=params).json()["bugs"][0]
+    response = session.get(config["bugzilla-url"] + "/rest/bug", params=params).json()
+    if "message" in response:
+        print(response["message"])
+        sys.exit(1)
+    response = response["bugs"][0]
     if "KEYWORDREQ" in response["keywords"] or response["component"] == "Keywording":
         # This is a keywording bug:
         print ("Keywording bug detected.")

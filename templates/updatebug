@@ -4,6 +4,7 @@
 
 import portage.versions
 import requests
+import sys
 from tatt.tattConfig import tattConfig as tattConfig
 
 
@@ -16,7 +17,13 @@ def main():
 	bug_id = str(@@BUG@@)
 
 	params = {'id': bug_id}
-	response = session.get(tattconfig['bugzilla-url'] + '/rest/bug', params=params).json()['bugs'][0]
+	response = session.get(tattconfig['bugzilla-url'] + '/rest/bug', params=params).json()
+
+	if 'message' in response:
+		print(response['message'])
+		sys.exit(1)
+
+	response = response['bugs'][0]
 
 	has_my_arch = False
 	has_other_arches = False
