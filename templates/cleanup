@@ -1,6 +1,6 @@
 #!/bin/bash
 ## Clean-up the keywordfile 
-sed -i "/@@CPV@@/d" @@KEYWORDFILE@@
+sed -i "/# Job @@CPV@@$/d" @@KEYWORDFILE@@
 
 # Remove all files associated to the job:
 rm -f @@JOB@@-*
