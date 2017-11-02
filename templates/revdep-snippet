@@ -4,7 +4,7 @@ if [[ $? == 0 ]] ; then
 elif [[ "${eout}" =~ REQUIRED_USE ]] ; then
   echo "${eout}";
   echo "@@CPV@@ : REQUIRED_USE not satisfied (probably) for " >> @@REPORTFILE@@;
-elif [[ "${eout}" =~ USE_CHANGES ]] ; then
+elif [[ "${eout}" =~ USE\ changes ]] ; then
   echo "${eout}";
   echo "@@CPV@@ : USE dependencies not satisfied (probably)" >> @@REPORTFILE@@;
 else
