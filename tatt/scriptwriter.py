@@ -83,8 +83,16 @@ def rdepTestString(rdep, config):
         sys.exit(1)
     rdepsnippet=rdepsnippetfile.read()
     snip = rdepsnippet.replace("@@FEATURES@@", "FEATURES=\"${FEATURES} test\"")
-    ustring = "USE=\'" + " ".join([st for st in rdep[1] if not st[0] == "!"]) + " "
-    ustring = ustring + " ".join(["-" + st[1:] for st in rdep[1] if st[0] == "!"]) + "\'"
+    uflags = []
+    for st in rdep[1]:
+        st = st.strip()
+        if len(st) == 0:
+            continue
+        if st[0] == "!":
+            uflags.append("-" + st[1:])
+        else:
+            uflags.append(st)
+    ustring = "USE=\'" + " ".join(uflags) + "\'"
     snip = snip.replace("@@USE@@", ustring)
     snip = snip.replace("@@CPV@@", rdep[0] )
     snip = snip.replace("@@EMERGEOPTS@@", config['emergeopts'])
