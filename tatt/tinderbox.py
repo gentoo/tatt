@@ -81,6 +81,6 @@ def stablerdeps (package, config):
         else : outlist.append(samp)
 
     if len(outlist2) > 0:
-        print("More than " + str(config['rdeps']) + " stable rdeps, took a sample. \n")
+        print("More than " + str(config['rdeps']) + " stable rdeps for " + atom + ", took a sample. \n")
     return outlist
 #############################
