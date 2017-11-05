@@ -52,7 +52,7 @@ def writeusecombiscript(job, config):
         outfile.write(useCombiTestString(p, config).replace("@@REPORTFILE@@",reportname))
     # Note: fchmod needs the filedescriptor which is an internal
     # integer retrieved by fileno().
-    os.fchmod(outfile.fileno(),484)  # 484 = 0744 = rwxr--r--
+    os.fchmod(outfile.fileno(), 0o744)  # rwxr--r--
     outfile.close()
 
 ######################################
@@ -100,7 +100,7 @@ def writerdepscript(job, config):
         # Todo: remove duplicates
         localsnippet = rdepTestString (r, config)
         outfile.write(localsnippet.replace("@@REPORTFILE@@", reportname))
-    os.fchmod(outfile.fileno(),484)
+    os.fchmod(outfile.fileno(), 0o744)
     outfile.close()
 
 
@@ -119,7 +119,7 @@ def writesucessreportscript (job, config):
     updatebug=updatebug.replace("@@BUG@@", job.bugnumber)
     outfile = open(outfilename,'w')
     outfile.write(updatebug)
-    os.fchmod(outfile.fileno(),484)
+    os.fchmod(outfile.fileno(), 0o744)
     outfile.close()
     print("Success Report script written to " + outfilename)
 
@@ -184,7 +184,7 @@ def writecommitscript (job, config):
         outfile.write(s)
     # Footer (committing)
     outfile.write (commitfooterfile.read().replace("@@ARCH@@", config['arch']).replace("@@BUG@@", job.bugnumber))
-    os.fchmod(outfile.fileno(),484)
+    os.fchmod(outfile.fileno(), 0o744)
     outfile.close()
     print("Commit script written to " + outfilename)
 
@@ -205,5 +205,5 @@ def writeCleanUpScript (job, config):
         print("WARNING: Will overwrite " + outfilename)
     outfile = open(outfilename,'w')
     outfile.write(script)
-    os.fchmod(outfile.fileno(),484)
+    os.fchmod(outfile.fileno(), 0o744)
     outfile.close()
