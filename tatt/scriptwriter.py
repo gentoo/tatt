@@ -2,6 +2,7 @@
 
 import random
 import os
+import portage
 import sys
 
 from .usecombis import findUseFlagCombis
@@ -40,6 +41,9 @@ def writeusecombiscript(job, config):
     except IOError:
         print("use-header not found in " + config['template-dir'])
         sys.exit(1)
+
+    port = portage.db[portage.root]["porttree"].dbapi
+
     useheader=useheaderfile.read().replace("@@JOB@@", job.name)
     outfilename = (job.name + "-useflags.sh")
     reportname = (job.name + ".report")
@@ -48,6 +52,19 @@ def writeusecombiscript(job, config):
     outfile = open(outfilename, 'w')
     outfile.write(useheader)
     for p in job.packageList:
+        # check if the package already has the needed keywords
+        if config['arch']:
+            kw = port.aux_get(p.packageString()[1:], ["KEYWORDS"])
+            if len(kw) > 0:
+                kwl = kw[0].split()
+                try:
+                    kwl.index(config['arch'])
+                    # the list of keywords in portage already contains the target
+                    # keyword, skip this package
+                    continue
+                except ValueError:
+                    pass
+
         outfile.write("# Code for " + p.packageCatName() + "\n")
         outfile.write(useCombiTestString(p, config).replace("@@REPORTFILE@@",reportname))
     # Note: fchmod needs the filedescriptor which is an internal
