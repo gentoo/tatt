@@ -154,6 +154,8 @@ if options.bugnum:
     if myJob.packageList==None:
         if response["cf_stabilisation_atoms"]:
             myJob.packageList = packageFinder.findPackages(response["cf_stabilisation_atoms"], config['arch'])
+            if len(myJob.packageList) == 0 and ("KEYWORDREQ" in response["keywords"] or response["component"] == "Keywording"):
+                myJob.packageList = packageFinder.findPackages(response["cf_stabilisation_atoms"], '~' + config['arch'])
         else:
             response = session.get(config["bugzilla-url"] + "/rest/bug/{}/attachment".format(options.bugnum), params=params).json()["bugs"][str(options.bugnum)]
             for attachment in response:
