@@ -7,6 +7,9 @@ elif [[ "${eout}" =~ REQUIRED_USE ]] ; then
 elif [[ "${eout}" =~ USE\ changes ]] ; then
   echo "${eout}"
   echo "@@USE@@ : USE dependencies not satisfied (probably)" >> @@REPORTFILE@@
+elif [[ "${eout}" =~ keyword\ changes ]]; then
+  echo "${eout}"
+  echo "@@USE@@ : unkeyworded dependencies (probably)" >> @@REPORTFILE@@
 else
   echo "${eout}"
   echo "@@USE@@ @@FEATURES@@ failed for @@CPV@@" >> @@REPORTFILE@@
