@@ -3,13 +3,13 @@ if [[ $? == 0 ]] ; then
   echo "@@USE@@ @@FEATURES@@ succeeded for @@CPV@@" >> @@REPORTFILE@@
 elif [[ "${eout}" =~ REQUIRED_USE ]] ; then
   echo "${eout}"
-  echo "@@USE@@ : REQUIRED_USE not satisfied (probably)" >> @@REPORTFILE@@
+  echo "@@USE@@ : REQUIRED_USE not satisfied (probably) for @@CPV@@" >> @@REPORTFILE@@
 elif [[ "${eout}" =~ USE\ changes ]] ; then
   echo "${eout}"
-  echo "@@USE@@ : USE dependencies not satisfied (probably)" >> @@REPORTFILE@@
+  echo "@@USE@@ : USE dependencies not satisfied (probably) for @@CPV@@" >> @@REPORTFILE@@
 elif [[ "${eout}" =~ keyword\ changes ]]; then
   echo "${eout}"
-  echo "@@USE@@ : unkeyworded dependencies (probably)" >> @@REPORTFILE@@
+  echo "@@USE@@ : unkeyworded dependencies (probably) for @@CPV@@" >> @@REPORTFILE@@
 else
   echo "${eout}"
   echo "@@USE@@ @@FEATURES@@ failed for @@CPV@@" >> @@REPORTFILE@@
