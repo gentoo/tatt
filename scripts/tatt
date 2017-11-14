@@ -175,6 +175,8 @@ if myJob.packageList is not None and len(myJob.packageList) > 0:
         myJob.name = options.jobname
     elif options.infile:
         myJob.name = options.infile
+    elif options.bugnum:
+        myJob.name = myJob.packageList[0].packageName() + '-' + options.bugnum
     else:
         myJob.name = myJob.packageList[0].packageName()
     print ("Jobname: " + myJob.name)
