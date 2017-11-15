@@ -16,5 +16,5 @@ setup(name = "tatt",
       description = "tatt is an arch testing tool",
       license = "GPL-2",
       keywords = "gentoo arch testing",
-      url = "http://github.com/tom111/tatt",   # project home page
+      url = "http://github.com/gentoo/tatt",   # project home page
       )
