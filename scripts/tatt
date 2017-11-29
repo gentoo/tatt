@@ -144,7 +144,7 @@ if options.bugnum:
         # This is a keywording bug:
         print ("Keywording bug detected.")
         myJob.type="keyword"
-    elif "STABLEREQ" in response["keywords"] or response["component"] == "Stabilization":
+    elif "STABLEREQ" in response["keywords"] or response["component"] == "Stabilization" or response["component"] == "Vulnerabilities":
         # Stablebug
         print ("Stabilization bug detected.")
         myJob.type="stable"
