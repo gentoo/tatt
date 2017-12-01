@@ -74,6 +74,7 @@ def writeusecombiscript(job, config):
 
         outfile.write("# Code for " + p.packageCatName() + "\n")
         outfile.write(useCombiTestString(job.name, p, config))
+        outfile.write("echo >> " + reportname + "\n")
     # Note: fchmod needs the filedescriptor which is an internal
     # integer retrieved by fileno().
     os.fchmod(outfile.fileno(), 0o744)  # rwxr--r--
