@@ -61,6 +61,7 @@ def writeusecombiscript(job, config):
                     kwl.index(config['arch'])
                     # the list of keywords in portage already contains the target
                     # keyword, skip this package
+                    print("skipping " + p.packageString() + " as it is already stable")
                     continue
                 except ValueError:
                     pass
