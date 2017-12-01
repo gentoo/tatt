@@ -11,17 +11,29 @@ from .tool import unique
 
 #### USE-COMBIS ########
 
-def useCombiTestString(pack, config):
-    """ Build with diffent useflag combis """
+def scriptTemplate(jobname, config, filename):
+    """ open snippet file and replace common placeholders """
     try:
-        usesnippetfile=open(config['template-dir'] + "use-snippet", 'r')
+        snippetfile=open(config['template-dir'] + filename, 'r')
     except IOError:
         print("use-snippet not found in " + config['template-dir'])
         sys.exit(1)
+
+    reportname = jobname + ".report"
+
+    snippet = snippetfile.read()
+    snippet = snippet.replace("@@EMERGEOPTS@@", config['emergeopts'])
+    snippet = snippet.replace("@@JOB@@", jobname)
+    snippet = snippet.replace("@@ARCH@@", config['arch'])
+    snippet = snippet.replace("@@REPORTFILE@@", reportname)
+    return snippet
+
+def useCombiTestString(jobname, pack, config):
+    """ Build with diffent useflag combis """
+    usesnippet = scriptTemplate(jobname, config, "use-snippet")
+
     s = "" # This will contain the resulting string
-    usesnippet = usesnippetfile.read()
     usesnippet = usesnippet.replace("@@CPV@@", pack.packageString() )
-    usesnippet = usesnippet.replace("@@EMERGEOPTS@@", config['emergeopts'])
     usecombis = findUseFlagCombis (pack, config)
     for uc in usecombis:
         localsnippet = usesnippet.replace("@@USE@@", uc)
@@ -36,15 +48,10 @@ def useCombiTestString(pack, config):
 def writeusecombiscript(job, config):
     # job is a tatt job object
     # config is a tatt configuration
-    try:
-        useheaderfile=open(config['template-dir'] + "use-header", 'r')
-    except IOError:
-        print("use-header not found in " + config['template-dir'])
-        sys.exit(1)
+    useheader = scriptTemplate(job.name, config, "use-header")
 
     port = portage.db[portage.root]["porttree"].dbapi
 
-    useheader=useheaderfile.read().replace("@@JOB@@", job.name)
     outfilename = (job.name + "-useflags.sh")
     reportname = (job.name + ".report")
     if os.path.isfile(outfilename):
@@ -66,7 +73,7 @@ def writeusecombiscript(job, config):
                     pass
 
         outfile.write("# Code for " + p.packageCatName() + "\n")
-        outfile.write(useCombiTestString(p, config).replace("@@REPORTFILE@@",reportname))
+        outfile.write(useCombiTestString(job.name, p, config))
     # Note: fchmod needs the filedescriptor which is an internal
     # integer retrieved by fileno().
     os.fchmod(outfile.fileno(), 0o744)  # rwxr--r--
@@ -75,13 +82,9 @@ def writeusecombiscript(job, config):
 ######################################
 
 ############ RDEPS ################
-def rdepTestString(rdep, config):
-    try:
-        rdepsnippetfile=open(config['template-dir'] + "revdep-snippet", 'r')
-    except IOError:
-        print("revdep-snippet not found in " + config['template-dir'])
-        sys.exit(1)
-    rdepsnippet=rdepsnippetfile.read()
+def rdepTestString(jobname, rdep, config):
+    rdepsnippet = scriptTemplate(jobname, config, "revdep-snippet")
+
     snip = rdepsnippet.replace("@@FEATURES@@", "FEATURES=\"${FEATURES} test\"")
     uflags = []
     for st in rdep[1]:
@@ -108,14 +111,8 @@ def writerdepscript(job, config):
         return
 
     # If there are rdeps, write the script
-    try:
-        rdepheaderfile=open(config['template-dir'] + "revdep-header", 'r')
-    except IOError:
-        print("revdep-header not found in " + config['template-dir'])
-        sys.exit(1)
-    rdepheader=rdepheaderfile.read().replace("@@JOB@@", job.name)
+    rdepheader = scriptTemplate(job.name, config, "revdep-header")
     outfilename = (job.name + "-rdeps.sh")
-    reportname = (job.name + ".report")
     if os.path.isfile(outfilename):
         print("WARNING: Will overwrite " + outfilename)
     outfile = open(outfilename,'w')
@@ -123,8 +120,7 @@ def writerdepscript(job, config):
 
     for r in rdeps:
         # Todo: remove duplicates
-        localsnippet = rdepTestString (r, config)
-        outfile.write(localsnippet.replace("@@REPORTFILE@@", reportname))
+        outfile.write(rdepTestString(job.name, r, config))
     os.fchmod(outfile.fileno(), 0o744)
     outfile.close()
 
