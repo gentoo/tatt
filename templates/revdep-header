@@ -2,3 +2,21 @@
 # Reverse dependency testing for @@JOB@@
 
 trap "echo 'signal captured, exiting the entire script...'; exit" SIGHUP SIGINT SIGTERM 
+
+function tatt_pkg_error
+{
+  local eout=${2}
+
+  echo "${eout}"
+
+  if [[ "${eout}" =~ REQUIRED_USE ]] ; then
+    echo "USE='${USE}' : REQUIRED_USE not satisfied (probably) for ${1:?}" >> @@REPORTFILE@@
+  elif [[ "${eout}" =~ USE\ changes ]] ; then
+    echo "USE='${USE}' : USE dependencies not satisfied (probably) for ${1:?}" >> @@REPORTFILE@@
+  elif [[ "${eout}" =~ keyword\ changes ]]; then
+    echo "USE='${USE}' : unkeyworded dependencies (probably) for ${1:?}" >> @@REPORTFILE@@
+  else
+    echo "USE='${USE}' FEATURES='${FEATURES}' failed for ${1:?}" >> @@REPORTFILE@@
+  fi
+}
+
