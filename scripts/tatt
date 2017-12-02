@@ -5,6 +5,7 @@ from subprocess import *
 import sys
 import re
 import os
+import portage
 import base64
 import requests
 
@@ -182,8 +183,26 @@ if myJob.packageList is not None and len(myJob.packageList) > 0:
     print ("Jobname: " + myJob.name)
     ## Determine jobtype
 
+    port = portage.db[portage.root]["porttree"].dbapi
+
+    filteredPackages = []
     for p in myJob.packageList:
         print("Found the following package atom : " + p.packageString())
+        # check if the package already has the needed keywords
+        if config['arch']:
+            kw = port.aux_get(p.packageString()[1:], ["KEYWORDS"])
+            if len(kw) > 0:
+                kwl = kw[0].split()
+                try:
+                    kwl.index(config['arch'])
+                    # the list of keywords in portage already contains the target
+                    # keyword, skip this package
+                    print("\talready stable")
+                    continue
+                except ValueError:
+                    filteredPackages.append(p)
+
+    myJob.packageList = filteredPackages
 
     # Unmasking:
     try:
