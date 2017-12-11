@@ -186,18 +186,23 @@ if myJob.packageList is not None and len(myJob.packageList) > 0:
     port = portage.db[portage.root]["porttree"].dbapi
 
     filteredPackages = []
-    for p in myJob.packageList:
-        print("Found the following package atom : " + p.packageString())
-        # check if the package already has the needed keywords
-        if config['arch']:
+
+    if config['arch']:
+        targetarch = config['arch']
+        if myJob.type == "keyword":
+            targetarch = '~' + targetarch
+
+        for p in myJob.packageList:
+            print("Found the following package atom : " + p.packageString())
+            # check if the package already has the needed keywords
             kw = port.aux_get(p.packageString()[1:], ["KEYWORDS"])
             if len(kw) > 0:
                 kwl = kw[0].split()
                 try:
-                    kwl.index(config['arch'])
+                    kwl.index(targetarch)
                     # the list of keywords in portage already contains the target
                     # keyword, skip this package
-                    print("\talready stable")
+                    print("\talready marked " + targetarch)
                     continue
                 except ValueError:
                     filteredPackages.append(p)
