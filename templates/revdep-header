@@ -9,18 +9,25 @@ function tatt_pkg_error
 
   echo "${eout}"
 
+  if [ -n "${USE}" ]; then
+    echo -n "USE='${USE}'" >> @@REPORTFILE@@
+  fi
+  if [ -n "${FEATURES}" ]; then
+    echo -n " FEATURES='${FEATURES}'" >> @@REPORTFILE@@
+  fi
+
   if [[ "${eout}" =~ REQUIRED_USE ]] ; then
-    echo "USE='${USE}' : REQUIRED_USE not satisfied (probably) for ${1:?}" >> @@REPORTFILE@@
+    echo " : REQUIRED_USE not satisfied (probably) for ${1:?}" >> @@REPORTFILE@@
   elif [[ "${eout}" =~ USE\ changes ]] ; then
-    echo "USE='${USE}' : USE dependencies not satisfied (probably) for ${1:?}" >> @@REPORTFILE@@
+    echo " : USE dependencies not satisfied (probably) for ${1:?}" >> @@REPORTFILE@@
   elif [[ "${eout}" =~ keyword\ changes ]]; then
-    echo "USE='${USE}' : unkeyworded dependencies (probably) for ${1:?}" >> @@REPORTFILE@@
+    echo " : unkeyworded dependencies (probably) for ${1:?}" >> @@REPORTFILE@@
   elif [[ "${eout}" =~ Error:\ circular\ dependencies: ]]; then
-    echo "USE='${USE}' : circular dependencies (probably) for ${1:?}" >> @@REPORTFILE@@
+    echo " : circular dependencies (probably) for ${1:?}" >> @@REPORTFILE@@
   elif [[ "${eout}" =~ \[blocks\ B ]]; then
-    echo "USE='${USE}' : blocked packages (probably) for ${1:?}" >> @@REPORTFILE@@
+    echo " : blocked packages (probably) for ${1:?}" >> @@REPORTFILE@@
   else
-    echo "USE='${USE}' FEATURES='${FEATURES}' failed for ${1:?}" >> @@REPORTFILE@@
+    echo " failed for ${1:?}" >> @@REPORTFILE@@
   fi
 }
 
