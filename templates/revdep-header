@@ -31,3 +31,4 @@ function tatt_pkg_error
   fi
 }
 
+echo -e "revdep tests started on $(date)\n" >> @@REPORTFILE@@
