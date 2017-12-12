@@ -24,7 +24,7 @@ function tatt_pkg_error
     echo " : unkeyworded dependencies (probably) for ${1:?}" >> @@REPORTFILE@@
   elif [[ "${eout}" =~ Error:\ circular\ dependencies: ]]; then
     echo " : circular dependencies (probably) for ${1:?}" >> @@REPORTFILE@@
-  elif [[ "${eout}" =~ \[blocks\ B ]]; then
+  elif [[ "${eout}" =~ Blocked\ Packages ]]; then
     echo " : blocked packages (probably) for ${1:?}" >> @@REPORTFILE@@
   else
     echo " failed for ${1:?}" >> @@REPORTFILE@@
