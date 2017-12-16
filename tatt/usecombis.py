@@ -3,7 +3,7 @@
 import random
 import re
 import math
-from portage.dep import check_required_use
+from portage.dep import check_required_use, dep_getcpv
 from subprocess import *
 
 from .tool import unique
@@ -18,7 +18,7 @@ def findUseFlagCombis (package, config, port):
     Generate combinations of use flags to test
     The output will be a list each containing a ready to use USE=... string
     """
-    uselist = sorted(reduce_flags(get_flags(package.packageString()[1:])))
+    uselist = sorted(reduce_flags(get_flags(dep_getcpv(package.packageString()))))
     # The uselist could have duplicates due to slot-conditional
     # output of equery
     uselist=unique(uselist)
@@ -43,7 +43,7 @@ def findUseFlagCombis (package, config, port):
         swlist = list(range(2**len(uselist)))
 
     usecombis=[]
-    ruse = " ".join(port.aux_get(package.packageString()[1:], ["REQUIRED_USE"]))
+    ruse = " ".join(port.aux_get(dep_getcpv(package.packageString()), ["REQUIRED_USE"]))
     for sw in swlist:
         mod = []
         act = [] # check_required_use doesn't like -flag entries
