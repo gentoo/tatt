@@ -1,6 +1,7 @@
 """Module for easy access to portage's atom syntax """
 
 import re
+from portage.dep import dep_getcpv
 
 class gentooPackage(object):
     """A Gentoo package consists of:
@@ -11,7 +12,7 @@ class gentooPackage(object):
 
     def __init__(self, st):
         """An atom is initialized from an atom string"""
-        if st[0] == '=': st = st[1:]
+        st = dep_getcpv(st)
         slashparts = st.split("/")
         self.category = slashparts[0]
         minusparts = slashparts[1].split("-")

@@ -6,6 +6,7 @@ import sys
 import re
 import os
 import portage
+from portage.dep import dep_getcpv
 import base64
 import requests
 
@@ -195,7 +196,7 @@ if myJob.packageList is not None and len(myJob.packageList) > 0:
         for p in myJob.packageList:
             print("Found the following package atom : " + p.packageString())
             # check if the package already has the needed keywords
-            kw = port.aux_get(p.packageString()[1:], ["KEYWORDS"])
+            kw = port.aux_get(dep_getcpv(p.packageString()), ["KEYWORDS"])
             if len(kw) > 0:
                 kwl = kw[0].split()
                 try:
