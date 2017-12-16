@@ -7,6 +7,7 @@ from portage.dep import check_required_use
 from subprocess import *
 
 from .tool import unique
+from gentoolkit.flag import get_flags, reduce_flags
 
 def all_valid_flags(flag):
     return True
@@ -17,9 +18,7 @@ def findUseFlagCombis (package, config, port):
     Generate combinations of use flags to test
     The output will be a list each containing a ready to use USE=... string
     """
-    uses=Popen('equery -C uses '+package.packageString()+' | cut -f 1 | cut -c 2-40 | xargs',
-               shell=True, stdout=PIPE).communicate()[0].decode('utf-8')
-    uselist=uses.split()
+    uselist = sorted(reduce_flags(get_flags(package.packageString()[1:])))
     # The uselist could have duplicates due to slot-conditional
     # output of equery
     uselist=unique(uselist)
