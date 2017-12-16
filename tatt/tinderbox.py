@@ -12,6 +12,7 @@ from subprocess import *
 import random
 
 from .gentooPackage import gentooPackage as gP
+from portage.dep import isvalidatom
 
 ## TODO: Make the number of rdeps to sample a config option
 ## Pass the config on to this function:
@@ -59,7 +60,8 @@ def stablerdeps (package, config):
     d = dict([])
     for s in splitlist:
         # Saves necessary useflags under package names, removing duplicates.
-        d[gP(s[0]).packageCatName()] = s[1]
+        if isvalidatom('=' + s[0]):
+            d[gP(s[0]).packageCatName()] = s[1]
     outlist2 = [[k, d[k]] for k in list(d.keys())]
     outlist = []
     # outlist2 is set up at this point.  It contains all candidates.  To cut it down we sample
