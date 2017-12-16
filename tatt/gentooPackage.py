@@ -1,7 +1,7 @@
 """Module for easy access to portage's atom syntax """
 
 import re
-from portage.dep import dep_getcpv
+from portage.dep import dep_getcpv, dep_getkey, isvalidatom
 
 class gentooPackage(object):
     """A Gentoo package consists of:
@@ -12,28 +12,13 @@ class gentooPackage(object):
 
     def __init__(self, st):
         """An atom is initialized from an atom string"""
-        st = dep_getcpv(st)
-        slashparts = st.split("/")
+        if not isvalidatom(st):
+            st = '=' + st
+        cp = dep_getkey(st)
+        self.ver = dep_getcpv(st)[len(cp) + 1:] # +1 to strip the leading '-'
+        slashparts = cp.split("/")
         self.category = slashparts[0]
-        minusparts = slashparts[1].split("-")
-        self.ver = ""
-        if len (minusparts) == 1:
-            # No version given
-            self.name=slashparts[1]
-        else:
-            # Parse the name-version part
-            self.name=""
-            while 1:
-                p = minusparts.pop(0)
-                # Try a number after a '-'
-                if re.match('[0-9]+', p):
-                    # Version starts here:
-                    self.ver = "-".join([p] + minusparts)
-                    break
-                else:
-                    # Append back to name
-                    if self.name=="": self.name = p
-                    else : self.name = "-".join([self.name, p])
+        self.name = slashparts[1]
 
     def packageName(self):
         """Returns the package name without category"""
