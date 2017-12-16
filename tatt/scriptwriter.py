@@ -2,6 +2,7 @@
 
 import random
 import os
+import portage
 import sys
 
 from .usecombis import findUseFlagCombis
@@ -27,13 +28,13 @@ def scriptTemplate(jobname, config, filename):
     snippet = snippet.replace("@@REPORTFILE@@", reportname)
     return snippet
 
-def useCombiTestString(jobname, pack, config):
+def useCombiTestString(jobname, pack, config, port):
     """ Build with diffent useflag combis """
     usesnippet = scriptTemplate(jobname, config, "use-snippet")
 
     s = "" # This will contain the resulting string
     usesnippet = usesnippet.replace("@@CPV@@", pack.packageString() )
-    usecombis = findUseFlagCombis (pack, config)
+    usecombis = findUseFlagCombis (pack, config, port)
     for uc in usecombis:
         localsnippet = usesnippet.replace("@@USE@@", uc)
         localsnippet = localsnippet.replace("@@FEATURES@@", "")
@@ -55,9 +56,10 @@ def writeusecombiscript(job, config):
         print("WARNING: Will overwrite " + outfilename)
     outfile = open(outfilename, 'w')
     outfile.write(useheader)
+    port = portage.db[portage.root]["porttree"].dbapi
     for p in job.packageList:
         outfile.write("# Code for " + p.packageCatName() + "\n")
-        outfile.write(useCombiTestString(job.name, p, config))
+        outfile.write(useCombiTestString(job.name, p, config, port))
         outfile.write("echo >> " + reportname + "\n")
     # Note: fchmod needs the filedescriptor which is an internal
     # integer retrieved by fileno().
