@@ -3,12 +3,16 @@
 import random
 import re
 import math
+from portage.dep import check_required_use
 from subprocess import *
 
 from .tool import unique
 
+def all_valid_flags(flag):
+    return True
+
 ## Useflag Combis ##
-def findUseFlagCombis (package, config):
+def findUseFlagCombis (package, config, port):
     """
     Generate combinations of use flags to test
     The output will be a list each containing a ready to use USE=... string
@@ -40,16 +44,21 @@ def findUseFlagCombis (package, config):
         swlist = list(range(2**len(uselist)))
 
     usecombis=[]
+    ruse = " ".join(port.aux_get(package.packageString()[1:], ["REQUIRED_USE"]))
     for sw in swlist:
         mod = []
+        act = [] # check_required_use doesn't like -flag entries
         for pos in range(len(uselist)):
             if ((2**pos) & sw):
                 mod.append("")
+                act.append(uselist[pos])
             else:
                 mod.append("-")
-        usecombis.append(list(zip(mod, uselist)))
-
-    usecombis = [["".join(uf) for uf in combi] for combi in usecombis]
+        if bool(check_required_use(ruse, " ".join(act), all_valid_flags)):
+            uc = " ".join(["".join(uf) for uf in list(zip(mod, uselist))])
+            usecombis.append(uc)
+        else:
+            print("  " + package.packageString() + ": ignoring invalid USE flag combination", act)
 
     # Merge everything to a USE="" string
-    return ["USE=\'"+" ".join(uc)+ "\'" for uc in usecombis]
+    return ["USE=\'" + uc + "\'" for uc in usecombis]
