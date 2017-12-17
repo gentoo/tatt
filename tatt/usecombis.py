@@ -12,6 +12,17 @@ from gentoolkit.flag import get_flags, reduce_flags
 def all_valid_flags(flag):
     return True
 
+def check_uses(ruse, uselist, sw, package):
+    act = [] # check_required_use doesn't like -flag entries
+    for pos in range(len(uselist)):
+        if ((2**pos) & sw):
+            act.append(uselist[pos])
+    if bool(check_required_use(ruse, " ".join(act), all_valid_flags)):
+        return True
+    else:
+        print("  " + package.packageString() + ": ignoring invalid USE flag combination", act)
+        return False
+
 ## Useflag Combis ##
 def findUseFlagCombis (package, config, port):
     """
@@ -25,39 +36,48 @@ def findUseFlagCombis (package, config, port):
     for i in config['ignoreprefix']:
         uselist=[u for u in uselist if not re.match(i,u)]
 
+    ruse = " ".join(port.aux_get(dep_getcpv(package.packageString()), ["REQUIRED_USE"]))
+    swlist = []
     if config['usecombis'] == 0:
         # Do only all and nothing:
-        swlist = [0,2**(len(uselist))-1]
+        if check_uses(ruse, uselist, 0, package):
+            swlist.append(0)
+        if check_uses(ruse, uselist, 2**len(uselist) - 1):
+            swlist.append(2**len(uselist) - 1)
     # Test if we can exhaust all USE-combis by computing the binary logarithm.
     elif len(uselist) > math.log(config['usecombis'],2):
         # Generate a sample of USE combis
         s = 2**(len (uselist))
+        rnds = set()
         random.seed()
-        swlist = [random.randint(0, s-1) for i in range (config['usecombis'])]
-        swlist.append(0)
-        swlist.append(s-1)
+        while len(swlist) < config['usecombis'] and len(rnds) < config['usecombis']:
+            r = random.randint(0, s-1)
+            if r in rnds:
+                # already checked
+                continue
+
+            if not check_uses(ruse, uselist, r, package):
+                # invalid combination
+                continue
+
+            swlist.append(r)
+
         swlist.sort()
-        swlist = unique(swlist)
     else:
         # Yes we can: generate all combinations
-        swlist = list(range(2**len(uselist)))
+        for pos in range(2**len(uselist)):
+            if check_uses(ruse, uselist, pos, package):
+                swlist.append(pos)
 
     usecombis=[]
-    ruse = " ".join(port.aux_get(dep_getcpv(package.packageString()), ["REQUIRED_USE"]))
     for sw in swlist:
         mod = []
-        act = [] # check_required_use doesn't like -flag entries
         for pos in range(len(uselist)):
             if ((2**pos) & sw):
                 mod.append("")
-                act.append(uselist[pos])
             else:
                 mod.append("-")
-        if bool(check_required_use(ruse, " ".join(act), all_valid_flags)):
-            uc = " ".join(["".join(uf) for uf in list(zip(mod, uselist))])
-            usecombis.append(uc)
-        else:
-            print("  " + package.packageString() + ": ignoring invalid USE flag combination", act)
+        usecombis.append(" ".join(["".join(uf) for uf in list(zip(mod, uselist))]))
 
     # Merge everything to a USE="" string
     return ["USE=\'" + uc + "\'" for uc in usecombis]
