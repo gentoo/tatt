@@ -2,8 +2,6 @@
 pushd @@CP@@ > /dev/null
 
 repoman -d full || exit 1
-repoman -m "@@CP@@: @@NEWKEYWORD@@ stable
-
-Gentoo-bug: @@BUG@@" commit || exit 1
+repoman -m "@@CP@@: @@NEWKEYWORD@@ stable (bug #@@BUG@@)" commit || exit 1
 
 popd > /dev/null
