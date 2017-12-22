@@ -55,6 +55,7 @@ def findUseFlagCombis (package, config, port):
             if r in rnds:
                 # already checked
                 continue
+            rnds.add(r)
 
             if not check_uses(ruse, uselist, r, package):
                 # invalid combination
