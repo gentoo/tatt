@@ -58,7 +58,7 @@ def writeusecombiscript(job, config):
     outfile.write(useheader)
     port = portage.db[portage.root]["porttree"].dbapi
     for p in job.packageList:
-        outfile.write("# Code for " + p.packageCatName() + "\n")
+        outfile.write("\n# Code for " + p.packageString() + "\n")
         outfile.write(useCombiTestString(job.name, p, config, port))
         outfile.write("echo >> " + reportname + "\n")
     # Note: fchmod needs the filedescriptor which is an internal
