@@ -21,62 +21,69 @@ https://github.com/gentoo/tatt
 Ways to use tatt
 ================
 
-1) Work on a stable bug no 300000. This will unmask the package and
-create five shell scripts.  One is for automated testing of USE-flag
-combinations, one is for testing of reverse dependencies, one is for
-committing the new keywords to CVS, one is for leaving a message on
-the bug, and finally one is for cleaning up.
+Work on a stable bug no 300000
+------------------------------
 
-tatt -b300000 -j myjob
+This will unmask the package and create five shell scripts.  One is
+for automated testing of USE-flag combinations, one is for testing of
+reverse dependencies, one is for committing the new keywords to CVS, one
+is for leaving a message on the bug, and finally one is for cleaning up.
 
--j specifies a jobname which will be a prefix for the scripts that
+    tatt -b300000 -j myjob
+
+ -j specifies a jobname which will be a prefix for the scripts that
 tatt produces, if it is left empty the bugnumber will be used
 
+Work on multiple packages
+-------------------------
 
-2) If a whole list of packages should be tested, they can be specified
+If a whole list of packages should be tested, they can be specified
 in a file
 
-tatt -f myPackageFile -b bugnumber
+    tatt -f myPackageFile -b bugnumber
 
 This will open the file myPackageFile, look for all atoms in it, and
 write scripts that test/commit all packages.  If -j is omitted the
 filename is used.  The bugnumber is necessary for the commit script.
 
-3) Resolving a bug
+Resolving a bug
+---------------
 
 Assume everything was committed and we want to resolve the bug.
 
-tatt -r bugnum -m "x86 stable, Thanks xyz" 
+    tatt -r bugnum -m "x86 stable, Thanks xyz"
 
 removes your arch from the CC field of the bug and adds the message.
 
-tatt -cr bugnum -m "x86 stable, Thanks, closing" 
+    tatt -cr bugnum -m "x86 stable, Thanks, closing"
 
 Does the things -r does and additionally closes the bug.
 
-4) Running individual parts of tatt.
+Running individual parts of tatt
+--------------------------------
 
--) Open a bug and leave a message (for instance after successfull
+- Open a bug and leave a message (for instance after successfull
  testing)
 
-tatt -s300000
+    tatt -s300000
 
--) Create only the test script for reverse dependencies of foo:
+- Create only the test script for reverse dependencies of foo:
 
-tatt -d app-bar/foo
+    tatt -d app-bar/foo
 
--) Create only the USE-flag testing script of foo
+- Create only the USE-flag testing script of foo
 
-tatt -u app-bar/foo
+    tatt -u app-bar/foo
 
-4) Show help 
+- Show help 
 
-tatt -h 
+    tatt -h 
 
 * Configuring tatt via ~/.tatt
 The specification of the configuration file can be found in dot-tatt-spec which usually resides
 /usr/lib/${python}/site-packages/tatt
 
+```shell
 ####### EXAMPLE ~/.tatt ############
 # Here we show the possible options together with their default values
 
@@ -117,3 +124,4 @@ The specification of the configuration file can be found in dot-tatt-spec which 
 # All emerge runs in the generated scripts are automatically passed
 # the -1 option.  Here you can specify additional options.
 # emergeopts="-v"
+```
