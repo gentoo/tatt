@@ -187,6 +187,9 @@ if myJob.packageList is not None and len(myJob.packageList) > 0:
     port = portage.db[portage.root]["porttree"].dbapi
 
     filteredPackages = []
+    # for keywording bugs the packages that already have the keyword still need
+    # to be unmasked so they can be used by the other packages that still need work
+    kwPackages = []
 
     if config['arch']:
         targetarch = config['arch']
@@ -200,10 +203,20 @@ if myJob.packageList is not None and len(myJob.packageList) > 0:
             if len(kw) > 0:
                 kwl = kw[0].split()
                 try:
+                    kwl.index(config['arch'])
+                    # the list of keywords in portage already contains the arch
+                    # as stable, skip this package
+                    print("\talready stable for " + config['arch'])
+                    continue
+                except ValueError:
+                    pass
+
+                try:
                     kwl.index(targetarch)
-                    # the list of keywords in portage already contains the target
-                    # keyword, skip this package
-                    print("\talready marked " + targetarch)
+                    # the list of keywords in portage already contains the target keyword,
+                    # skip this package from building, but remember it for unmasking
+                    print("\talready keyworded as " + targetarch)
+                    kwPackages.append(p)
                     continue
                 except ValueError:
                     filteredPackages.append(p)
@@ -249,6 +262,16 @@ if myJob.packageList is not None and len(myJob.packageList) > 0:
                 print ("Uh Oh, no job.type? Tell tomka@gentoo.org to fix this!")
             unmaskfile.write("  # Job " + myJob.name + "\n")
             print ("Unmasked " + p.packageString()+ " in "+config['unmaskfile'])
+
+    # now write the remaining packages for keywording
+    for p in kwPackages:
+        # Test if unmaskfile already contains the atom
+        if re.search(re.escape(p.packageString()), unmaskfileContent):
+            print (p.packageString() + " already in "+config['unmaskfile'])
+        else:
+            unmaskfile.write(p.packageString() + "  # Job " + myJob.name + "\n")
+            print ("Unmasked " + p.packageString() + " in " + config['unmaskfile'])
+
     unmaskfile.close()
     ## Write the scripts
     writeUSE(myJob, config)
