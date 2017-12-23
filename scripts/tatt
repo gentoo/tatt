@@ -208,6 +208,10 @@ if myJob.packageList is not None and len(myJob.packageList) > 0:
                 except ValueError:
                     filteredPackages.append(p)
 
+    if len(filteredPackages) == 0:
+        print("\nno packages left")
+        sys.exit(0)
+
     myJob.packageList = filteredPackages
 
     # Unmasking:
