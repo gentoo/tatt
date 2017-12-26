@@ -50,7 +50,7 @@ def findUseFlagCombis (package, config, port):
         s = 2**(len (uselist))
         rnds = set()
         random.seed()
-        while len(swlist) < config['usecombis'] and len(rnds) < config['usecombis']:
+        while len(swlist) < config['usecombis'] and len(rnds) < s:
             r = random.randint(0, s-1)
             if r in rnds:
                 # already checked
