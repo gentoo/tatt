@@ -29,6 +29,14 @@ function tatt_pkg_error
   else
     echo " failed for ${1:?}" >> @@REPORTFILE@@
   fi
+
+  CP=${1#=}
+  BUILDLOG=/var/tmp/portage/${CP}/temp/build.log
+  if [[ -n "@@BUILDLOGDIR@@" && -s "${BUILDLOG}" ]]; then
+    LOGNAME=$(mktemp -p "@@BUILDLOGDIR@@" "${CP/\//_}_use_XXXXX")
+    mv "${BUILDLOG}" "${LOGNAME}"
+    echo "    log has been saved as ${LOGNAME}" >> @@REPORTFILE@@
+  fi
 }
 
 echo -e "USE tests started on $(date)\n" >> @@REPORTFILE@@

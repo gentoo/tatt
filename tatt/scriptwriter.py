@@ -26,6 +26,7 @@ def scriptTemplate(jobname, config, filename):
     snippet = snippet.replace("@@JOB@@", jobname)
     snippet = snippet.replace("@@ARCH@@", config['arch'])
     snippet = snippet.replace("@@REPORTFILE@@", reportname)
+    snippet = snippet.replace("@@BUILDLOGDIR@@", config['buildlogdir'])
     return snippet
 
 def useCombiTestString(jobname, pack, config, port):

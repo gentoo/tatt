@@ -12,3 +12,4 @@ tinderbox-url=string(default="http://qa-reports.gentoo.org/output/genrdeps/rinde
 safedir=string(default="")
 bugzilla-url=string(default="https://bugs.gentoo.org")
 bugzilla-key=string(default="")
+buildlogdir=string(default="")

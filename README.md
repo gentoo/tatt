@@ -124,4 +124,8 @@ The specification of the configuration file can be found in dot-tatt-spec which 
 # All emerge runs in the generated scripts are automatically passed
 # the -1 option.  Here you can specify additional options.
 # emergeopts="-v"
+
+# directory where logs of failed builds will be stored
+# the exact name of the log will be shown in the report file
+# buildlogdir="./tatt/logs"
 ```
