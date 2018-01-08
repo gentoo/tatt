@@ -1,7 +1,7 @@
 #!/bin/bash
 pushd @@REPODIR@@ > /dev/null
 
-if [ "@@NEWKEYWORD@@" = "@@ARCH" ]; then
+if [ "@@NEWKEYWORD@@" = "@@ARCH@@" ]; then
 	DESCR="@@ARCH@@ stable (bug #@@BUG@@)"
 else
 	DESCR="@@ARCH@@ keyworded (bug #@@BUG@@)"
