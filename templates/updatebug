@@ -38,7 +38,8 @@ def main():
 	# We don't close bugs which still have other arches for obvious reasons,
 	# and security bugs because stabilization is not the last step for them.
 	params['cc'] = {}
-	params['cc']['remove'] = ['@@ARCH@@@gentoo.org']
+	if has_my_arch:
+		params['cc']['remove'] = ['@@ARCH@@@gentoo.org']
 	params['comment'] = {}
 	if has_other_arches or 'Security' in response['product']:
 		params['comment']['body'] = '@@ARCH@@ stable'
