@@ -152,7 +152,6 @@ if options.bugnum:
     else:
         print ("Could not detect bug's type, is the 'Keywords' field set?")
         sys.exit(1)
-    # If myJob.packageList is still empty we search in the bug-title
     if myJob.packageList==None:
         if response["cf_stabilisation_atoms"]:
             myJob.packageList = packageFinder.findPackages(response["cf_stabilisation_atoms"], config['arch'])
