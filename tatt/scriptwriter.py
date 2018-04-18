@@ -30,7 +30,8 @@ def scriptTemplate(job, config, filename):
 
     snippet = snippetfile.read()
     snippet = snippet.replace("@@EMERGEOPTS@@", config['emergeopts'])
-    snippet = snippet.replace("@@BUG@@", job.bugnumber)
+    if job.bugnumber:
+        snippet = snippet.replace("@@BUG@@", job.bugnumber)
     snippet = snippet.replace("@@JOB@@", job.name)
     snippet = snippet.replace("@@ARCH@@", config['arch'])
     snippet = snippet.replace("@@REPODIR@@", config['repodir'])
