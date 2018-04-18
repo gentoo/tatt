@@ -15,7 +15,7 @@ tatt uses 'bugz' from www-client/pybugz.  You may want to configure an
 alias for 'bugz' to contain your login-credentials or you will have to
 type them everytime you use tatt.
 
-tatt lives on github.  Forks and pull requests are welcome:
+tatt lives on GitHub.  Forks and pull requests are welcome:
 https://github.com/gentoo/tatt
 
 Ways to use tatt
