@@ -276,10 +276,10 @@ if myJob.packageList is not None and len(myJob.packageList) > 0:
     writeUSE(myJob, config)
     writeRdeps(myJob, config)
     writeCleanup (myJob, config)
-    ## Config and Successscript can only be written if we have a bugnumber
+    ## Successscript can only be written if we have a bugnumber
     if myJob.bugnumber:
         writeSuccess(myJob, config)
-        writeCommit(myJob, config)
+    writeCommit(myJob, config)
     sys.exit (0)
 
 # Code for resolving bugs (-r and -m)
