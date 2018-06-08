@@ -10,6 +10,8 @@ def findPackages (s, arch):
     packages = []
 
     for line in s.splitlines():
+        if not line:
+            continue
         atom, _, arches = line.partition(' ')
         if not arches or arch in arches.split(' '):
             packages.append(gP(atom))
