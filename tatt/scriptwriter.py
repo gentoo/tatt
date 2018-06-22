@@ -46,18 +46,20 @@ def scriptTemplate(job, config, filename):
 def useCombiTestString(job, pack, config, port):
     """ Build with diffent useflag combis """
     usesnippet = scriptTemplate(job, config, "use-snippet")
-
-    s = "" # This will contain the resulting string
     usesnippet = usesnippet.replace("@@CPV@@", pack.packageString() )
+
+    # test once with tests and users flags
+    # do this first to trigger bugs in some packages where the test suite relies on
+    # the package being already installed
+    localsnippet = usesnippet.replace("@@USE@@", "")
+    localsnippet = localsnippet.replace("@@FEATURES@@", "FEATURES=\"${FEATURES} test\"")
+    s = localsnippet
+
     usecombis = findUseFlagCombis (pack, config, port)
     for uc in usecombis:
         localsnippet = usesnippet.replace("@@USE@@", uc)
         localsnippet = localsnippet.replace("@@FEATURES@@", "")
         s = s + localsnippet
-    # In the end we test once with tests and users flags
-    localsnippet = usesnippet.replace("@@USE@@", "")
-    localsnippet = localsnippet.replace("@@FEATURES@@", "FEATURES=\"${FEATURES} test\"")
-    s = s + localsnippet
     return s
 
 def writeusecombiscript(job, config):
