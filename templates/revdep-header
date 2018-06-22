@@ -3,40 +3,13 @@
 
 trap "echo 'signal captured, exiting the entire script...'; exit" SIGHUP SIGINT SIGTERM 
 
-function tatt_pkg_error
-{
-  local eout=${2}
+export TATT_TEST_TYPE="rdep"
+export TATT_REPORTFILE="@@REPORTFILE@@"
+export TATT_BUILDLOGDIR="@@BUILDLOGDIR@@"
+export TATT_EMERGEOPTS="@@EMERGEOPTS@@"
 
-  echo "${eout}"
+source "@@TEMPLATEDIR@@tatt_functions.sh"
 
-  if [ -n "${USE}" ]; then
-    echo -n "USE='${USE}'" >> @@REPORTFILE@@
-  fi
-  if [ -n "${FEATURES}" ]; then
-    echo -n " FEATURES='${FEATURES}'" >> @@REPORTFILE@@
-  fi
-
-  if [[ "${eout}" =~ REQUIRED_USE ]] ; then
-    echo " : REQUIRED_USE not satisfied (probably) for ${1:?}" >> @@REPORTFILE@@
-  elif [[ "${eout}" =~ USE\ changes ]] ; then
-    echo " : USE dependencies not satisfied (probably) for ${1:?}" >> @@REPORTFILE@@
-  elif [[ "${eout}" =~ keyword\ changes ]]; then
-    echo " : unkeyworded dependencies (probably) for ${1:?}" >> @@REPORTFILE@@
-  elif [[ "${eout}" =~ Error:\ circular\ dependencies: ]]; then
-    echo " : circular dependencies (probably) for ${1:?}" >> @@REPORTFILE@@
-  elif [[ "${eout}" =~ Blocked\ Packages ]]; then
-    echo " : blocked packages (probably) for ${1:?}" >> @@REPORTFILE@@
-  else
-    echo " failed for ${1:?}" >> @@REPORTFILE@@
-  fi
-
-  CP=${1#=}
-  BUILDLOG=/var/tmp/portage/${CP}/temp/build.log
-  if [[ -n "@@BUILDLOGDIR@@" && -s "${BUILDLOG}" ]]; then
-    LOGNAME=$(mktemp -p "@@BUILDLOGDIR@@" "${CP/\//_}_rdep_XXXXX")
-    mv "${BUILDLOG}" "${LOGNAME}"
-    echo "    log has been saved as ${LOGNAME}" >> @@REPORTFILE@@
-  fi
-}
+export USE
 
 echo -e "revdep tests started on $(date)\n" >> @@REPORTFILE@@

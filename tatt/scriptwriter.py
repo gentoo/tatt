@@ -41,6 +41,7 @@ def scriptTemplate(job, config, filename):
     snippet = snippet.replace("@@BUILDLOGDIR@@", config['buildlogdir'])
     snippet = snippet.replace("@@KEYWORDFILE@@", config['unmaskfile'])
     snippet = snippet.replace("@@NEWKEYWORD@@", newkeyword)
+    snippet = snippet.replace("@@TEMPLATEDIR@@", config['template-dir'])
     return snippet
 
 def useCombiTestString(job, pack, config, port):
