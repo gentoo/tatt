@@ -52,9 +52,10 @@ def useCombiTestString(job, pack, config, port):
     # test once with tests and users flags
     # do this first to trigger bugs in some packages where the test suite relies on
     # the package being already installed
-    localsnippet = usesnippet.replace("@@USE@@", "")
-    localsnippet = localsnippet.replace("@@FEATURES@@", "FEATURES=\"${FEATURES} test\"")
-    s = localsnippet
+    usetestsnippet = scriptTemplate(job, config, "use-test-snippet")
+    usetestsnippet = usetestsnippet.replace("@@CPV@@", pack.packageString() )
+    usetestsnippet = usetestsnippet.replace("@@FEATURES@@", "FEATURES=\"${FEATURES} test\"")
+    s = usetestsnippet.replace("@@USE@@", "")
 
     usecombis = findUseFlagCombis (pack, config, port)
     for uc in usecombis:
