@@ -1,6 +1,1 @@
-eout=$( @@USE@@ @@FEATURES@@ emerge -1 @@EMERGEOPTS@@ @@CPV@@ 2>&1 1>/dev/tty )
-if [[ $? == 0 ]] ; then
-  echo "@@USE@@ @@FEATURES@@ succeeded for @@CPV@@" >> @@REPORTFILE@@
-else
-  @@USE@@ @@FEATURES@@ tatt_pkg_error "@@CPV@@" "${eout}"
-fi
+@@USE@@ tatt_test_pkg "@@CPV@@"

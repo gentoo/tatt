@@ -54,13 +54,11 @@ def useCombiTestString(job, pack, config, port):
     # the package being already installed
     usetestsnippet = scriptTemplate(job, config, "use-test-snippet")
     usetestsnippet = usetestsnippet.replace("@@CPV@@", pack.packageString() )
-    usetestsnippet = usetestsnippet.replace("@@FEATURES@@", "FEATURES=\"${FEATURES} test\"")
     s = usetestsnippet.replace("@@USE@@", "")
 
     usecombis = findUseFlagCombis (pack, config, port)
     for uc in usecombis:
         localsnippet = usesnippet.replace("@@USE@@", uc)
-        localsnippet = localsnippet.replace("@@FEATURES@@", "")
         s = s + localsnippet
     return s
 
@@ -89,9 +87,8 @@ def writeusecombiscript(job, config):
 
 ############ RDEPS ################
 def rdepTestString(job, rdep, config):
-    rdepsnippet = scriptTemplate(job, config, "revdep-snippet")
+    snip = scriptTemplate(job, config, "revdep-snippet")
 
-    snip = rdepsnippet.replace("@@FEATURES@@", "FEATURES=\"${FEATURES} test\"")
     uflags = []
     for st in rdep[1]:
         st = st.strip()

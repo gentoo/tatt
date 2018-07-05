@@ -1,1 +1,1 @@
-@@USE@@ T@@FEATURES@@ tatt_test_pkg "@@CPV@@"
+@@USE@@ tatt_test_pkg --test "@@CPV@@"

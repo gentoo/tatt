@@ -38,11 +38,15 @@ function tatt_pkg_error
 
 function tatt_test_pkg
 {
-  if [ -n "${TFEATURES}" ]; then
+  if [ "${1:?}" == "--test" ]; then
+    shift
     if ! emerge --onlydeps -1 --with-test-deps ${TATT_EMERGEOPTS} "${1:?}"; then
       echo "merging test dependencies of ${1} failed" >> "${TATT_REPORTFILE}"
       return 0
     fi
+    TFEATURES="${FEATURES} test"
+  else
+    TFEATURES="${FEATURES}"
   fi
 
   eout=$( FEATURES="${TFEATURES}" emerge -1 ${TATT_EMERGEOPTS} "${1:?}" 2>&1 1>/dev/tty )
