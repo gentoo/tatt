@@ -70,6 +70,11 @@ parser.add_option("-c", "--close",
                   help="Resolve the given bugnumber with closing it, needs to be combined with -r",
                   dest="close",
                   action="store_true")
+parser.add_option("-k", "--keywording",
+                  help="search for keywording packages, needs to be combined with -f",
+                  dest="keywording",
+                  action="store_true",
+                  default = False)
 parser.add_option("-m", "--message",
                   help="Message for bug resolution.",
                   dest="resolvemessage",
@@ -129,7 +134,14 @@ if options.infile:
         sys.exit(1)
     packraw = packfile.read()
     packfile.close()
-    myJob.packageList = packageFinder.findPackages(packraw, config['arch'])
+    targetarch = config['arch']
+    if options.keywording:
+        targetarch = '~' + targetarch
+        myJob.type="keyword"
+    else:
+        myJob.type="stable"
+
+    myJob.packageList = packageFinder.findPackages(packraw, targetarch)
 
 ## -b and a bugnumber was given ?
 if options.bugnum:
