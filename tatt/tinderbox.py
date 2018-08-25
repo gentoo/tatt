@@ -1,4 +1,4 @@
-"""acessing the tinderbox at http://tinderbox.dev.gentoo.org/misc/dindex/ """
+"""acessing the tinderbox at http://qa-reports.gentoo.org/output/genrdeps/rindex/ """
 
 import socket # For setting a global timeout
 # Support python2 and python3 versions of urllib:
@@ -21,7 +21,7 @@ from portage.dep import isvalidatom
 def stablerdeps (package, config):
     """
     Find packages with stable versions which depend on atom
-    We query the tinderbox at http://tinderbox.dev.gentoo.org/misc/dindex/
+    We query the tinderbox at http://qa-reports.gentoo.org/output/genrdeps/rindex/
     for this purpose.
     The result is a list of pairs of package atoms and a list of necessary useflags
     """

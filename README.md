@@ -114,7 +114,7 @@ The specification of the configuration file can be found in dot-tatt-spec which 
 # repodir="./gentoo-x86"
 
 # Url where the pre-generated rindex is to be found
-# tinderbox-url="http://qa-reports.gentoo.org/output/genrdeps/rindex/"
+# tinderbox-url="https://qa-reports.gentoo.org/output/genrdeps/rindex/"
 
 # If this is set, then tatt will refuse to run in a directory that does not
 # match this string.  Use it as a safety measure against creating tatt-scripts
