@@ -66,6 +66,10 @@ def writeusecombiscript(job, config):
     # job is a tatt job object
     # config is a tatt configuration
     useheader = scriptTemplate(job, config, "use-header")
+    if os.path.exists(config['template-dir'] + "use-loop"):
+        useloop = scriptTemplate(job, config, "use-loop")
+    else:
+        useloop = "@@LOOP_BODY@@"
 
     outfilename = (job.name + "-useflags.sh")
     reportname = (job.name + ".report")
@@ -75,9 +79,9 @@ def writeusecombiscript(job, config):
     outfile.write(useheader)
     port = portage.db[portage.root]["porttree"].dbapi
     for p in job.packageList:
-        outfile.write("\n# Code for " + p.packageString() + "\n")
-        outfile.write(useCombiTestString(job, p, config, port))
-        outfile.write("echo >> " + reportname + "\n")
+        loop = useloop.replace("@@LOOP_BODY@@", useCombiTestString(job, p, config, port))
+        loop = loop.replace("@@CPV@@", p.packageString())
+        outfile.write(loop)
     # Note: fchmod needs the filedescriptor which is an internal
     # integer retrieved by fileno().
     os.fchmod(outfile.fileno(), 0o744)  # rwxr--r--
