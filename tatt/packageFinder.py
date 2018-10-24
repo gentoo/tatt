@@ -12,7 +12,7 @@ def findPackages (s, arch):
     for line in s.splitlines():
         if not line:
             continue
-        atom, _, arches = line.partition(' ')
+        atom, _, arches = line.replace('\t', ' ').partition(' ')
         if not arches or arch in arches.split(' '):
             packages.append(gP(atom))
 
