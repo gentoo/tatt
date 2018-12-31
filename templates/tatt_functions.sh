@@ -28,11 +28,17 @@ function tatt_pkg_error
   fi
 
   CP=${1#=}
-  BUILDLOG=/var/tmp/portage/${CP}/temp/build.log
+  BUILDDIR=/var/tmp/portage/${CP}
+  BUILDLOG=${BUILDDIR}/temp/build.log
   if [[ -n "${TATT_BUILDLOGDIR}" && -s "${BUILDLOG}" ]]; then
     LOGNAME=$(mktemp -p "${TATT_BUILDLOGDIR}" "${CP/\//_}_${TATT_TEST_TYPE}_XXXXX")
     mv "${BUILDLOG}" "${LOGNAME}"
     echo "    log has been saved as ${LOGNAME}" >> "${TATT_REPORTFILE}"
+    TESTLOGS=($(find ${BUILDDIR}/work -name test-suite.log -o -name testsuite.log -o -name LastTest.log))
+    if [ ${#TESTLOGS[@]} -gt 0 ]; then
+      tar cf ${LOGNAME}.tar ${TESTLOGS[@]}
+      echo "    testsuite logs have been saved as ${LOGNAME}.tar" >> "${TATT_REPORTFILE}"
+    fi
   fi
 }
 
