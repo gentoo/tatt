@@ -3,6 +3,7 @@
 import random
 import re
 import math
+import itertools
 import portage
 from portage.dep import check_required_use, dep_getcpv
 from subprocess import *
@@ -24,22 +25,24 @@ def enabled_use_flags(package):
     settings.lock()
     return res
 
-def all_valid_flags(flag):
-    return True
+def flag_combinations(flags):
+    """ Yield all possible combinations of all possible sizes for ``flags``.
 
-def check_uses(ruse, uselist, alwayson, sw, package):
-    act = alwayson # check_required_use doesn't like -flag entries
-    for pos in range(len(uselist)):
-        if ((2**pos) & sw):
-            act.add(uselist[pos])
-    if bool(check_required_use(ruse, list(act), all_valid_flags)):
-        return True
-    else:
-        print("  " + package.packageString() + ": ignoring invalid USE flag combination", act)
-        return False
+    Example: ['a', 'b', 'c'] -> [
+        [],
+        ['a'], ['b'], ['c'],
+        ['a', 'b'], ['a', 'c'], ['b', 'c'],
+        ['a', 'b', 'c'],
+    ]
+    """
+    for i in range(len(flags)):
+        # TODO: drop py2 and use "yield from"
+        for comb in itertools.combinations(flags, i):
+            yield comb
+
 
 ## Useflag Combis ##
-def findUseFlagCombis (package, config, port):
+def findUseFlagCombis(package, config, port):
     """
     Generate combinations of use flags to test
     The output will be a list each containing a ready to use USE=... string
@@ -61,48 +64,36 @@ def findUseFlagCombis (package, config, port):
             uselist.remove(u)
 
     ruse = " ".join(port.aux_get(dep_getcpv(package.packageString()), ["REQUIRED_USE"]))
-    swlist = []
+    allcombs = list(flag_combinations(uselist))
+
+    def check(comb):
+        comb = list(set(comb) | alwayson)
+        return bool(check_required_use(ruse, comb, lambda flag: True))
+
+    combs = [c for c in allcombs if check(c)]
+    print("{} valid combinations among {} possible ones".format(len(combs), len(allcombs)))
     if config['usecombis'] == 0:
-        # Do only all and nothing:
-        if check_uses(ruse, uselist, alwayson.copy(), 0, package):
-            swlist.append(0)
-        if check_uses(ruse, uselist, alwayson.copy(), 2**len(uselist) - 1, package):
-            swlist.append(2**len(uselist) - 1)
+        # Do only all and nothing, that is, the first and the last valid
+        # combinations
+        if len(combs) > 2:
+            del combs[1:-1]
     # Test if we can exhaust all USE-combis by computing the binary logarithm.
-    elif len(uselist) > math.log(config['usecombis'],2):
+    elif len(combs) > config['usecombis']:
         # Generate a sample of USE combis
-        s = 2**(len (uselist))
-        rnds = set()
         random.seed()
-        while len(swlist) < config['usecombis'] and len(rnds) < s:
-            r = random.randint(0, s-1)
-            if r in rnds:
-                # already checked
-                continue
-            rnds.add(r)
+        combs = random.choices(combs, k=config['usecombis'])
 
-            if not check_uses(ruse, uselist, alwayson.copy(), r, package):
-                # invalid combination
-                continue
+    print("Chose {} combinations".format(len(combs)))
 
-            swlist.append(r)
-
-        swlist.sort()
-    else:
-        # Yes we can: generate all combinations
-        for pos in range(2**len(uselist)):
-            if check_uses(ruse, uselist, alwayson.copy(), pos, package):
-                swlist.append(pos)
-
-    usecombis=[]
-    for sw in swlist:
-        mod = []
-        for pos in range(len(uselist)):
-            if ((2**pos) & sw):
-                mod.append("")
+    result = []
+    for comb in combs:
+        line = []
+        for flag in uselist:
+            if flag in comb:
+                line.append(flag)
             else:
-                mod.append("-")
-        usecombis.append(" ".join(["".join(uf) for uf in list(zip(mod, uselist))]))
+                line.append('-' + flag)
+        result.append(line)
 
     # Merge everything to a USE="" string
-    return ["USE=\'" + uc + "\'" for uc in usecombis]
+    return ["USE='{}'".format(' '.join(useflags)) for useflags in result]
