@@ -18,7 +18,7 @@ from portage.dep import isvalidatom
 ## Pass the config on to this function:
 
 ## Generate stable rdeps ###
-def stablerdeps (package, config):
+def stablerdeps (atom, config):
     """
     Find packages with stable versions which depend on atom
     We query the tinderbox at http://qa-reports.gentoo.org/output/genrdeps/rindex/
@@ -29,7 +29,6 @@ def stablerdeps (package, config):
     # File structure on this tinderbox equals that in the tree
     # Problem: The rdeps can be version dependent
     # nothing we can do about this here...
-    atom = package.packageCatName()
 
     socket.setdefaulttimeout(45)
     try:

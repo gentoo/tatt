@@ -5,9 +5,11 @@ import os
 import portage
 import sys
 
+from .gentooPackage import gentooPackage as gP
 from .usecombis import findUseFlagCombis
 from .tinderbox import stablerdeps
 from .tool import unique
+from portage.dep import dep_getkey
 
 #### USE-COMBIS ########
 
@@ -110,12 +112,30 @@ def rdepTestString(job, rdep, config):
 
 def writerdepscript(job, config):
     # Populate the list of rdeps
+    # while at it also create a list of only the package names
     rdeps = []
+    pkgs = []
     for p in job.packageList:
-        rdeps = rdeps + stablerdeps (p, config)
+        atom = p.packageCatName()
+        pkgs.append(atom)
+        rdeps = rdeps + stablerdeps (atom, config)
     if len(rdeps) == 0:
         print("No stable rdeps for " + job.name)
         return
+
+    # now clean the list
+    # first find all those entries that have no useflags and main packages of this job
+    for i in range(len(rdeps) - 1, 0, -1):
+        r = rdeps[i]
+        hasU = False
+        for st in r[1]:
+            if len(st.strip()) > 0:
+                hasU = True
+                break
+        if hasU:
+            continue
+        if r[0] in pkgs:
+            rdeps.pop(i)
 
     # If there are rdeps, write the script
     rdepheader = scriptTemplate(job, config, "revdep-header")
