@@ -84,6 +84,9 @@ def writeusecombiscript(job, config):
         loop = useloop.replace("@@LOOP_BODY@@", useCombiTestString(job, p, config, port))
         loop = loop.replace("@@CPV@@", p.packageString())
         outfile.write(loop)
+    if os.path.exists(config['template-dir'] + "use-footer"):
+        footer = scriptTemplate(job, config, "use-footer")
+        outfile.write(footer)
     # Note: fchmod needs the filedescriptor which is an internal
     # integer retrieved by fileno().
     os.fchmod(outfile.fileno(), 0o744)  # rwxr--r--

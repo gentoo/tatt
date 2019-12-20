@@ -63,5 +63,6 @@ function tatt_test_pkg
     echo "USE='${USE}' succeeded for ${1:?}" >> "${TATT_REPORTFILE}"
   else
     FEATURES="${TFEATURES}" tatt_pkg_error "${1:?}" "${eout}"
+    return 1
   fi
 }

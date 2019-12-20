@@ -11,3 +11,5 @@ export TATT_EMERGEOPTS="@@EMERGEOPTS@@"
 source "@@TEMPLATEDIR@@tatt_functions.sh"
 
 echo -e "USE tests started on $(date)\n" >> @@REPORTFILE@@
+
+test_ret=0
