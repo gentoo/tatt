@@ -13,7 +13,8 @@ def findPackages (s, arch):
         if not line:
             continue
         atom, _, arches = line.replace('\t', ' ').partition(' ')
-        if not arches or arch in arches.split(' '):
+        archlist = arches.split(' ')
+        if not arches or arch in archlist or ('~' + arch) in archlist:
             packages.append(gP(atom))
 
     return(packages)
