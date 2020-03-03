@@ -101,7 +101,7 @@ The specification of the configuration file can be found in dot-tatt-spec which 
 # template-dir="/usr/share/tatt/templates/"
 
 # Where do you want tatt to put unmasked packages.
-# unmaskfile="/etc/portage/package.keywords/archtest"
+# unmaskfile="/etc/portage/package.accept_keywords/archtest"
 
 # You can customize the maximal number of rdeps to be tested as follows:
 # rdeps=3
