@@ -166,9 +166,9 @@ if options.bugnum:
         sys.exit(1)
     if myJob.packageList==None:
         if response["cf_stabilisation_atoms"]:
-            myJob.packageList = packageFinder.findPackages(response["cf_stabilisation_atoms"], config['arch'])
+            myJob.packageList = packageFinder.findPackages(response["cf_stabilisation_atoms"], config['arch'], config['repodir'], options.bugnum)
             if len(myJob.packageList) == 0 and ("KEYWORDREQ" in response["keywords"] or response["component"] == "Keywording"):
-                myJob.packageList = packageFinder.findPackages(response["cf_stabilisation_atoms"], '~' + config['arch'])
+                myJob.packageList = packageFinder.findPackages(response["cf_stabilisation_atoms"], '~' + config['arch'], config['repodir'], options.bugnum)
         else:
             response = session.get(config["bugzilla-url"] + "/rest/bug/{}/attachment".format(options.bugnum), params=params).json()["bugs"][str(options.bugnum)]
             for attachment in response:
@@ -176,7 +176,7 @@ if options.bugnum:
                     continue
                 for flag in attachment['flags']:
                     if flag["name"] == "stabilization-list" and flag["status"] == '+':
-                        myJob.packageList = packageFinder.findPackages(base64.b64decode(attachment["data"]).decode("utf8"), config['arch'])
+                        myJob.packageList = packageFinder.findPackages(base64.b64decode(attachment["data"]).decode("utf8"), config['arch'], config['repodir'],  options.bugnum)
 
 
 # joint code for -f and -b
@@ -209,6 +209,7 @@ if myJob.packageList is not None and len(myJob.packageList) > 0:
 
         for p in myJob.packageList:
             print("Found the following package atom : " + p.packageString())
+
             # check if the package already has the needed keywords
             kw = port.aux_get(dep_getcpv(p.packageString()), ["KEYWORDS"])
             if len(kw) > 0:
