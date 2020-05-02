@@ -239,30 +239,36 @@ if myJob.packageList is not None and len(myJob.packageList) > 0:
     myJob.packageList = filteredPackages
 
     # Unmasking:
+    unmaskname=config['unmaskdir']
+    if os.path.exists(unmaskname) and not os.path.isdir(unmaskname):
+        print ("unmaskdir '", unmaskname, "' exists and is no directory")
+        sys.exit(1)
+    elif not os.path.exists(unmaskname):
+        os.mkdir(unmaskname, 0o755)
+    unmaskname=unmaskname+"/tatt_"+myJob.name
+
     try:
-        unmaskfile=open(config['unmaskfile'], 'r+')
+        unmaskfile=open(unmaskname, 'r+')
     except IOError:
-        print ("Your unmaskfile was not found, I will create it as")
-        print (config['unmaskfile'])
         try:
-            unmaskfile=open(config['unmaskfile'], 'w')
+            unmaskfile=open(unmaskname, 'w')
             unmaskfile.write(" ")
             unmaskfile.close()
         except IOError:
             # If we can't write to the file, then it should be configured differently
-            print (" ".join(["Can not write to ",config['unmaskfile']]))
+            print (" ".join(["Can not write to ",unmaskname]))
             print ("Maybe you don't have permission or the location is invalid.")
-            print (" ".join(["Is",os.path.split(config['unmaskfile'])[0],"a writeable directory?"]))
+            print (" ".join(["Is",config['unmaskdir'],"a writeable directory?"]))
             print ("Probably you want to configure a different unmaskfile")
             print ("in your ~/.tatt.  Exiting")
             sys.exit(1)
-        unmaskfile=open(config['unmaskfile'], 'r+')
+        unmaskfile=open(unmaskname, 'r+')
 
     unmaskfileContent = unmaskfile.read()
     for p in myJob.packageList:
         # Test if unmaskfile already contains the atom
         if re.search(re.escape(p.packageString()), unmaskfileContent):
-            print (p.packageString() + " already in "+config['unmaskfile'])
+            print (p.packageString() + " already in "+unmaskname)
         else:
             unmaskfile.write(p.packageString())
             if myJob.type=="stable":
@@ -272,22 +278,22 @@ if myJob.packageList is not None and len(myJob.packageList) > 0:
             else:
                 print ("Uh Oh, no job.type? Tell tomka@gentoo.org to fix this!")
             unmaskfile.write("  # Job " + myJob.name + "\n")
-            print ("Unmasked " + p.packageString()+ " in "+config['unmaskfile'])
+            print ("Unmasked " + p.packageString()+ " in "+unmaskname)
 
     # now write the remaining packages for keywording
     for p in kwPackages:
         # Test if unmaskfile already contains the atom
         if re.search(re.escape(p.packageString()), unmaskfileContent):
-            print (p.packageString() + " already in "+config['unmaskfile'])
+            print (p.packageString() + " already in "+unmaskname)
         else:
             unmaskfile.write(p.packageString() + "  # Job " + myJob.name + "\n")
-            print ("Unmasked " + p.packageString() + " in " + config['unmaskfile'])
+            print ("Unmasked " + p.packageString() + " in " + unmaskname)
 
     unmaskfile.close()
     ## Write the scripts
     writeUSE(myJob, config)
     writeRdeps(myJob, config)
-    writeCleanup (myJob, config)
+    writeCleanup (myJob, config, unmaskname)
     ## Successscript can only be written if we have a bugnumber
     if myJob.bugnumber:
         writeSuccess(myJob, config)

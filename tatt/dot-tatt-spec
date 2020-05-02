@@ -1,7 +1,7 @@
 successmessage=string(default="Archtested on @@ARCH@@: Everything fine")
 ignoreprefix=string_list(default=list("elibc_","video_cards_","linguas_","python_targets_","python_single_target_","kdeenablefinal","test","debug"))
 template-dir=string(default="/usr/share/tatt/templates/")
-unmaskfile=string(default="/etc/portage/package.accept_keywords/archtest")
+unmaskdir=string(default="/etc/portage/package.accept_keywords")
 arch=string(default="x86")
 defaultopts=string(default="")
 emergeopts=string(default="")

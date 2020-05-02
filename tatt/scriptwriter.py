@@ -41,7 +41,6 @@ def scriptTemplate(job, config, filename):
     snippet = snippet.replace("@@REPODIR@@", config['repodir'])
     snippet = snippet.replace("@@REPORTFILE@@", reportname)
     snippet = snippet.replace("@@BUILDLOGDIR@@", config['buildlogdir'])
-    snippet = snippet.replace("@@KEYWORDFILE@@", config['unmaskfile'])
     snippet = snippet.replace("@@NEWKEYWORD@@", newkeyword)
     snippet = snippet.replace("@@TEMPLATEDIR@@", config['template-dir'])
     return snippet
@@ -214,8 +213,9 @@ def writecommitscript (job, config):
 
 
 ######## Write clean-up script ##############
-def writeCleanUpScript (job, config):
+def writeCleanUpScript (job, config, unmaskname):
     script = scriptTemplate(job, config, "cleanup")
+    script = script.replace("@@KEYWORDFILE@@", unmaskname)
     outfilename = (job.name + "-cleanup.sh")
     if os.path.isfile(outfilename):
         print("WARNING: Will overwrite " + outfilename)
