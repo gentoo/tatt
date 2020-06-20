@@ -2,10 +2,10 @@
 import subprocess
 from .gentooPackage import gentooPackage as gP
 
-def findPackages (s, arch, repo, bugnum):
-    """ Given a string s,
-        and a string arch
-        return all gentooPackages from that string that need actioning on that arch """
+def findPackages (s, arch, repo, bugnum=False):
+    """ Given a string s, a string arch, a string path to the repo, and
+        an integer bugnum, return all gentooPackages from that string
+        that need actioning on that arch """
 
     packages = []
 

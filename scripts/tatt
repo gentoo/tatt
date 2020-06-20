@@ -142,7 +142,7 @@ if options.infile:
     else:
         myJob.type="stable"
 
-    myJob.packageList = packageFinder.findPackages(packraw, targetarch)
+    myJob.packageList = packageFinder.findPackages(packraw, targetarch, get_repo_dir(config['repodir']))
 ## -b and a bugnumber was given ?
 if options.bugnum:
     print("Bugnumber:  " + options.bugnum)
