@@ -39,6 +39,7 @@ def scriptTemplate(job, config, filename):
     snippet = snippet.replace("@@JOB@@", job.name)
     snippet = snippet.replace("@@ARCH@@", config['arch'])
     snippet = snippet.replace("@@REPODIR@@", config['repodir'])
+    snippet = snippet.replace("@@REPODIR_COMMITS@@", config['repodir_commits'])
     snippet = snippet.replace("@@REPORTFILE@@", reportname)
     snippet = snippet.replace("@@BUILDLOGDIR@@", config['buildlogdir'])
     snippet = snippet.replace("@@NEWKEYWORD@@", newkeyword)

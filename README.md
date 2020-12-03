@@ -114,6 +114,10 @@ The specification of the configuration file can be found in dot-tatt-spec which 
 # Location of Gentoo repository
 # repodir="/var/db/repos/gentoo"
 
+# Location of Gentoo repository for repoman checks and commit scripts
+# in case commits will be executed on a different system:
+# repodir_commits=string(default="")
+
 # Url where the pre-generated rindex is to be found
 # tinderbox-url="https://qa-reports.gentoo.org/output/genrdeps/rindex/"
 

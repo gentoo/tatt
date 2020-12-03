@@ -1,5 +1,5 @@
 #!/bin/bash
-pushd @@REPODIR@@ > /dev/null
+pushd @@REPODIR_COMMITS@@ > /dev/null
 
 if [ "@@NEWKEYWORD@@" = "@@ARCH@@" ]; then
 	DESCR="@@ARCH@@ stable"

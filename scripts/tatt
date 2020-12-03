@@ -109,6 +109,11 @@ else:
         print("repodir value '{}' does not seem to be a directory".format(config['repodir']))
         sys.exit(1)
 
+# repodir_commits defaults to repodir value
+if config['repodir_commits'] == "":
+    print("repodir_commits not set; Using repodir value '{}'".format(config['repodir']))
+    config['repodir_commits']=config['repodir']
+
 # If given, test if the bugnumber represents an int
 try:
     int(options.bugnum)
