@@ -19,7 +19,6 @@ from tatt.scriptwriter import writecommitscript as writeCommit
 from tatt.scriptwriter import writeCleanUpScript as writeCleanup
 from tatt.tattConfig import tattConfig as tattConfig
 from tatt.job import job as job
-from tatt.tool import get_repo_dir
 
 ##### Generate a global config obj, reading from ~/.tatt #####
 config = tattConfig()
@@ -93,6 +92,28 @@ parser.add_option("-v", "--verbose",
 config['verbose']=options.verbose
 # Normalize the template dir:
 config['template-dir']=os.path.abspath(config['template-dir'])+os.sep
+
+# Now that we use nattka, we need a working repodir
+if config['repodir'] == "":
+    if os.path.isdir("/var/db/repos/gentoo"):
+        config['repodir']="/var/db/repos/gentoo"
+    elif os.path.isdir("/usr/portage"):
+        config['repodir']="/usr/portage"
+    else:
+        print("repodir not set in config and tatt was unable to determine fallback")
+        sys.exit(1)
+
+    print("repodir not set in config; Using '{}' as fallback".format(config['repodir']))
+else:
+    if not os.path.isdir(config['repodir']):
+        print("repodir value '{}' does not seem to be a directory".format(config['repodir']))
+        sys.exit(1)
+
+# repodir_commits defaults to repodir value
+if config['repodir_commits'] == "":
+    print("repodir_commits not set; Using repodir value '{}'".format(config['repodir']))
+    config['repodir_commits']=config['repodir']
+
 # If given, test if the bugnumber represents an int
 try:
     int(options.bugnum)
@@ -142,7 +163,7 @@ if options.infile:
     else:
         myJob.type="stable"
 
-    myJob.packageList = packageFinder.findPackages(packraw, targetarch, get_repo_dir(config['repodir']))
+    myJob.packageList = packageFinder.findPackages(packraw, targetarch, config['repodir'])
 ## -b and a bugnumber was given ?
 if options.bugnum:
     print("Bugnumber:  " + options.bugnum)
@@ -166,9 +187,9 @@ if options.bugnum:
         sys.exit(1)
     if myJob.packageList==None:
         if response["cf_stabilisation_atoms"]:
-            myJob.packageList = packageFinder.findPackages(response["cf_stabilisation_atoms"], config['arch'], get_repo_dir(config['repodir']), options.bugnum)
+            myJob.packageList = packageFinder.findPackages(response["cf_stabilisation_atoms"], config['arch'], config['repodir'], options.bugnum)
             if len(myJob.packageList) == 0 and ("KEYWORDREQ" in response["keywords"] or response["component"] == "Keywording"):
-                myJob.packageList = packageFinder.findPackages(response["cf_stabilisation_atoms"], '~' + config['arch'], get_repo_dir(config['repodir']), options.bugnum)
+                myJob.packageList = packageFinder.findPackages(response["cf_stabilisation_atoms"], '~' + config['arch'], config['repodir'], options.bugnum)
         else:
             response = session.get(config["bugzilla-url"] + "/rest/bug/{}/attachment".format(options.bugnum), params=params).json()["bugs"][str(options.bugnum)]
             for attachment in response:
@@ -176,7 +197,7 @@ if options.bugnum:
                     continue
                 for flag in attachment['flags']:
                     if flag["name"] == "stabilization-list" and flag["status"] == '+':
-                        myJob.packageList = packageFinder.findPackages(base64.b64decode(attachment["data"]).decode("utf8"), config['arch'], get_repo_dir(config['repodir']), options.bugnum)
+                        myJob.packageList = packageFinder.findPackages(base64.b64decode(attachment["data"]).decode("utf8"), config['arch'], config['repodir'], options.bugnum)
 
 
 # joint code for -f and -b
