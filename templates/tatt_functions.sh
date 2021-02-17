@@ -55,7 +55,7 @@ function tatt_test_pkg
     TFEATURES="${FEATURES}"
   fi
 
-  eout=$( FEATURES="${TFEATURES}" emerge -1 ${TATT_EMERGEOPTS} "${1:?}" 2>&1 1>/dev/tty )
+  eout=$( FEATURES="${TFEATURES}" emerge -1 --getbinpkg=n --usepkg-exclude="${1:?}" ${TATT_EMERGEOPTS} "${1:?}" 2>&1 1>/dev/tty )
   if [[ $? == 0 ]] ; then
     if [ -n "${TFEATURES}" ]; then
       echo -n "FEATURES='${TFEATURES}' " >> "${TATT_REPORTFILE}"
