@@ -56,20 +56,20 @@ def findUseFlagCombis (package, config, port):
         ignore_use_expand = False
 
         while len(swlist) < config['usecombis'] and len(rnds) < s:
-            if attempts >= 10000 and not ignore_use_expand:
-                # After 10000 attempts, let's give up on USE_EXPAND.
-                ignore_use_expand = True
-                attempts = 0
+            if attempts >= 10000:
+                if not ignore_use_expand:
+                    # After 10000 attempts, let's give up on USE_EXPAND.
+                    ignore_use_expand = True
+                    attempts = 0
 
-                print("Giving up on USE_EXPAND after {0} tries to find valid USE combinations".format(attempts))
-                print("We've found {0} USE combinations so far".format(len(swlist)))
-                uselist = [use for use in uselist if not "_" in use]
-                
-            if attempts >= 10000 and ignore_use_expand:
-                # Let's give up entirely and use what we have.
-                print("Giving up on finding more USE combinations after {0} further attempts".format(attempts))
-                print("We've found {0} USE combinations".format(len(swlist)))
-                break
+                    print("Giving up on USE_EXPAND after {0} tries to find valid USE combinations".format(attempts))
+                    print("We've found {0} USE combinations so far".format(len(swlist)))
+                    uselist = [use for use in uselist if not "_" in use]
+                else:
+                    # Let's give up entirely and use what we have.
+                    print("Giving up on finding more USE combinations after {0} further attempts".format(attempts))
+                    print("We've found {0} USE combinations".format(len(swlist)))
+                    break
 
             r = random.randint(0, s-1)
             if r in rnds:
