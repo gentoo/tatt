@@ -55,6 +55,8 @@ function tatt_test_pkg
     TFEATURES="${FEATURES}"
   fi
 
+  # --usepkg-exclude needs the package name, so let's extract it
+  # from the atom we have
   local name=$(portageq pquery "${1:?}" -n)
 
   eout=$( FEATURES="${TFEATURES}" emerge -1 --getbinpkg=n --usepkg-exclude="${name}" ${TATT_EMERGEOPTS} "${1:?}" 2>&1 1>/dev/tty )
