@@ -32,6 +32,7 @@ def scriptTemplate(job, config, filename):
 
     snippet = snippetfile.read()
     snippet = snippet.replace("@@EMERGEOPTS@@", config['emergeopts'])
+    snippet = snippet.replace("@@CLEANDEPS@@", config['cleandeps'])
     if job.bugnumber:
         snippet = snippet.replace("@@BUG@@", job.bugnumber)
     else:

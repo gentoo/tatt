@@ -44,6 +44,11 @@ function tatt_pkg_error
 
 function tatt_test_pkg
 {
+  # unmerge dependencies before tests
+  if [[ -n $TATT_CLEANDEPS ]]; then
+    CLEAN_DELAY=0 emerge -cq
+  fi
+
   if [ "${1:?}" == "--test" ]; then
     shift
     if ! emerge --onlydeps -1 --with-test-deps ${TATT_EMERGEOPTS} "${1:?}"; then
@@ -53,6 +58,11 @@ function tatt_test_pkg
     TFEATURES="${FEATURES} test"
   else
     TFEATURES="${FEATURES}"
+    # if not testing, install regular deps first
+    if ! emerge --onlydeps -1 ${TATT_EMERGEOPTS} "${1:?}"; then
+      echo "merging dependencies of $1 failed" >> "${TATT_REPORTFILE}"
+      return 0
+    fi
   fi
 
   # --usepkg-exclude needs the package name, so let's extract it
