@@ -151,6 +151,11 @@ def writerdepscript(job, config):
         # Todo: remove duplicates
         outfile.write(rdepTestString(job, r, config))
     os.fchmod(outfile.fileno(), 0o744)
+
+    if os.path.exists(config['template-dir'] + "revdep-footer"):
+        footer = scriptTemplate(job, config, "revdep-footer")
+        outfile.write(footer)
+
     outfile.close()
 
 
