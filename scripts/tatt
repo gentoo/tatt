@@ -152,6 +152,10 @@ if options.bugnum:
     if "message" in response:
         print(response["message"])
         sys.exit(1)
+    if len(response["bugs"]) == 0:
+        print("bug " + options.bugnum + " not found in bugzilla")
+        sys.exit(1)
+
     response = response["bugs"][0]
     if "KEYWORDREQ" in response["keywords"] or response["component"] == "Keywording":
         # This is a keywording bug:
