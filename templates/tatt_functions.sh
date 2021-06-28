@@ -49,7 +49,7 @@ function tatt_test_pkg
 
 	# Do a first pass to avoid circular dependencies
 	# --onlydeps should mean we're avoiding (too much) duplicate work
-	USE="minimal -doc" emerge --onlydeps -q1 --with-test-deps ${TATT_EMERGEOPTS} "${1:?}"
+	USE="${USE} minimal -doc" emerge --onlydeps -q1 --with-test-deps ${TATT_EMERGEOPTS} "${1:?}"
 
     if ! emerge --onlydeps -q1 --with-test-deps ${TATT_EMERGEOPTS} "${1:?}"; then
       echo "merging test dependencies of ${1} failed" >> "${TATT_REPORTFILE}"
