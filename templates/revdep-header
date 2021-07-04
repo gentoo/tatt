@@ -10,6 +10,8 @@ export TATT_EMERGEOPTS="@@EMERGEOPTS@@"
 
 source "@@TEMPLATEDIR@@tatt_functions.sh"
 
+test_ret=0
+
 export USE
 
 echo -e "revdep tests started on $(date)\n" >> @@REPORTFILE@@
