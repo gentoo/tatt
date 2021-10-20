@@ -11,7 +11,7 @@ def findPackages (s, arch, repo, bugnum=False):
 
     if bugnum:
             print("Using Nattka to process the bug")
-            output = subprocess.check_output(['nattka', '--repo', repo, 'apply', '-a', arch, '-n', bugnum, '--ignore-sanity-check', '--ignore-dependencies'])
+            output = subprocess.check_output(['nattka', '--repo', repo, 'apply', '-a', arch.replace("~", ""), '-n', bugnum, '--ignore-sanity-check', '--ignore-dependencies'])
             output = output.decode("utf8").split("\n")
             output = [line for line in output if not line.startswith("#")]
             output = [line.split(" ")[0] for line in output]
