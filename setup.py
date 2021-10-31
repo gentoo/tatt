@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name = "tatt",
-      version = "0.2",
+      version = "0.9",
       packages = find_packages(),
       scripts = ['scripts/tatt'],
       package_data = {
