@@ -31,6 +31,7 @@ function tatt_pkg_error
   BUILDDIR=/var/tmp/portage/${CP}
   BUILDLOG=${BUILDDIR}/temp/build.log
   if [[ -n "${TATT_BUILDLOGDIR}" && -s "${BUILDLOG}" ]]; then
+    mkdir -p "${TATT_BUILDLOGDIR}"
     LOGNAME=$(mktemp -p "${TATT_BUILDLOGDIR}" "${CP/\//_}_${TATT_TEST_TYPE}_XXXXX")
     mv "${BUILDLOG}" "${LOGNAME}"
     echo "    log has been saved as ${LOGNAME}" >> "${TATT_REPORTFILE}"
