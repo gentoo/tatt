@@ -120,7 +120,8 @@ def writerdepscript(job, config):
     for p in job.packageList:
         atom = p.packageCatName()
         pkgs.append(atom)
-        rdeps = rdeps + stablerdeps (atom, config)
+        if config['rdeps'] > 0:
+            rdeps = rdeps + stablerdeps (atom, config)
     if len(rdeps) == 0:
         print("No stable rdeps for " + job.name)
         return
