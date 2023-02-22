@@ -1,7 +1,8 @@
 # Code for checking consistency of @@EBUILD@@
 pushd @@CP@@ > /dev/null
 
-repoman -d full || exit 1
-repoman -m "@@CP@@: ${DESCR}" commit || exit 1
+pkgcheck scan || exit 1
+git add @@EBUILD@@ || exit 1
+pkgdev commit -m "@@CP@@: ${DESCR}" --signoff || exit 1
 
 popd > /dev/null
