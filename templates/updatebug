@@ -37,10 +37,7 @@ def main():
 
 	# We don't close bugs which still have other arches for obvious reasons,
 	# and security bugs because stabilization is not the last step for them.
-	if '@@NEWKEYWORD@@' == '@@ARCH@@':
-		comment = "@@ARCH@@ stable"
-	else:
-		comment = "@@ARCH@@ keyworded"
+	comment = "@@ARCH@@ done"
 	params['cc'] = {}
 	if has_my_arch:
 		params['cc']['remove'] = ['@@ARCH@@@gentoo.org']
@@ -48,7 +45,7 @@ def main():
 	if has_other_arches or 'Security' in response['product']:
 		params['comment']['body'] = comment
 	else:
-		params['comment']['body'] = comment + ', closing'
+		params['comment']['body'] = comment + '\r\n\r\nall arches done'
 		params['status'] = 'RESOLVED'
 		params['resolution'] = 'FIXED'
 

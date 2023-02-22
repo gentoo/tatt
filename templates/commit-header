@@ -2,11 +2,11 @@
 pushd @@REPODIR@@ > /dev/null
 
 if [ "@@NEWKEYWORD@@" = "@@ARCH@@" ]; then
-	DESCR="@@ARCH@@ stable"
+	DESCR="Stabilize @@ARCH@@"
 else
-	DESCR="@@ARCH@@ keyworded"
+	DESCR="Keyword @@ARCH@@"
 fi
 
 if [ -n "@@BUG@@" ]; then
-	DESCR="${DESCR} (bug #@@BUG@@)"
+	DESCR="${DESCR}, #@@BUG@@"
 fi
