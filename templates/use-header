@@ -7,6 +7,7 @@ export TATT_TEST_TYPE="use"
 export TATT_REPORTFILE="@@REPORTFILE@@"
 export TATT_BUILDLOGDIR="@@BUILDLOGDIR@@"
 export TATT_EMERGEOPTS="@@EMERGEOPTS@@"
+export TATT_CLEANDEPS="@@CLEANDEPS@@"
 
 source "@@TEMPLATEDIR@@tatt_functions.sh"
 
